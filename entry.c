@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.5 2000/11/14 23:00:54 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.6 2001/10/01 22:22:04 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -124,16 +124,19 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			bit_set(e->dom, 0);
 			bit_set(e->month, 0);
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			e->flags |= DOW_STAR;
 		} else if (!strcmp("monthly", cmd)) {
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
 			bit_set(e->dom, 0);
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			e->flags |= DOW_STAR;
 		} else if (!strcmp("weekly", cmd)) {
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
 			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
+			e->flags |= DOW_STAR;
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
 			bit_set(e->dow, 0);
 		} else if (!strcmp("daily", cmd) || !strcmp("midnight", cmd)) {
