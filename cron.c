@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: cron.c,v 1.1 1996/12/16 19:39:47 halley Exp $";
+static char rcsid[] = "$Id: cron.c,v 1.2 1996/12/27 19:37:44 vixie Exp $";
 #endif
 
 
@@ -75,6 +75,7 @@ main(argc, argv)
 #endif
 	(void) signal(SIGHUP, sighup_handler);
 
+	acquire_daemonlock(0);
 	set_cron_uid();
 	set_cron_cwd();
 
@@ -99,6 +100,7 @@ main(argc, argv)
 		case 0:
 			/* child process */
 			log_it("CRON",getpid(),"STARTUP","fork ok");
+			(void) setsid();
 			break;
 		default:
 			/* parent process should just die */
@@ -106,10 +108,7 @@ main(argc, argv)
 		}
 	}
 
-	while (getppid() != INIT_PID)
-		sleep(1);	/* wait for parent holding file lock to exit */
 	acquire_daemonlock(0);
-	(void) setsid();
 	database.head = NULL;
 	database.tail = NULL;
 	database.mtime = (time_t) 0;

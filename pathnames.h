@@ -16,7 +16,7 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.1 1996/12/16 19:39:48 halley Exp $
+ * $Id: pathnames.h,v 1.2 1996/12/27 19:37:54 vixie Exp $
  */
 
 #if (defined(BSD)) && (BSD >= 199103) || defined(__linux) || defined(AIX)
@@ -58,7 +58,7 @@
 #else
 # define PIDDIR "/etc/"
 #endif
-#define PIDFILE		"%scron.pid"
+#define PIDFILE		"cron.pid"
 
 			/* 4.3BSD-style crontab */
 #define SYSCRONTAB	"/etc/crontab"

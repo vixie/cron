@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.2 1996/12/27 19:37:54 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -46,6 +46,43 @@ static char rcsid[] = "$Id: misc.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
 
 static int		LogFD = ERR;
 
+/*
+ * glue_strings is the overflow-safe equivalent of
+ *		sprintf(buffer, "%s%c%s", a, separator, b);
+ *
+ * returns 1 on success, 0 on failure.  'buffer' MUST NOT be used if
+ * glue_strings fails.
+ */
+int
+glue_strings(buffer, buffer_size, a, b, separator)
+	char	*buffer;
+	int	buffer_size;	
+	char	*a;
+	char	*b;
+	int	separator;
+{
+	char *buf;
+	char *buf_end;
+
+	if (buffer_size <= 0)
+		return (0);
+	buf_end = buffer + buffer_size;
+	buf = buffer;
+
+	for ( /* nothing */; buf < buf_end && *a != '\0'; buf++, a++ )
+		*buf = *a;
+	if (buf == buf_end)
+		return (0);
+	*buf++ = separator;
+	if (buf == buf_end)
+		return (0);
+	for ( /* nothing */; buf < buf_end && *b != '\0'; buf++, b++ )
+		*buf = *b;
+	if (buf == buf_end)
+		return (0);
+	*buf = '\0';
+	return (1);
+}
 
 int
 strcmp_until(left, right, until)
@@ -250,7 +287,7 @@ acquire_daemonlock(closeflag)
 	int closeflag;
 {
 	static	FILE	*fp = NULL;
-	char		buf[MAX_TEMPSTR];
+	char		buf[3*MAX_FNAME];
 	char		pidfile[MAX_FNAME];
 	int		fd, otherpid;
 
@@ -261,30 +298,34 @@ acquire_daemonlock(closeflag)
 	}
 
 	if (!fp) {
-		(void) sprintf(pidfile, PIDFILE, PIDDIR);
-		if ((-1 == (fd = open(pidfile, O_RDWR|O_CREAT, 0644)))
-		    || (NULL == (fp = fdopen(fd, "r+")))
-		    ) {
+		if (strlen(PIDDIR)+strlen(PIDFILE) >= sizeof pidfile) {
+			fprintf(stderr, "%s: path too long\n");
+			log_it("CRON", getpid(), "DEATH", "path too long");
+			exit(ERROR_EXIT);
+		}
+		sprintf(pidfile, "%s%s", PIDDIR, PIDFILE);
+		if ((-1 == (fd = open(pidfile, O_RDWR|O_CREAT, 0644))) ||
+		    (NULL == (fp = fdopen(fd, "r+")))) {
 			sprintf(buf, "can't open or create %s: %s",
 				pidfile, strerror(errno));
 			fprintf(stderr, "%s: %s\n", ProgramName, buf);
 			log_it("CRON", getpid(), "DEATH", buf);
 			exit(ERROR_EXIT);
 		}
+
+		if (flock(fd, LOCK_EX|LOCK_NB) < OK) {
+			int save_errno = errno;
+
+			fscanf(fp, "%d", &otherpid);
+			sprintf(buf, "can't lock %s, otherpid may be %d: %s",
+				pidfile, otherpid, strerror(save_errno));
+			fprintf(stderr, "%s: %s\n", ProgramName, buf);
+			log_it("CRON", getpid(), "DEATH", buf);
+			exit(ERROR_EXIT);
+		}
+
+		(void) fcntl(fd, F_SETFD, 1);
 	}
-
-	if (flock(fd, LOCK_EX|LOCK_NB) < OK) {
-		int save_errno = errno;
-
-		fscanf(fp, "%d", &otherpid);
-		sprintf(buf, "can't lock %s, otherpid may be %d: %s",
-			pidfile, otherpid, strerror(save_errno));
-		fprintf(stderr, "%s: %s\n", ProgramName, buf);
-		log_it("CRON", getpid(), "DEATH", buf);
-		exit(ERROR_EXIT);
-	}
-
-	(void) fcntl(fd, F_SETFD, 1);
 
 	rewind(fp);
 	fprintf(fp, "%d\n", getpid());
@@ -589,6 +630,11 @@ mkprint(dst, src, len)
 	register unsigned char *src;
 	register int len;
 {
+	/*
+	 * XXX
+	 * We know this routine can't overflow the dst buffer because mkprints()
+	 * allocated enough space for the worst case.
+	 */
 	while (len-- > 0)
 	{
 		register unsigned char ch = *src++;
@@ -636,7 +682,7 @@ arpadate(clock)
 {
 	time_t t = clock ?*clock :time(0L);
 	struct tm *tm = localtime(&t);
-	static char ret[30];	/* zone name might be >3 chars */
+	static char ret[60];	/* zone name might be >3 chars */
 	
 	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %s",
 		       DowNames[tm->tm_wday],
@@ -652,7 +698,7 @@ arpadate(clock)
 #endif /*MAIL_DATE*/
 
 
-#ifdef HAVE_SAVED_SUIDS
+#ifdef HAVE_SAVED_UIDS
 static int save_euid;
 int swap_uids() { save_euid = geteuid(); return (seteuid(getuid())); }
 int swap_uids_back() { return (seteuid(save_euid)); }

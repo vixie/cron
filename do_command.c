@@ -16,18 +16,24 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.2 1996/12/27 19:37:51 vixie Exp $";
 #endif
 
 
 #include "cron.h"
-#include <sys/signal.h>
+#include <signal.h>
 #if defined(sequent)
 # include <sys/universe.h>
 #endif
 #if defined(SYSLOG)
 # include <syslog.h>
 #endif
+#if defined(__bsdi__)
+#include <errno.h>
+
+#include <pwd.h>
+#include <login_cap.h>
+#endif /* __bsdi__ */
 
 
 static void		child_process __P((entry *, user *)),
@@ -80,6 +86,7 @@ child_process(e, u)
 
 	Debug(DPROC, ("[%d] child_process('%s')\n", getpid(), e->cmd))
 
+#ifdef CAPITALIZE_FOR_PS
 	/* mark ourselves as different to PS command watchers by upshifting
 	 * our program name.  This has no effect on some kernels.
 	 */
@@ -89,6 +96,7 @@ child_process(e, u)
 		for (pch = ProgramName;  *pch;  pch++)
 			*pch = MkUpper(*pch);
 	}
+#endif /* CAPITALIZE_FOR_PS */
 
 	/* discover some useful and important environment settings
 	 */
@@ -205,14 +213,47 @@ child_process(e, u)
 		/* set our directory, uid and gid.  Set gid first, since once
 		 * we set uid, we've lost root privledges.
 		 */
+#if defined(__bsdi__)
+		{
+			struct passwd *pwd;
+			char *ep, *np;
+
+			pwd = getpwuid(e->uid);
+			if (pwd == NULL) {
+				fprintf(stderr, "getpwuid: couldn't get entry for %d\n", e->uid);
+				_exit(ERROR_EXIT);
+			}
+			if (setusercontext(0, pwd, e->uid, LOGIN_SETALL) < 0) {
+				fprintf(stderr, "setusercontext failed for %d\n", e->uid);
+				_exit(ERROR_EXIT);
+			}
+			if (auth_approve(0, pwd->pw_name, "cron") <= 0) {
+				fprintf(stderr, "approval failed for %d\n", e->uid);
+				_exit(ERROR_EXIT);
+			}
+			if (env_get("PATH", e->envp) == NULL &&
+			    (ep = getenv("PATH"))) {
+				np = malloc(strlen(ep) + 6);
+				if (np) {
+					strcpy(np, "PATH=");
+					strcat(np, ep);
+					env_set(e->envp, np);
+				}
+			}
+			
+		}
+#else
 		setgid(e->gid);
 # if defined(POSIX) || defined(BSD)	/* XXX guessing here */
 		initgroups(env_get("LOGNAME", e->envp), e->gid);
 # endif
 		setuid(e->uid);		/* we aren't root after this... */
+
+#endif /* __bsdi__ */
 		chdir(env_get("HOME", e->envp));
 
-		/* exec the command.
+		/*
+		 * Exec the command.
 		 */
 		{
 			char	*shell = env_get("SHELL", e->envp);
@@ -365,6 +406,11 @@ child_process(e, u)
 				auto char	hostname[MAXHOSTNAMELEN];
 
 				gethostname(hostname, MAXHOSTNAMELEN);
+				if (strlen(MAILARGS) + strlen(MAILCMD) +
+				    strlen(mailto) + 1 >= sizeof mailcmd) {
+					fprintf(stderr, "mailcmd too long\n");
+					(void) _exit(ERROR_EXIT);
+				}
 				sprintf(mailcmd, MAILARGS, MAILCMD, mailto);
 				if (!(mail = cron_popen(mailcmd, "w"))) {
 					perror(MAILCMD);

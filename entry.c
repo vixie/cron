@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.1 1996/12/16 19:39:47 halley Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.2 1996/12/27 19:37:52 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -249,22 +249,39 @@ load_entry(file, error_func, pw, envp)
 	 */
 	e->envp = env_copy(envp);
 	if (!env_get("SHELL", e->envp)) {
-		sprintf(envstr, "SHELL=%s", _PATH_BSHELL);
-		e->envp = env_set(e->envp, envstr);
+		if (glue_strings(envstr, sizeof envstr, "SHELL",
+				 _PATH_BSHELL, '='))
+			e->envp = env_set(e->envp, envstr);
+		else
+			log_it("CRON", getpid(), "error", "can't set SHELL");
 	}
 	if (!env_get("HOME", e->envp)) {
-		sprintf(envstr, "HOME=%s", pw->pw_dir);
-		e->envp = env_set(e->envp, envstr);
+		if (glue_strings(envstr, sizeof envstr, "HOME",
+				 pw->pw_dir, '='))
+			e->envp = env_set(e->envp, envstr);
+		else
+			log_it("CRON", getpid(), "error", "can't set HOME");
 	}
+#if !defined(__bsdi__)
 	if (!env_get("PATH", e->envp)) {
-		sprintf(envstr, "PATH=%s", _PATH_DEFPATH);
-		e->envp = env_set(e->envp, envstr);
+		if (glue_strings(envstr, sizeof envstr, "PATH",
+				 _PATH_DEFPATH, '='))
+			e->envp = env_set(e->envp, envstr);
+		else
+			log_it("CRON", getpid(), "error", "can't set PATH");
 	}
-	sprintf(envstr, "%s=%s", "LOGNAME", pw->pw_name);
-	e->envp = env_set(e->envp, envstr);
+#endif
+	if (glue_strings(envstr, sizeof envstr, "LOGNAME",
+			 pw->pw_name, '='))
+		e->envp = env_set(e->envp, envstr);
+	else
+		log_it("CRON", getpid(), "error", "can't set LOGNAME");
 #if defined(BSD)
-	sprintf(envstr, "%s=%s", "USER", pw->pw_name);
-	e->envp = env_set(e->envp, envstr);
+	if (glue_strings(envstr, sizeof envstr, "USER",
+			 pw->pw_name, '='))
+		e->envp = env_set(e->envp, envstr);
+	else
+		log_it("CRON", getpid(), "error", "can't set USER");
 #endif
 
 	Debug(DPARS, ("load_entry()...about to parse command\n"))

@@ -24,13 +24,12 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: popen.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
+static char rcsid[] = "$Id: popen.c,v 1.2 1996/12/27 19:37:55 vixie Exp $";
 static char sccsid[] = "@(#)popen.c	5.7 (Berkeley) 2/14/89";
 #endif /* not lint */
 
 #include "cron.h"
 #include <signal.h>
-
 
 #define WANT_GLOBBING 0
 

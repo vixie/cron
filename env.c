@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
+static char rcsid[] = "$Id: env.c,v 1.2 1996/12/27 19:37:53 vixie Exp $";
 #endif
 
 
@@ -115,7 +115,7 @@ load_env(envstr, f)
 {
 	long	filepos;
 	int	fileline;
-	char	name[MAX_TEMPSTR], val[MAX_ENVSTR];
+	char	name[MAX_ENVSTR], val[MAX_ENVSTR];
 	int	fields;
 
 	filepos = ftell(f);
@@ -135,7 +135,8 @@ load_env(envstr, f)
 		return (FALSE);
 	}
 
-	/* 2 fields from scanf; looks like an env setting
+	/*
+	 * 2 fields from scanf; looks like an env setting.
 	 */
 
 	/*
@@ -154,6 +155,10 @@ load_env(envstr, f)
 		}
 	}
 
+	/*
+	 * This can't overflow because get_string() limited the size of the
+	 * name and val fields.
+	 */
 	(void) sprintf(envstr, "%s=%s", name, val);
 	Debug(DPARS, ("load_env, <%s> <%s> -> <%s>\n", name, val, envstr))
 	return (TRUE);

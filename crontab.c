@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.2 1996/12/27 19:37:49 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -147,6 +147,10 @@ parse_args(argc, argv)
 		fprintf(stderr, "bailing out.\n");
 		exit(ERROR_EXIT);
 	}
+	if (strlen(pw->pw_name) >= sizeof User) {
+		fprintf(stderr, "username too long\n");
+		exit(ERROR_EXIT);
+	}
 	strcpy(User, pw->pw_name);
 	strcpy(RealUser, User);
 	Filename[0] = '\0';
@@ -170,6 +174,8 @@ parse_args(argc, argv)
 					ProgramName, optarg);
 				exit(ERROR_EXIT);
 			}
+			if (strlen(optarg) >= sizeof User)
+				usage("username too long");
 			(void) strcpy(User, optarg);
 			break;
 		case 'l':
@@ -201,6 +207,8 @@ parse_args(argc, argv)
 	} else {
 		if (argv[optind] != NULL) {
 			Option = opt_replace;
+			if (strlen(argv[optind]) >= sizeof Filename)
+				usage("filename too long");
 			(void) strcpy (Filename, argv[optind]);
 		} else {
 			usage("file name must be specified for replace");
@@ -250,7 +258,10 @@ list_cmd() {
 	int	ch;
 
 	log_it(RealUser, Pid, "LIST", User);
-	(void) sprintf(n, CRON_TAB(User));
+	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
+		fprintf(stderr, "path too long\n");
+		exit(ERROR_EXIT);
+	}
 	if (!(f = fopen(n, "r"))) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
@@ -273,7 +284,10 @@ delete_cmd() {
 	char	n[MAX_FNAME];
 
 	log_it(RealUser, Pid, "DELETE", User);
-	(void) sprintf(n, CRON_TAB(User));
+	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
+		fprintf(stderr, "path too long\n");
+		exit(ERROR_EXIT);
+	}
 	if (unlink(n)) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
@@ -305,7 +319,10 @@ edit_cmd() {
 	PID_T		pid, xpid;
 
 	log_it(RealUser, Pid, "BEGIN EDIT", User);
-	(void) sprintf(n, CRON_TAB(User));
+	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
+		fprintf(stderr, "path too long\n");
+		exit(ERROR_EXIT);
+	}
 	if (!(f = fopen(n, "r"))) {
 		if (errno != ENOENT) {
 			perror(n);
@@ -319,7 +336,11 @@ edit_cmd() {
 		}
 	}
 
-	(void) sprintf(Filename, "%s/crontab.%d", _PATH_TMP, Pid);
+	sprintf(q, "crontab.%d", Pid);
+	if (!glue_strings(Filename, sizeof Filename, _PATH_TMP, q, '/')) {
+		fprintf(stderr, "path too long\n");
+		goto fatal;
+	}
 	if (-1 == (t = open(Filename, O_CREAT|O_EXCL|O_RDWR, 0600))) {
 		perror(Filename);
 		goto fatal;
@@ -420,7 +441,10 @@ edit_cmd() {
 				ProgramName);
 			exit(ERROR_EXIT);
 		}
-		sprintf(q, "%s %s", editor, Filename);
+		if (!glue_strings(q, sizeof q, editor, Filename, ' ')) {
+			fprintf(stderr, "editor command line too long");
+			exit(ERROR_EXIT);
+		}
 		execlp(_PATH_BSHELL, _PATH_BSHELL, "-c", q, NULL);
 		perror(editor);
 		exit(ERROR_EXIT);
@@ -510,7 +534,10 @@ replace_cmd() {
 	struct stat sb;
 
 	(void) sprintf(n, "tmp.%d", Pid);
-	(void) sprintf(tn, CRON_TAB(n));
+	if (!glue_strings(tn, sizeof tn, SPOOL_DIR, n, '/')) {
+		fprintf(stderr, "path too long\n");
+		return (-2);
+	}
 	if (!(tmp = fopen(tn, "w+"))) {
 		perror(tn);
 		return (-2);
@@ -607,7 +634,11 @@ replace_cmd() {
 		return (-2);
 	}
 
-	(void) sprintf(n, CRON_TAB(User));
+	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
+		fprintf(stderr, "path too long\n");
+		unlink(tn);
+		return (-2);
+	}
 #ifdef RENAME_ISNT_ATOMIC
 	unlink(n);
 #endif

@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: compat.c,v 1.1 1996/12/16 19:39:48 halley Exp $";
+static char rcsid[] = "$Id: compat.c,v 1.2 1996/12/27 19:37:39 vixie Exp $";
 #endif
 
 /* vix 30dec93 [broke this out of misc.c - see RCS log for history]
@@ -227,7 +227,7 @@ setenv(name, value, overwrite)
 		return (-1);
 	}
 
-	sprintf("%s=%s", name, value);
+	sprintf(tmp, "%s=%s", name, value);
 	return (putenv(tmp));	/* intentionally orphan 'tmp' storage */
 }
 #endif
