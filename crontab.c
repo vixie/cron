@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.10 2003/03/08 17:18:18 vixie Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.11 2003/04/08 01:10:49 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -582,6 +582,11 @@ replace_cmd(void) {
 	while (!CheckErrorCount && !eof) {
 		switch (load_env(envstr, tmp)) {
 		case ERR:
+			/* check for data before the EOF */
+			if (envstr[0] != '\0') {
+				Set_LineNum(LineNumber + 1);
+				check_error("premature EOF");
+			}
 			eof = TRUE;
 			break;
 		case FALSE:
