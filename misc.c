@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.11 2003/02/15 20:55:11 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.12 2003/02/16 04:34:46 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -660,30 +660,25 @@ mkprints(src, len)
 }
 
 #ifdef MAIL_DATE
-/* Sat, 27 Feb 1993 11:44:51 -0800 (CST)
- * 1234567890123456789012345678901234567
+/* Sat, 27 Feb 93 11:44:51 CST
+ * 123456789012345678901234567
  */
 char *
 arpadate(clock)
 	time_t *clock;
 {
-	time_t t = clock ? *clock : time((TIME_T) 0);
+	time_t t = clock ?*clock :time(0L);
 	struct tm *tm = localtime(&t);
-	long gmtoff = get_gmtoff(&t, tm);
-	int hours = gmtoff / SECONDS_PER_HOUR;
-	int minutes = (gmtoff - (hours * SECONDS_PER_HOUR)) / SECONDS_PER_MINUTE;
-	static char ret[64];	/* zone name might be >3 chars */
+	static char ret[60];	/* zone name might be >3 chars */
 	
-	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %.2d%.2d (%s)",
+	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %s",
 		       DowNames[tm->tm_wday],
 		       tm->tm_mday,
 		       MonthNames[tm->tm_mon],
-		       tm->tm_year + 1900,
+		       tm->tm_year,
 		       tm->tm_hour,
 		       tm->tm_min,
 		       tm->tm_sec,
-		       hours,
-		       minutes,
 		       TZONE(*tm));
 	return (ret);
 }
@@ -710,32 +705,3 @@ strlens(const char *last, ...) {
 	va_end(ap);
 	return (ret);
 }
-
-/* Return the offset from GMT in seconds (algorithm taken from sendmail). */
-#ifndef HAVE_TM_GMTOFF
-long get_gmtoff(time_t *clock, struct tm *local)
-{
-	struct tm gmt;
-	long offset;
-
-	gmt = *gmtime(clock);
-	if (local == NULL)
-		local = localtime(clock);
-
-	offset = (local->tm_sec - gmt.tm_sec) +
-	    ((local->tm_min - gmt.tm_min) * 60) +
-	    ((local->tm_hour - gmt.tm_hour) * 3600);
-
-	/* Timezone may cause year rollover to happen on a different day. */
-	if (local->tm_year < gmt.tm_year)
-		offset -= 24 * 3600;
-	else if (local->tm_year > gmt.tm_year)
-		offset -= 24 * 3600;
-	else if (local->tm_yday < gmt.tm_yday)
-		offset -= 24 * 3600;
-	else if (local->tm_yday > gmt.tm_yday)
-		offset += 24 * 3600;
-
-	return (offset);
-}
-#endif /* HAVE_TM_GMTOFF */

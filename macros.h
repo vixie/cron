@@ -1,5 +1,5 @@
 /*
- * $Id: macros.h,v 1.3 2003/02/15 20:55:11 vixie Exp $
+ * $Id: macros.h,v 1.4 2003/02/16 04:34:46 vixie Exp $
  */
 
 /*
@@ -96,13 +96,6 @@
 #define	Set_LineNum(ln)	{Debug(DPARS|DEXT,("linenum=%d\n",ln)); \
 			 LineNumber = ln; \
 			}
-
-#ifdef HAVE_TM_GMTOFF
-#define	get_gmtoff(c, t)	(t->tm_gmtoff)
-#endif
-
-#define	SECONDS_PER_MINUTE	60
-#define	SECONDS_PER_HOUR	3600
 
 #define	FIRST_MINUTE	0
 #define	LAST_MINUTE	59

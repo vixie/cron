@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.6 2003/02/15 20:55:11 vixie Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.7 2003/02/16 04:34:45 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -403,7 +403,7 @@ child_process(entry *e, user *u) {
 					e->cmd);
 #ifdef MAIL_DATE
 				fprintf(mail, "Date: %s\n",
-					arpadate(&StartTime));
+					arpadate(&TargetTime));
 #endif /*MAIL_DATE*/
 				for (env = e->envp;  *env;  env++)
 					fprintf(mail, "X-Cron-Env: <%s>\n",

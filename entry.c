@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.9 2003/02/15 20:55:11 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.10 2003/02/16 04:34:45 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -153,7 +153,6 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
-			e->flags |= HR_STAR;
 		} else {
 			ecode = e_timespec;
 			goto eof;
@@ -169,8 +168,6 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	} else {
 		Debug(DPARS, ("load_entry()...about to parse numerics\n"))
 
-		if (ch == '*')
-			e->flags |= MIN_STAR;
 		ch = get_list(e->minute, FIRST_MINUTE, LAST_MINUTE,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
@@ -181,8 +178,6 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		/* hours
 		 */
 
-		if (ch == '*')
-			e->flags |= HR_STAR;
 		ch = get_list(e->hour, FIRST_HOUR, LAST_HOUR,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
@@ -225,7 +220,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		}
 	}
 
-	/* make sundays equivalent */
+	/* make sundays equivilent */
 	if (bit_test(e->dow, 0) || bit_test(e->dow, 7)) {
 		bit_set(e->dow, 0);
 		bit_set(e->dow, 7);
@@ -494,7 +489,7 @@ get_range(bitstr_t *bits, int low, int high, const char *names[],
 	/* range. set all elements from num1 to num2, stepping
 	 * by num3.  (the step is a downward-compatible extension
 	 * proposed conceptually by bob@acornrc, syntactically
-	 * designed then implemented by paul vixie).
+	 * designed then implmented by paul vixie).
 	 */
 	for (i = num1;  i <= num2;  i += num3)
 		if (EOF == set_element(bits, low, high, i))
