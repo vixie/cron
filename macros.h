@@ -1,5 +1,5 @@
 /*
- * $Id: macros.h,v 1.7 2003/03/08 17:18:18 vixie Exp $
+ * $Id: macros.h,v 1.8 2003/03/08 17:21:02 vixie Exp $
  */
 
 /*
@@ -79,7 +79,7 @@
 
 #if DEBUGGING
 # define Debug(mask, message) \
-			if ( (DebugFlags & (mask) ) == (mask) ) \
+			if ((DebugFlags & (mask)) != 0) \
 				printf message;
 #else /* !DEBUGGING */
 # define Debug(mask, message) \
