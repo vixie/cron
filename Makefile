@@ -19,7 +19,7 @@
 
 # Makefile for vixie's cron
 #
-# $Id: Makefile,v 1.3 2000/01/02 20:53:37 vixie Exp $
+# $Id: Makefile,v 1.4 2000/03/04 10:44:44 vixie Exp $
 #
 # vix 03mar88 [moved to RCS, rest of log is in there]
 # vix 30mar87 [goodbye, time.c; hello, getopt]
@@ -81,7 +81,8 @@ CFLAGS		=	$(CDEBUG) $(INCLUDE) $(DEFS)
 
 INFOS		=	README CHANGES FEATURES INSTALL CONVERSION THANKS MAIL
 MANPAGES	=	bitstring.3 crontab.5 crontab.1 cron.8 putman.sh
-HEADERS		=	bitstring.h cron.h config.h pathnames.h externs.h 
+HEADERS		=	bitstring.h cron.h config.h pathnames.h externs.h \
+			macros.h structs.h funcs.h globals.h
 SOURCES		=	cron.c crontab.c database.c do_command.c entry.c \
 			env.c job.c user.c popen.c misc.c
 SHAR_SOURCE	=	$(INFOS) $(MANPAGES) Makefile $(HEADERS) $(SOURCES)
