@@ -19,7 +19,7 @@
 
 # Makefile for vixie's cron
 #
-# $Id: Makefile,v 1.5 2003/02/15 20:57:46 vixie Exp $
+# $Id: Makefile,v 1.6 2003/02/15 20:59:06 vixie Exp $
 #
 # vix 03mar88 [moved to RCS, rest of log is in there]
 # vix 30mar87 [goodbye, time.c; hello, getopt]
@@ -115,7 +115,7 @@ install		:	all
 			sh putman.sh crontab.5 $(DESTMAN)
 
 distclean	:	clean
-			rm -f *.orig *.BAK *.CKP *~ #*
+			rm -f *.orig *.rej *.BAK *.CKP *~ #*
 			rm -f a.out core tags
 
 clean		:
