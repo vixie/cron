@@ -1,5 +1,5 @@
 /*
- * $Id: globals.h,v 1.2 2000/01/02 20:53:42 vixie Exp $
+ * $Id: globals.h,v 1.3 2003/02/15 20:52:17 vixie Exp $
  */
 
 /*
@@ -60,6 +60,7 @@ XTRN const char *DowNames[]
 XTRN const char *ProgramName INIT("amnesia");
 XTRN int	LineNumber INIT(0);
 XTRN time_t	TargetTime INIT(0);
+XTRN int	NoFork INIT(0);
 
 #if DEBUGGING
 XTRN int	DebugFlags INIT(0);

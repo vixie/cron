@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: cron.c,v 1.5 2002/12/29 07:21:19 vixie Exp $";
+static char rcsid[] = "$Id: cron.c,v 1.6 2003/02/15 20:52:17 vixie Exp $";
 #endif
 
 #define	MAIN_PROGRAM
@@ -42,7 +42,7 @@ static	volatile sig_atomic_t	got_sighup, got_sigchld;
 
 static void
 usage(void) {
-	fprintf(stderr, "usage:  %s [-x debugflag[,...]]\n", ProgramName);
+	fprintf(stderr, "usage:  %s [-x debugflag[,...]] [-n]\n", ProgramName);
 	exit(ERROR_EXIT);
 }
 
@@ -61,6 +61,7 @@ main(int argc, char *argv[]) {
 	setlinebuf(stderr);
 #endif
 
+	NoFork = 0;
 	parse_args(argc, argv);
 
 	bzero((char *)&sact, sizeof sact);
@@ -94,7 +95,7 @@ main(int argc, char *argv[]) {
 	if (0) {
 # endif
 		(void) fprintf(stderr, "[%ld] cron started\n", (long)getpid());
-	} else {
+	} else if (NoFork == 0) {
 		switch (fork()) {
 		case -1:
 			log_it("CRON",getpid(),"DEATH","can't fork");
@@ -303,13 +304,16 @@ static void
 parse_args(int argc, char *argv[]) {
 	int argch;
 
-	while (-1 != (argch = getopt(argc, argv, "x:"))) {
+	while (-1 != (argch = getopt(argc, argv, "nx:"))) {
 		switch (argch) {
 		default:
 			usage();
 		case 'x':
 			if (!set_debug_flags(optarg))
 				usage();
+			break;
+		case 'n':
+			NoFork = 1;
 			break;
 		}
 	}

@@ -1,5 +1,7 @@
 Cron V4
 
+3.	[feature]	add -n to cron (for nofork).
+2.	[evol]		merge in many changes from *BSD and Linux.
 1.	[port]		fixups for nextstep, plus a syslog configuration bug.
 
 --------

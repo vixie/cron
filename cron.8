@@ -17,18 +17,20 @@
 .\"ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 .\"SOFTWARE.
 .\"
-.\" $Id: cron.8,v 1.4 2000/11/14 23:00:52 vixie Exp $
+.\" $Id: cron.8,v 1.5 2003/02/15 20:52:17 vixie Exp $
 .\" 
 .TH CRON 8 "10 January 1996""
 .UC 4
 .SH NAME
 cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
-cron
+cron [\-n]
 .SH DESCRIPTION
 .I Cron
 should be started from /etc/rc or /etc/rc.local.  It will return immediately,
-so you don't need to start it with '&'.
+so you don't need to start it with '&'.  The \-n option changes this default
+behavior causing it to run in the foreground.  This can be useful when 
+starting it out of init.
 .PP
 .I Cron
 searches /var/cron/tabs for crontab files which are named after accounts in
