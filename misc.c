@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.8 2000/11/14 23:00:56 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.9 2002/07/07 03:37:00 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -444,6 +444,10 @@ allowed(const char *username) {
 #endif
 	}
 
+	if (allow)
+		fcntl(fileno(allow), F_SETFD, 1);
+	if (deny)
+		fcntl(fileno(deny), F_SETFD, 1);
 	if (allow)
 		return (in_file(username, allow));
 	if (deny)
