@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.15 2003/04/08 01:12:25 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.16 2003/07/06 15:23:51 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -52,10 +52,10 @@ static const char *ecodes[] =
 		"out of memory"
 	};
 
-static char	get_list(bitstr_t *, int, int, const char *[], char, FILE *),
-		get_range(bitstr_t *, int, int, const char *[], char, FILE *),
-		get_number(int *, int, const char *[], char, FILE *, const char *);
-static int	set_element(bitstr_t *, int, int, int);
+static int	get_list(bitstr_t *, int, int, const char *[], int, FILE *),
+		get_range(bitstr_t *, int, int, const char *[], int, FILE *),
+		get_number(int *, int, const char *[], int, FILE *, const char *),
+		set_element(bitstr_t *, int, int, int);
 
 void
 free_entry(entry *e) {
@@ -395,9 +395,9 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	return (NULL);
 }
 
-static char
+static int
 get_list(bitstr_t *bits, int low, int high, const char *names[],
-	 char ch, FILE *file)
+	 int ch, FILE *file)
 {
 	int done;
 
@@ -439,9 +439,9 @@ get_list(bitstr_t *bits, int low, int high, const char *names[],
 }
 
 
-static char
+static int
 get_range(bitstr_t *bits, int low, int high, const char *names[],
-	  char ch, FILE *file)
+	  int ch, FILE *file)
 {
 	/* range = number | number "-" number [ "/" number ]
 	 */
@@ -523,8 +523,8 @@ get_range(bitstr_t *bits, int low, int high, const char *names[],
 	return (ch);
 }
 
-static char
-get_number(int *numptr, int low, const char *names[], char ch, FILE *file,
+static int
+get_number(int *numptr, int low, const char *names[], int ch, FILE *file,
     const char *terms) {
 	char temp[MAX_TEMPSTR], *pc;
 	int len, i;
