@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.3 1996/12/29 04:00:54 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.4 1997/01/14 20:48:10 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -77,7 +77,8 @@ glue_strings(buffer, buffer_size, a, b, separator)
 		*buf = *a;
 	if (buf == buf_end)
 		return (0);
-	*buf++ = separator;
+	if (separator != '/' || buf == buffer || buf[-1] != '/')
+		*buf++ = separator;
 	if (buf == buf_end)
 		return (0);
 	for ( /* nothing */; buf < buf_end && *b != '\0'; buf++, b++ )
