@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: cron.c,v 1.7 2003/02/15 20:55:11 vixie Exp $";
+static char rcsid[] = "$Id: cron.c,v 1.8 2003/02/15 21:14:05 vixie Exp $";
 #endif
 
 #define	MAIN_PROGRAM
@@ -105,7 +105,7 @@ main(int argc, char *argv[]) {
 			break;
 		case 0:
 			/* child process */
-			log_it("CRON",getpid(),"STARTUP","fork ok");
+			log_it("CRON",getpid(),"STARTUP",CRON_VERSION);
 			(void) setsid();
 			if ((fd = open(_PATH_DEVNULL, O_RDWR, 0)) >= 0) {
 				(void) dup2(fd, STDIN);

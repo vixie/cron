@@ -1,5 +1,6 @@
 Cron V4
 
+5.	[feature]	give cron a version number and display it.
 4.	[bug]		handle clock jumps (from freebsd pr# 24485)
 3.	[feature]	add -n to cron (for nofork).
 2.	[evol]		merge in many changes from *BSD and Linux.
