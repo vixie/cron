@@ -1,3 +1,9 @@
+Cron V4
+
+1.	[port]		fixups for nextstep, plus a syslog configuration bug.
+
+--------
+
 Vixie Cron		V3.0 Patch 2 notes
 Paul Vixie
 12-Dec-1994

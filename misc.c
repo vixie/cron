@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.6 2000/01/02 20:53:43 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.7 2000/09/07 21:52:54 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -43,7 +43,7 @@ static char rcsid[] = "$Id: misc.c,v 1.6 2000/01/02 20:53:43 vixie Exp $";
 #endif
 
 
-#if defined(LOG_CRON) && defined(LOG_FILE)
+#if defined(SYSLOG) && defined(LOG_FILE)
 # undef LOG_FILE
 #endif
 
@@ -51,6 +51,10 @@ static char rcsid[] = "$Id: misc.c,v 1.6 2000/01/02 20:53:43 vixie Exp $";
 # define LOG_CRON LOG_DAEMON
 #endif
 
+
+#ifndef FACILITY
+#define FACILITY LOG_CRON
+#endif
 
 static int		LogFD = ERR;
 
@@ -559,7 +563,7 @@ log_it(username, xpid, event, detail)
 		 * print the pid ourselves.
 		 */
 # ifdef LOG_DAEMON
-		openlog(ProgramName, LOG_PID, LOG_CRON);
+		openlog(ProgramName, LOG_PID, FACILITY);
 # else
 		openlog(ProgramName, LOG_PID);
 # endif

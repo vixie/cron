@@ -31,6 +31,9 @@
 
 #include <bitstring.h>
 #include <ctype.h>
+#ifndef isascii
+#define isascii(c)      ((unsigned)(c)<=0177)
+#endif
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -123,4 +126,8 @@ extern	int		flock(int, int);
 #endif
 #ifndef LOCK_UN
 # define LOCK_UN 8
+#endif
+
+#ifndef WCOREDUMP
+# define WCOREDUMP(st)          (((st) & 0200) != 0)
 #endif
