@@ -1,5 +1,6 @@
 Cron V4
 
+8.	[bug]		fix stepsize 0 infinite loop.
 7.	[evol]		"enum" version of freebsd fix to env-var settings.
 6.	[evol]		changes #12-17 from tcmiller (for *BSD alignment).
 5.	[feature]	give cron a version number and display it.
