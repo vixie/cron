@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: database.c,v 1.4 2000/01/02 20:53:40 vixie Exp $";
+static char rcsid[] = "$Id: database.c,v 1.5 2003/02/16 04:40:01 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the log]
@@ -29,6 +29,16 @@ static char rcsid[] = "$Id: database.c,v 1.4 2000/01/02 20:53:40 vixie Exp $";
 #include "cron.h"
 
 #define TMAX(a,b) ((a)>(b)?(a):(b))
+
+/*
+ * Because crontab files may be owned by their respective users we
+ * take extreme care in opening them.  If the OS lacks the O_NOFOLLOW
+ * we will just have to live without it.  In order for this to be an
+ * issue an attacker would have to subvert group crontab.
+ */
+#ifndef O_NOFOLLOW
+# define O_NOFOLLOW	0
+#endif
 
 static	void		process_crontab(const char *, const char *,
 					const char *, struct stat *,
@@ -79,11 +89,9 @@ load_database(cron_db *old_db) {
 	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
 	new_db.head = new_db.tail = NULL;
 
-	if (syscron_stat.st_mtime) {
-		process_crontab("root", "*system*",
-				SYSCRONTAB, &syscron_stat,
+	if (syscron_stat.st_mtime)
+		process_crontab("root", NULL, SYSCRONTAB, &syscron_stat,
 				&new_db, old_db);
-	}
 
 	/* we used to keep this dir open all the time, for the sake of
 	 * efficiency.  however, we need to close it in every fork, and
@@ -182,14 +190,18 @@ process_crontab(const char *uname, const char *fname, const char *tabname,
 	int crontab_fd = OK - 1;
 	user *u;
 
-	if (strcmp(fname, "*system*") != 0 && !(pw = getpwnam(uname))) {
+	if (fname == NULL) {
+		/* must be set to something for logging purposes.
+		 */
+		fname = "*system*";
+	} else if ((pw = getpwnam(uname)) == NULL) {
 		/* file doesn't have a user in passwd file.
 		 */
 		log_it(fname, getpid(), "ORPHAN", "no passwd entry");
 		goto next_crontab;
 	}
 
-	if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
+	if ((crontab_fd = open(tabname, O_RDONLY|O_NONBLOCK|O_NOFOLLOW, 0)) < OK) {
 		/* crontab not accessible?
 		 */
 		log_it(fname, getpid(), "CAN'T OPEN", tabname);
@@ -198,6 +210,23 @@ process_crontab(const char *uname, const char *fname, const char *tabname,
 
 	if (fstat(crontab_fd, statbuf) < OK) {
 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
+		goto next_crontab;
+	}
+	if (!S_ISREG(statbuf->st_mode)) {
+		log_it(fname, getpid(), "NOT REGULAR", tabname);
+		goto next_crontab;
+	}
+	if ((statbuf->st_mode & 07777) != 0600) {
+		log_it(fname, getpid(), "BAD FILE MODE", tabname);
+		goto next_crontab;
+	}
+	if (statbuf->st_uid != ROOT_UID && (pw == NULL ||
+	    statbuf->st_uid != pw->pw_uid || strcmp(uname, pw->pw_name) != 0)) {
+		log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+		goto next_crontab;
+	}
+	if (statbuf->st_nlink != 1) {
+		log_it(fname, getpid(), "BAD LINK COUNT", tabname);
 		goto next_crontab;
 	}
 

@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.12 2003/02/16 04:34:46 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.13 2003/02/16 04:40:01 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -28,19 +28,7 @@ static char rcsid[] = "$Id: misc.c,v 1.12 2003/02/16 04:34:46 vixie Exp $";
  */
 
 #include "cron.h"
-#if SYS_TIME_H
-# include <sys/time.h>
-#else
-# include <time.h>
-#endif
-#include <sys/file.h>
-#include <sys/stat.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <fcntl.h>
-#if defined(SYSLOG)
-# include <syslog.h>
-#endif
+#include <limits.h>
 
 #if defined(SYSLOG) && defined(LOG_FILE)
 # undef LOG_FILE
@@ -55,6 +43,10 @@ static char rcsid[] = "$Id: misc.c,v 1.12 2003/02/16 04:34:46 vixie Exp $";
 #endif
 
 static int LogFD = ERR;
+
+#if defined(SYSLOG)
+static int syslog_open = FALSE;
+#endif
 
 /*
  * glue_strings is the overflow-safe equivalent of
@@ -228,7 +220,7 @@ set_cron_cwd(void) {
 			exit(ERROR_EXIT);
 		}
 	}
-	if ((sb.st_mode & S_IFDIR) == 0) {
+	if (!S_ISDIR(sb.st_mode)) {
 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
 			CRONDIR);
 		exit(ERROR_EXIT);
@@ -264,7 +256,7 @@ set_cron_cwd(void) {
  *
  * note: main() calls us twice; once before forking, once after.
  *	we maintain static storage of the file pointer so that we
- *	can rewrite our PID into the PIDFILE after the fork.
+ *	can rewrite our PID into _PATH_CRON_PID after the fork.
  */
 void
 acquire_daemonlock(int closeflag) {
@@ -325,8 +317,8 @@ acquire_daemonlock(int closeflag) {
 	num = write(fd, buf, strlen(buf));
 	(void) ftruncate(fd, num);
 
-	/* abandon fd and fp even though the file is open. we need to
-	 * keep it open and locked, but we don't need the handles elsewhere.
+	/* abandon fd even though the file is open. we need to keep
+	 * it open and locked, but we don't need the handles elsewhere.
 	 */
 }
 
@@ -485,18 +477,15 @@ out:
 }
 
 void
-log_it(const char *username, PID_T xpid, const char *event, const char *detail)
-{
+log_it(const char *username, PID_T xpid, const char *event, const char *detail) {
+#if defined(LOG_FILE) || DEBUGGING
 	PID_T pid = xpid;
+#endif
 #if defined(LOG_FILE)
 	char *msg;
 	TIME_T now = time((TIME_T) 0);
 	struct tm *t = localtime(&now);
 #endif /*LOG_FILE*/
-
-#if defined(SYSLOG)
-	static int	syslog_open = 0;
-#endif
 
 #if defined(LOG_FILE)
 	/* we assume that MAX_TEMPSTR will hold the date, time, &punctuation.
@@ -542,10 +531,6 @@ log_it(const char *username, PID_T xpid, const char *event, const char *detail)
 
 #if defined(SYSLOG)
 	if (!syslog_open) {
-		/* we don't use LOG_PID since the pid passed to us by
-		 * our client may not be our own.  therefore we want to
-		 * print the pid ourselves.
-		 */
 # ifdef LOG_DAEMON
 		openlog(ProgramName, LOG_PID, FACILITY);
 # else
@@ -572,6 +557,10 @@ log_close(void) {
 		close(LogFD);
 		LogFD = ERR;
 	}
+#if defined(SYSLOG)
+	closelog();
+	syslog_open = FALSE;
+#endif /*SYSLOG*/
 }
 
 /* char *first_word(char *s, char *t)
@@ -660,37 +649,59 @@ mkprints(src, len)
 }
 
 #ifdef MAIL_DATE
-/* Sat, 27 Feb 93 11:44:51 CST
- * 123456789012345678901234567
+/* Sat, 27 Feb 1993 11:44:51 -0800 (CST)
+ * 1234567890123456789012345678901234567
  */
 char *
 arpadate(clock)
 	time_t *clock;
 {
-	time_t t = clock ?*clock :time(0L);
-	struct tm *tm = localtime(&t);
-	static char ret[60];	/* zone name might be >3 chars */
+	time_t t = clock ? *clock : time((TIME_T) 0);
+	struct tm tm = *localtime(&t);
+	long gmtoff = get_gmtoff(&t, &tm);
+	int hours = gmtoff / SECONDS_PER_HOUR;
+	int minutes = (gmtoff - (hours * SECONDS_PER_HOUR)) / SECONDS_PER_MINUTE;
+	static char ret[64];	/* zone name might be >3 chars */
 	
-	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %s",
-		       DowNames[tm->tm_wday],
-		       tm->tm_mday,
-		       MonthNames[tm->tm_mon],
-		       tm->tm_year,
-		       tm->tm_hour,
-		       tm->tm_min,
-		       tm->tm_sec,
+	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %.2d%.2d (%s)",
+		       DowNames[tm.tm_wday],
+		       tm.tm_mday,
+		       MonthNames[tm.tm_mon],
+		       tm.tm_year + 1900,
+		       tm.tm_hour,
+		       tm.tm_min,
+		       tm.tm_sec,
+		       hours,
+		       minutes,
 		       TZONE(*tm));
 	return (ret);
 }
 #endif /*MAIL_DATE*/
 
 #ifdef HAVE_SAVED_UIDS
-static int save_euid;
-int swap_uids() { save_euid = geteuid(); return (seteuid(getuid())); }
-int swap_uids_back() { return (seteuid(save_euid)); }
+static uid_t save_euid;
+static gid_t save_egid;
+
+int swap_uids(void) {
+	save_egid = getegid();
+	save_euid = geteuid();
+	return ((setegid(getgid()) || seteuid(getuid())) ? -1 : 0);
+}
+
+int swap_uids_back(void) {
+	return ((setegid(getgid()) || seteuid(getuid())) ? -1 : 0);
+}
+
 #else /*HAVE_SAVED_UIDS*/
-int swap_uids() { return (setreuid(geteuid(), getuid())); }
-int swap_uids_back() { return (swap_uids()); }
+
+int swap_uids(void) {
+	return ((setregid(getegid(), getgid()) || setreuid(geteuid(), getuid()))
+	    ? -1 : 0);
+}
+
+int swap_uids_back(void) {
+	return (swap_uids());
+}
 #endif /*HAVE_SAVED_UIDS*/
 
 size_t
@@ -705,3 +716,37 @@ strlens(const char *last, ...) {
 	va_end(ap);
 	return (ret);
 }
+
+/* Return the offset from GMT in seconds (algorithm taken from sendmail).
+ *
+ * warning:
+ *	clobbers the static storage space used by localtime() and gmtime().
+ *	If the local pointer is non-NULL it *must* point to a local copy.
+ */
+#ifndef HAVE_TM_GMTOFF
+long get_gmtoff(time_t *clock, struct tm *local)
+{
+	struct tm gmt;
+	long offset;
+
+	gmt = *gmtime(clock);
+	if (local == NULL)
+		local = localtime(clock);
+
+	offset = (local->tm_sec - gmt.tm_sec) +
+	    ((local->tm_min - gmt.tm_min) * 60) +
+	    ((local->tm_hour - gmt.tm_hour) * 3600);
+
+	/* Timezone may cause year rollover to happen on a different day. */
+	if (local->tm_year < gmt.tm_year)
+		offset -= 24 * 3600;
+	else if (local->tm_year > gmt.tm_year)
+		offset -= 24 * 3600;
+	else if (local->tm_yday < gmt.tm_yday)
+		offset -= 24 * 3600;
+	else if (local->tm_yday > gmt.tm_yday)
+		offset += 24 * 3600;
+
+	return (offset);
+}
+#endif /* HAVE_TM_GMTOFF */

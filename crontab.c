@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.7 2003/02/15 21:14:05 vixie Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.8 2003/02/16 04:40:01 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -38,6 +38,9 @@ enum opt_t	{ opt_unknown, opt_list, opt_delete, opt_edit, opt_replace };
 
 #if DEBUGGING
 static char	*Options[] = { "???", "list", "delete", "edit", "replace" };
+static char	*getoptargs = "u:lerx:";
+#else
+static char	*getoptargs = "u:ler";
 #endif
 
 static	PID_T		Pid;
@@ -60,7 +63,7 @@ static void
 usage(const char *msg) {
 	fprintf(stderr, "%s: usage error: %s\n", ProgramName, msg);
 	fprintf(stderr, "usage:\t%s [-u user] file\n", ProgramName);
-	fprintf(stderr, "\t%s [-u user] { -e | -l | -r }\n", ProgramName);
+	fprintf(stderr, "\t%s [-u user] [ -e | -l | -r ]\n", ProgramName);
 	fprintf(stderr, "\t\t(default operation is replace, per 1003.2)\n");
 	fprintf(stderr, "\t-e\t(edit user's crontab)\n");
 	fprintf(stderr, "\t-l\t(list user's crontab)\n");
@@ -81,7 +84,6 @@ main(int argc, char *argv[]) {
 	setlinebuf(stderr);
 #endif
 	parse_args(argc, argv);		/* sets many globals, opens a file */
-	set_cron_uid();
 	set_cron_cwd();
 	if (!allowed(User)) {
 		fprintf(stderr,
@@ -93,6 +95,9 @@ main(int argc, char *argv[]) {
 	}
 	exitstatus = OK_EXIT;
 	switch (Option) {
+	case opt_unknown:
+		exitstatus = ERROR_EXIT;
+		break;
 	case opt_list:
 		list_cmd();
 		break;
@@ -131,12 +136,14 @@ parse_args(int argc, char *argv[]) {
 	strcpy(RealUser, User);
 	Filename[0] = '\0';
 	Option = opt_unknown;
-	while (-1 != (argch = getopt(argc, argv, "u:lerx:"))) {
+	while (-1 != (argch = getopt(argc, argv, getoptargs))) {
 		switch (argch) {
+#if DEBUGGING
 		case 'x':
 			if (!set_debug_flags(optarg))
 				usage("bad debug option");
 			break;
+#endif
 		case 'u':
 			if (MY_UID(pw) != ROOT_UID) {
 				fprintf(stderr,
@@ -509,6 +516,7 @@ replace_cmd(void) {
 	int ch, eof, fd;
 	int error = 0;
 	entry *e;
+	uid_t file_owner;
 	time_t now = time(NULL);
 	char **envp = env_init();
 
@@ -593,15 +601,17 @@ replace_cmd(void) {
 		goto done;
 	}
 
+	file_owner = (getgid() == getegid()) ? ROOT_UID : pw->pw_uid;
+
 #ifdef HAS_FCHOWN
-	if (fchown(fileno(tmp), ROOT_UID, -1) < OK) {
+	if (fchown(fileno(tmp), file_owner, -1) < OK) {
 		perror("fchown");
 		fclose(tmp);
 		error = -2;
 		goto done;
 	}
 #else
-	if (chown(TempFilename, ROOT_UID, -1) < OK) {
+	if (chown(TempFilename, file_owner, -1) < OK) {
 		perror("chown");
 		fclose(tmp);
 		error = -2;

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.10 2003/02/16 04:34:45 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.11 2003/02/16 04:40:01 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -60,6 +60,7 @@ static int	set_element(bitstr_t *, int, int, int);
 void
 free_entry(entry *e) {
 	free(e->cmd);
+	free(e->pwd);
 	env_free(e->envp);
 	free(e);
 }
@@ -153,6 +154,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			e->flags |= HR_STAR;
 		} else {
 			ecode = e_timespec;
 			goto eof;
@@ -168,6 +170,8 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	} else {
 		Debug(DPARS, ("load_entry()...about to parse numerics\n"))
 
+		if (ch == '*')
+			e->flags |= MIN_STAR;
 		ch = get_list(e->minute, FIRST_MINUTE, LAST_MINUTE,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
@@ -178,6 +182,8 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		/* hours
 		 */
 
+		if (ch == '*')
+			e->flags |= HR_STAR;
 		ch = get_list(e->hour, FIRST_HOUR, LAST_HOUR,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
@@ -220,7 +226,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		}
 	}
 
-	/* make sundays equivilent */
+	/* make sundays equivalent */
 	if (bit_test(e->dow, 0) || bit_test(e->dow, 7)) {
 		bit_set(e->dow, 0);
 		bit_set(e->dow, 7);
@@ -247,14 +253,16 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			goto eof;
 		}
 		Debug(DPARS, ("load_entry()...uid %ld, gid %ld\n",
-			      (long)e->uid, (long)e->gid))
+			      (long)e->pwd->pw_uid, (long)e->pwd->pw_gid))
 	} else if (ch == '*') {
 		ecode = e_cmd;
 		goto eof;
 	}
 
-	e->uid = pw->pw_uid;
-	e->gid = pw->pw_gid;
+	if ((e->pwd = pw_dup(pw)) == NULL) {
+		ecode = e_memory;
+		goto eof;
+	}
 
 	/* copy and fix up environment.  some variables are just defaults and
 	 * others are overrides.
@@ -285,7 +293,8 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		} else
 			log_it("CRON", getpid(), "error", "can't set HOME");
 	}
-#if !defined(__bsdi__)
+#ifndef LOGIN_CAP
+	/* If login.conf is in used we will get the default PATH later. */
 	if (!env_get("PATH", e->envp)) {
 		if (glue_strings(envstr, sizeof envstr, "PATH",
 				 _PATH_DEFPATH, '=')) {
@@ -297,7 +306,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		} else
 			log_it("CRON", getpid(), "error", "can't set PATH");
 	}
-#endif
+#endif /* LOGIN_CAP */
 	if (glue_strings(envstr, sizeof envstr, "LOGNAME",
 			 pw->pw_name, '=')) {
 		if ((tenvp = env_set(e->envp, envstr)) == NULL) {
@@ -307,7 +316,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		e->envp = tenvp;
 	} else
 		log_it("CRON", getpid(), "error", "can't set LOGNAME");
-#if defined(BSD)
+#if defined(BSD) || defined(__linux)
 	if (glue_strings(envstr, sizeof envstr, "USER",
 			 pw->pw_name, '=')) {
 		if ((tenvp = env_set(e->envp, envstr)) == NULL) {
@@ -366,6 +375,8 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
  eof:
 	if (e->envp)
 		env_free(e->envp);
+	if (e->pwd)
+		free(e->pwd);
 	if (e->cmd)
 		free(e->cmd);
 	free(e);
@@ -489,7 +500,7 @@ get_range(bitstr_t *bits, int low, int high, const char *names[],
 	/* range. set all elements from num1 to num2, stepping
 	 * by num3.  (the step is a downward-compatible extension
 	 * proposed conceptually by bob@acornrc, syntactically
-	 * designed then implmented by paul vixie).
+	 * designed then implemented by paul vixie).
 	 */
 	for (i = num1;  i <= num2;  i += num3)
 		if (EOF == set_element(bits, low, high, i))

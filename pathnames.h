@@ -20,7 +20,7 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.6 2002/12/29 07:21:19 vixie Exp $
+ * $Id: pathnames.h,v 1.7 2003/02/16 04:40:01 vixie Exp $
  */
 
 #ifndef CRONDIR
@@ -74,6 +74,10 @@
 # define EDITOR _PATH_VI
 #else
 # define EDITOR "/usr/ucb/vi"
+#endif
+
+#ifndef _PATH_SENDMAIL
+# define _PATH_SENDMAIL "/usr/lib/sendmail"
 #endif
 
 #ifndef _PATH_BSHELL

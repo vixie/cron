@@ -19,7 +19,7 @@
 
 # Makefile for vixie's cron
 #
-# $Id: Makefile,v 1.6 2003/02/15 20:59:06 vixie Exp $
+# $Id: Makefile,v 1.7 2003/02/16 04:40:01 vixie Exp $
 #
 # vix 03mar88 [moved to RCS, rest of log is in there]
 # vix 30mar87 [goodbye, time.c; hello, getopt]
@@ -84,14 +84,14 @@ MANPAGES	=	bitstring.3 crontab.5 crontab.1 cron.8 putman.sh
 HEADERS		=	bitstring.h cron.h config.h pathnames.h externs.h \
 			macros.h structs.h funcs.h globals.h
 SOURCES		=	cron.c crontab.c database.c do_command.c entry.c \
-			env.c job.c user.c popen.c misc.c
+			env.c job.c user.c popen.c misc.c pw_dup.c
 SHAR_SOURCE	=	$(INFOS) $(MANPAGES) Makefile $(HEADERS) $(SOURCES)
 LINT_CRON	=	cron.c database.c user.c entry.c \
-			misc.c job.c do_command.c env.c popen.c
+			misc.c job.c do_command.c env.c popen.c pw_dup.c
 LINT_CRONTAB	=	crontab.c misc.c entry.c env.c
 CRON_OBJ	=	cron.o database.o user.o entry.o job.o do_command.o \
-			misc.o env.o popen.o
-CRONTAB_OBJ	=	crontab.o misc.o entry.o env.o
+			misc.o env.o popen.o pw_dup.o
+CRONTAB_OBJ	=	crontab.o misc.o entry.o env.o pw_dup.o
 
 all		:	cron crontab
 

@@ -1,5 +1,5 @@
 /*
- * $Id: macros.h,v 1.4 2003/02/16 04:34:46 vixie Exp $
+ * $Id: macros.h,v 1.5 2003/02/16 04:40:01 vixie Exp $
  */
 
 /*
@@ -48,7 +48,7 @@
 #define	MAX_COMMAND	1000	/* max length of internally generated cmd */
 #define	MAX_ENVSTR	1000	/* max length of envvar=value\0 strings */
 #define	MAX_TEMPSTR	100	/* obvious */
-#define	MAX_UNAME	20	/* max length of username, should be overkill */
+#define	MAX_UNAME	33	/* max length of username, should be overkill */
 #define	ROOT_UID	0	/* don't change this, it really must be root */
 #define	ROOT_USER	"root"	/* ditto */
 
@@ -62,9 +62,7 @@
 #define	DLOAD		0x0010	/* database loading debug mask */
 #define	DMISC		0x0020	/* misc debug mask */
 #define	DTEST		0x0040	/* test mode: don't execute any commands */
-#define	DBIT		0x0080	/* bit twiddling shown (long) */
 
-#define	CRON_TAB(u)	"%s/%s", SPOOL_DIR, u
 #define	PPC_NULL	((const char **)NULL)
 
 #ifndef MAXHOSTNAMELEN
@@ -79,9 +77,6 @@
 			while (c!='\t' && c!=' ' && c!='\n' && c != EOF) \
 				c = get_char(f);
 
-#define	Skip_Line(c, f) \
-			do {c = get_char(f);} while (c != '\n' && c != EOF);
-
 #if DEBUGGING
 # define Debug(mask, message) \
 			if ( (DebugFlags & (mask) ) == (mask) ) \
@@ -91,11 +86,17 @@
 			;
 #endif /* DEBUGGING */
 
-#define	MkLower(ch)	(isupper(ch) ? tolower(ch) : ch)
 #define	MkUpper(ch)	(islower(ch) ? toupper(ch) : ch)
 #define	Set_LineNum(ln)	{Debug(DPARS|DEXT,("linenum=%d\n",ln)); \
 			 LineNumber = ln; \
 			}
+
+#ifdef HAVE_TM_GMTOFF
+#define	get_gmtoff(c, t)	(t->tm_gmtoff)
+#endif
+
+#define	SECONDS_PER_MINUTE	60
+#define	SECONDS_PER_HOUR	3600
 
 #define	FIRST_MINUTE	0
 #define	LAST_MINUTE	59

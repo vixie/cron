@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.7 2003/02/16 04:34:45 vixie Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.8 2003/02/16 04:40:01 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -32,7 +32,7 @@ void
 do_command(entry *e, user *u) {
 	Debug(DPROC, ("[%ld] do_command(%s, (%s,%ld,%ld))\n",
 		      (long)getpid(), e->cmd, u->name,
-		      (long)e->uid, (long)e->gid))
+		      (long)e->pwd->pw_uid, (long)e->pwd->pw_gid))
 
 	/* fork to become asynchronous -- parent process is done immediately,
 	 * and continues to run the normal cron code, which means return to
@@ -82,12 +82,12 @@ child_process(entry *e, user *u) {
 
 	/* discover some useful and important environment settings
 	 */
-	usernm = env_get("LOGNAME", e->envp);
+	usernm = e->pwd->pw_name;
 	mailto = env_get("MAILTO", e->envp);
 
 	/* our parent is watching for our death by catching SIGCHLD.  we
 	 * do not care to watch for our children's deaths this way -- we
-	 * use wait() explictly.  so we have to reset the signal (which
+	 * use wait() explicitly.  so we have to reset the signal (which
 	 * was inherited from the parent).
 	 */
 	(void) signal(SIGCHLD, SIG_DFL);
@@ -142,7 +142,7 @@ child_process(entry *e, user *u) {
 		exit(ERROR_EXIT);
 		/*NOTREACHED*/
 	case 0:
-		Debug(DPROC, ("[%ld] grandchild process Vfork()'ed\n",
+		Debug(DPROC, ("[%ld] grandchild process vfork()'ed\n",
 			      (long)getpid()))
 
 		/* write a log message.  we've waited this long to do it
@@ -159,9 +159,7 @@ child_process(entry *e, user *u) {
 
 		/* that's the last thing we'll log.  close the log files.
 		 */
-#ifdef SYSLOG
-		closelog();
-#endif
+		log_close();
 
 		/* get new pgrp, void tty, etc.
 		 */
@@ -192,41 +190,64 @@ child_process(entry *e, user *u) {
 		/* set our directory, uid and gid.  Set gid first, since once
 		 * we set uid, we've lost root privledges.
 		 */
-#if defined(__bsdi__) && (_BSDI_VERSION > 199510)
+#ifdef LOGIN_CAP
 		{
-			struct passwd *pwd;
-			char *ep, *np;
+#ifdef BSD_AUTH
+			auth_session_t *as;
+#endif
+			login_cap_t *lc;
+			char **p;
+			extern char **environ;
 
-			pwd = getpwuid(e->uid);
-			if (pwd == NULL) {
-				fprintf(stderr, "getpwuid: couldn't get entry for %d\n", e->uid);
+			if ((lc = login_getclass(e->pwd->pw_class)) == NULL) {
+				fprintf(stderr,
+				    "unable to get login class for %s\n",
+				    e->pwd->pw_name);
 				_exit(ERROR_EXIT);
 			}
-			if (setusercontext(0, pwd, e->uid, LOGIN_SETALL) < 0) {
-				fprintf(stderr, "setusercontext failed for %d\n", e->uid);
+			if (setusercontext(lc, e->pwd, e->pwd->pw_uid, LOGIN_SETALL) < 0) {
+				fprintf(stderr,
+				    "setusercontext failed for %s\n",
+				    e->pwd->pw_name);
 				_exit(ERROR_EXIT);
 			}
-			if (auth_approve(0, pwd->pw_name, "cron") <= 0) {
-				fprintf(stderr, "approval failed for %d\n", e->uid);
+#ifdef BSD_AUTH
+			as = auth_open();
+			if (as == NULL || auth_setpwd(as, e->pwd) != 0) {
+				fprintf(stderr, "can't malloc\n");
 				_exit(ERROR_EXIT);
 			}
-			if (env_get("PATH", e->envp) == NULL &&
-			    (ep = getenv("PATH"))) {
-				np = malloc(strlen(ep) + 6);
-				if (np) {
-					strcpy(np, "PATH=");
-					strcat(np, ep);
-					env_set(e->envp, np);
+			if (auth_approval(as, lc, usernm, "cron") <= 0) {
+				fprintf(stderr, "approval failed for %s\n",
+				    e->pwd->pw_name);
+				_exit(ERROR_EXIT);
+			}
+			auth_close(as);
+#endif /* BSD_AUTH */
+			login_close(lc);
+
+			/* If no PATH specified in crontab file but
+			 * we just added one via login.conf, add it to
+			 * the crontab environment.
+			 */
+			if (env_get("PATH", e->envp) == NULL && environ != NULL) {
+				for (p = environ; *p; p++) {
+					if (strncmp(*p, "PATH=", 5) == 0) {
+						e->envp = env_set(e->envp, *p);
+						break;
+					}
 				}
 			}
-			
 		}
 #else
-		setgid(e->gid);
-		initgroups(env_get("LOGNAME", e->envp), e->gid);
-		setuid(e->uid);		/* we aren't root after this... */
+		setgid(e->pwd->pw_gid);
+		initgroups(usernm, e->pwd->pw_gid);
+#if (defined(BSD)) && (BSD >= 199103)
+		setlogin(usernm);
+#endif /* BSD */
+		setuid(e->pwd->pw_uid);	/* we aren't root after this... */
 
-#endif /* __bsdi__ */
+#endif /* LOGIN_CAP */
 		chdir(env_get("HOME", e->envp));
 
 		/*
@@ -392,7 +413,7 @@ child_process(entry *e, user *u) {
 					(void) _exit(ERROR_EXIT);
 				}
 				(void)sprintf(mailcmd, MAILFMT, MAILARG);
-				if (!(mail = cron_popen(mailcmd, "w"))) {
+				if (!(mail = cron_popen(mailcmd, "w", e->pwd))) {
 					perror(mailcmd);
 					(void) _exit(ERROR_EXIT);
 				}
@@ -403,7 +424,7 @@ child_process(entry *e, user *u) {
 					e->cmd);
 #ifdef MAIL_DATE
 				fprintf(mail, "Date: %s\n",
-					arpadate(&TargetTime));
+					arpadate(&StartTime));
 #endif /*MAIL_DATE*/
 				for (env = e->envp;  *env;  env++)
 					fprintf(mail, "X-Cron-Env: <%s>\n",
@@ -472,7 +493,8 @@ child_process(entry *e, user *u) {
 
 		Debug(DPROC, ("[%ld] waiting for grandchild #%d to finish\n",
 			      (long)getpid(), children))
-		pid = wait(&waiter);
+		while ((pid = wait(&waiter)) < OK && errno == EINTR)
+			;
 		if (pid < OK) {
 			Debug(DPROC,
 			      ("[%ld] no more grandchildren--mail written?\n",

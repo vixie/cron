@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 1.6 2002/12/29 07:21:19 vixie Exp $";
+static char rcsid[] = "$Id: env.c,v 1.7 2003/02/16 04:40:01 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -174,7 +174,7 @@ env_get(char *name, char **envp) {
 	int len = strlen(name);
 	char *p, *q;
 
-	while ((p = *envp++) != '\0') {
+	while ((p = *envp++) != NULL) {
 		if (!(q = strchr(p, '=')))
 			continue;
 		if ((q - p) == len && !strncmp(p, name, len))

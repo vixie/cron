@@ -1,5 +1,5 @@
 /*
- * $Id: structs.h,v 1.5 2003/02/16 04:34:46 vixie Exp $
+ * $Id: structs.h,v 1.6 2003/02/16 04:40:01 vixie Exp $
  */
 
 /*
@@ -21,8 +21,7 @@
 
 typedef	struct _entry {
 	struct _entry	*next;
-	uid_t		uid;	
-	gid_t		gid;
+	struct passwd	*pwd;
 	char		**envp;
 	char		*cmd;
 	bitstr_t	bit_decl(minute, MINUTE_COUNT);
@@ -31,10 +30,12 @@ typedef	struct _entry {
 	bitstr_t	bit_decl(month,  MONTH_COUNT);
 	bitstr_t	bit_decl(dow,    DOW_COUNT);
 	int		flags;
-#define	DOM_STAR	0x01
-#define	DOW_STAR	0x02
-#define	WHEN_REBOOT	0x04
-#define	DONT_LOG	0x08
+#define	MIN_STAR	0x01
+#define	HR_STAR		0x02
+#define	DOM_STAR	0x04
+#define	DOW_STAR	0x08
+#define	WHEN_REBOOT	0x10
+#define	DONT_LOG	0x20
 } entry;
 
 			/* the crontab database will be a list of the

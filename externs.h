@@ -57,13 +57,13 @@
 # include <paths.h>
 #endif /*BSD*/
 
-#if !defined(_PATH_SENDMAIL)
-# define _PATH_SENDMAIL "/usr/lib/sendmail"
-#endif /*SENDMAIL*/
+#if defined(LOGIN_CAP)
+# include <login_cap.h>
+#endif /*LOGIN_CAP*/
 
-#if defined(__bsdi__) && (_BSDI_VERSION > 199510)
-#include <login_cap.h>
-#endif /* __bsdi__ */
+#if defined(BSD_AUTH)
+# include <bsd_auth.h>
+#endif /*BSD_AUTH*/
 
 #define DIR_T	struct dirent
 #define WAIT_T	int
@@ -76,23 +76,17 @@ extern char *tzname[2];
 #endif
 #define TZONE(tm) tzname[(tm).tm_isdst]
 
-#if (BSD >= 198606)
+#if (defined(BSD)) && (BSD >= 198606) || defined(__linux)
 # define HAVE_FCHOWN
 # define HAVE_FCHMOD
 #endif
 
-#if (BSD >= 199103)
+#if (defined(BSD)) && (BSD >= 199103) || defined(__linux)
 # define HAVE_SAVED_UIDS
 #endif
 
 #define MY_UID(pw) getuid()
 #define MY_GID(pw) getgid()
-
-#if !defined(AIX) && !defined(UNICOS)
-# define SYS_TIME_H 1
-#else
-# define SYS_TIME_H 0
-#endif
 
 /* getopt() isn't part of POSIX.  some systems define it in <stdlib.h> anyway.
  * of those that do, some complain that our definition is different and some

@@ -1,5 +1,5 @@
 /*
- * $Id: funcs.h,v 1.5 2003/02/16 04:34:46 vixie Exp $
+ * $Id: funcs.h,v 1.6 2003/02/16 04:40:01 vixie Exp $
  */
 
 /*
@@ -69,4 +69,10 @@ user		*load_user(int, struct passwd *, const char *),
 
 entry		*load_entry(FILE *, void (*)(), struct passwd *, char **);
 
-FILE		*cron_popen(char *, char *);
+FILE		*cron_popen(char *, char *, struct passwd *);
+
+struct passwd	*pw_dup(const struct passwd *);
+
+#ifndef HAVE_TM_GMTOFF
+long		get_gmtoff(time_t *, struct tm *);
+#endif

@@ -21,7 +21,7 @@
 
 /* config.h - configurables for Vixie Cron
  *
- * $Id: config.h,v 1.7 2003/02/16 04:34:45 vixie Exp $
+ * $Id: config.h,v 1.8 2003/02/16 04:40:01 vixie Exp $
  */
 
 /*
@@ -45,7 +45,6 @@
 			/* -Fx	 = Set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
 			 * -oem	 = Option Errors Mailedtosender
-			 * -or0s = Option Readtimeout -- don't time out
 			 * -oi   = Ignore "." alone on a line
 			 * -t    = Get recipient from headers
 			 */
@@ -86,3 +85,19 @@
 			 * places.
 			 */
 #define SYSLOG	 			/*-*/
+
+			/* if you want cron to capitalize its name in ps
+			 * when running a job.  Does not work on SYSV.
+			 */
+/*#define CAPITALIZE_FOR_PS		/*-*/
+
+			/* if you have a tm_gmtoff member in struct tm.
+			 * If not, we will have to compute the value ourselves.
+			*/
+/*#define HAVE_TM_GMTOFF		/*-*/
+
+			/* if your OS supports a BSD-style login.conf file */
+/*#define LOGIN_CAP			/*-*/
+
+			/* if your OS supports BSD authentication */
+/*#define BSD_AUTH			/*-*/
