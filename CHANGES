@@ -1,5 +1,6 @@
 Cron V4
 
+9.	[misc]		megapatch from tcmiller (posix compliance, etc).
 8.	[bug]		fix stepsize 0 infinite loop.
 7.	[evol]		"enum" version of freebsd fix to env-var settings.
 6.	[evol]		changes #12-17 from tcmiller (for *BSD alignment).

@@ -1,5 +1,5 @@
 /*
- * $Id: funcs.h,v 1.7 2003/02/21 21:16:18 vixie Exp $
+ * $Id: funcs.h,v 1.8 2003/03/08 17:18:18 vixie Exp $
  */
 
 /*
@@ -52,7 +52,7 @@ int		job_runqueue(void),
 		cron_pclose(FILE *),
 		glue_strings(char *, size_t, const char *, const char *, char),
 		strcmp_until(const char *, const char *, char),
-		allowed(const char *),
+		allowed(const char * ,const char * ,const char *),
 		strdtb(char *);
 
 size_t		strlens(const char *, ...);

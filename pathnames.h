@@ -20,12 +20,19 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.7 2003/02/16 04:40:01 vixie Exp $
+ * $Id: pathnames.h,v 1.8 2003/03/08 17:18:18 vixie Exp $
  */
 
+#ifndef _PATHNAMES_H_
+#define _PATHNAMES_H_
+
+#if (defined(BSD)) && (BSD >= 199103) || defined(__linux) || defined(AIX)
+# include <paths.h>
+#endif /*BSD*/
+
 #ifndef CRONDIR
-			/* CRONDIR is where crond(8) and crontab(1) both chdir
-			 * to; SPOOL_DIR, ALLOW_FILE, DENY_FILE, and LOG_FILE
+			/* CRONDIR is where cron(8) and crontab(1) both chdir
+			 * to; SPOOL_DIR, CRON_ALLOW, CRON_DENY, and LOG_FILE
 			 * are all relative to this directory.
 			 */
 #define CRONDIR		"/var/cron"
@@ -34,23 +41,25 @@
 			/* SPOOLDIR is where the crontabs live.
 			 * This directory will have its modtime updated
 			 * whenever crontab(1) changes a crontab; this is
-			 * the signal for crond(8) to look at each individual
+			 * the signal for cron(8) to look at each individual
 			 * crontab file and reload those whose modtimes are
 			 * newer than they were last time around (or which
 			 * didn't exist last time around...)
 			 */
 #define SPOOL_DIR	"tabs"
 
-			/* undefining these turns off their features.  note
-			 * that ALLOW_FILE and DENY_FILE must both be defined
-			 * in order to enable the allow/deny code.  If neither
-			 * LOG_FILE or SYSLOG is defined, we don't log.  If
-			 * both are defined, we log both ways.  Note that if
+			/* cron allow/deny file.  At least cron.deny must
+			 * exist for ordinary users to run crontab.
+			 */
+#define	CRON_ALLOW	"cron.allow"
+#define	CRON_DENY	"cron.deny"
+
+			/* undefining this turns off logging to a file.  If
+			 * neither LOG_FILE or SYSLOG is defined, we don't log.
+			 * If both are defined, we log both ways.  Note that if
 			 * LOG_CRON is defined by <syslog.h>, LOG_FILE will not
 			 * be used.
 			 */
-#define	ALLOW_FILE	"allow"
-#define DENY_FILE	"deny"
 #define LOG_FILE	"log"
 
 			/* where should the daemon stick its PID?
@@ -95,3 +104,5 @@
 #ifndef _PATH_DEVNULL
 # define _PATH_DEVNULL "/dev/null"
 #endif
+
+#endif /* _PATHNAMES_H_ */

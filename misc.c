@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.14 2003/02/21 21:16:18 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.15 2003/03/08 17:18:18 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -112,7 +112,7 @@ strdtb(char *s) {
 	 * or the last non-blank in the string, whichever comes first.
 	 */
 	do	{x--;}
-	while (x >= s && isspace(*x));
+	while (x >= s && isspace((unsigned char)*x));
 
 	/* one character beyond where we stopped above is where the null
 	 * goes.
@@ -206,14 +206,16 @@ set_cron_uid(void) {
 void
 set_cron_cwd(void) {
 	struct stat sb;
+	struct group *grp = NULL;
 
+#ifdef CRON_GROUP
+	grp = getgrnam(CRON_GROUP);
+#endif
 	/* first check for CRONDIR ("/var/cron" or some such)
 	 */
-	if (stat(CRONDIR, &sb) < OK) {
+	if (stat(CRONDIR, &sb) < OK && errno == ENOENT) {
 		perror(CRONDIR);
-		if (errno != ENOENT)
-			exit(ERROR_EXIT);
-		if (OK == mkdir(CRONDIR, 0700)) {
+		if (OK == mkdir(CRONDIR, 0710)) {
 			fprintf(stderr, "%s: created\n", CRONDIR);
 			stat(CRONDIR, &sb);
 		} else {
@@ -250,6 +252,12 @@ set_cron_cwd(void) {
 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
 			SPOOL_DIR);
 		exit(ERROR_EXIT);
+	}
+	if (grp != NULL) {
+		if (sb.st_gid != grp->gr_gid)
+			chown(SPOOL_DIR, -1, grp->gr_gid);
+		if (sb.st_mode != 01730)
+			chmod(SPOOL_DIR, 01730);
 	}
 }
 
@@ -423,58 +431,35 @@ in_file(const char *string, FILE *file, int error)
 			if (*endp != '\n')
 				return (error);
 			*endp = '\0';
+			if (0 == strcmp(line, string))
+				return (TRUE);
 		}
-		if (0 == strcmp(line, string))
-			return (TRUE);
 	}
 	if (ferror(file))
 		return (error);
 	return (FALSE);
 }
 
-/* int allowed(const char *username)
- *	returns TRUE if (ALLOW_FILE exists and user is listed)
- *	or (DENY_FILE exists and user is NOT listed)
- *	or (neither file exists but user=="root" so it's okay)
+/* int allowed(const char *username, const char *allow_file, const char *deny_file)
+ *	returns TRUE if (allow_file exists and user is listed)
+ *	or (deny_file exists and user is NOT listed).
+ *	root is always allowed.
  */
 int
-allowed(const char *username) {
-	FILE	*allow = NULL;
-	FILE	*deny = NULL;
+allowed(const char *username, const char *allow_file, const char *deny_file) {
+	FILE	*fp;
 	int	isallowed;
 
-#if defined(ALLOW_FILE) && defined(DENY_FILE)
+	if (strcmp(username, ROOT_USER) == 0)
+		return (TRUE);
 	isallowed = FALSE;
-	allow = fopen(ALLOW_FILE, "r");
-	if (allow == NULL && errno != ENOENT)
-		goto out;
-	deny = fopen(DENY_FILE, "r");
-	if (deny == NULL && errno != ENOENT)
-		goto out;
-	Debug(DMISC, ("allow/deny enabled, %d/%d\n", !!allow, !!deny))
-
-	if (allow) {
-		isallowed = in_file(username, allow, FALSE);
-		goto out;
+	if ((fp = fopen(allow_file, "r")) != NULL) {
+		isallowed = in_file(username, fp, FALSE);
+		fclose(fp);
+	} else if ((fp = fopen(deny_file, "r")) != NULL) {
+		isallowed = !in_file(username, fp, FALSE);
+		fclose(fp);
 	}
-	if (deny) {
-		isallowed = !in_file(username, deny, TRUE);
-		goto out;
-	}
-#endif
-
-#if defined(ALLOW_ONLY_ROOT)
-	isallowed = strcmp(username, ROOT_USER) == 0;
-#else
-	isallowed = TRUE;
-#endif
-
-out:
-	if (allow)
-		fclose(allow);
-	if (deny)
-		fclose(deny);
-
 	return (isallowed);
 }
 
@@ -541,7 +526,7 @@ log_it(const char *username, PID_T xpid, const char *event, const char *detail) 
 		syslog_open = TRUE;		/* assume openlog success */
 	}
 
-	syslog(LOG_INFO, "(%s) %s (%s)\n", username, event, detail);
+	syslog(LOG_INFO, "(%s) %s (%s)", username, event, detail);
 
 #endif /*SYSLOG*/
 

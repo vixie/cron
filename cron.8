@@ -17,14 +17,17 @@
 .\"ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 .\"SOFTWARE.
 .\"
-.\" $Id: cron.8,v 1.5 2003/02/15 20:52:17 vixie Exp $
+.\" $Id: cron.8,v 1.6 2003/03/08 17:18:18 vixie Exp $
 .\" 
 .TH CRON 8 "10 January 1996""
 .UC 4
 .SH NAME
 cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
-cron [\-n]
+.B cron
+.RB [ \-l
+.IR load_avg ]
+.RB [ \-n ]
 .SH DESCRIPTION
 .I Cron
 should be started from /etc/rc or /etc/rc.local.  It will return immediately,
@@ -37,7 +40,7 @@ searches /var/cron/tabs for crontab files which are named after accounts in
 /etc/passwd; crontabs found are loaded into memory.
 .I Cron
 also searches for /etc/crontab which is in a different format (see
-.IR crontab (5) ).
+.IR crontab (5)).
 .I Cron
 then wakes up every minute, examining all stored crontabs, checking each
 command to see if it should be run in the current minute.  When executing
@@ -58,15 +61,30 @@ need not be restarted whenever a crontab file is modified.  Note that the
 .IR Crontab (1)
 command updates the modtime of the spool directory whenever it changes a
 crontab.
+.SS Daylight Saving Time and other time changes
+Local time changes of less than three hours, such as those caused
+by the start or end of Daylight Saving Time, are handled specially.
+This only applies to jobs that run at a specific time and jobs that
+are run with a granularity greater than one hour.  Jobs that run
+more frequently are scheduled normally.
+.PP
+If time has moved forward, those jobs that would have run in the
+interval that has been skipped will be run immediately.
+Conversely, if time has moved backward, care is taken to avoid running
+jobs twice.
+.PP
+Time changes of more than 3 hours are considered to be corrections to
+the clock or timezone, and the new time is used immediately.
 .SH SIGNALS
 On receipt of a \s-2SIGHUP\s+2, the cron daemon will close and reopen its
 log file.  This is useful in scripts which rotate and age log files.  
 Naturally this is not relevant if cron was built to use
 .IR syslog (3).
-.SH BUGS
-.I cron
-will behave mysteriously if a system clock is reset backward by more than
-59 seconds.  Smaller steps, or steps forward, are handled correctly.
+.SH CAVEATS
+In this version of
+.BR cron ,
+/etc/crontab must not be readable or writable by any user other than root.
+In other words, it should be mode 0600.
 .SH "SEE ALSO"
 .IR crontab (1),
 .IR crontab (5)

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.12 2003/02/21 21:20:19 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.13 2003/03/08 17:18:18 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -263,6 +263,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		ecode = e_memory;
 		goto eof;
 	}
+	bzero(e->pwd->pw_passwd, strlen(e->pwd->pw_passwd));
 
 	/* copy and fix up environment.  some variables are just defaults and
 	 * others are overrides.
@@ -519,13 +520,13 @@ get_number(int *numptr, int low, const char *names[], char ch, FILE *file) {
 	pc = temp;
 	len = 0;
 	all_digits = TRUE;
-	while (isalnum(ch)) {
+	while (isalnum((unsigned char)ch)) {
 		if (++len >= MAX_TEMPSTR)
 			return (EOF);
 
 		*pc++ = ch;
 
-		if (!isdigit(ch))
+		if (!isdigit((unsigned char)ch))
 			all_digits = FALSE;
 
 		ch = get_char(file);

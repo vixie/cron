@@ -1,5 +1,5 @@
 /*
- * $Id: globals.h,v 1.7 2003/02/21 21:16:18 vixie Exp $
+ * $Id: globals.h,v 1.8 2003/03/08 17:18:18 vixie Exp $
  */
 
 /*
@@ -41,8 +41,8 @@ XTRN const char *copyright[]
 XTRN const char *MonthNames[]
 #ifdef MAIN_PROGRAM
 	= {
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun",\
-		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec",\
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 		NULL
 	}
 #endif
@@ -51,7 +51,7 @@ XTRN const char *MonthNames[]
 XTRN const char *DowNames[]
 #ifdef MAIN_PROGRAM
 	= {
-		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",\
+		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun",
 		NULL
 	}
 #endif
@@ -67,7 +67,7 @@ XTRN int	DebugFlags INIT(0);
 XTRN const char *DebugFlagNames[]
 #ifdef MAIN_PROGRAM
 	= {
-		"ext", "sch", "proc", "pars", "load", "misc", "test", "bit",\
+		"ext", "sch", "proc", "pars", "load", "misc", "test", "bit",
 		NULL
 	}
 #endif

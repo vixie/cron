@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.9 2003/02/21 21:16:18 vixie Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.10 2003/03/08 17:18:18 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -85,7 +85,7 @@ main(int argc, char *argv[]) {
 #endif
 	parse_args(argc, argv);		/* sets many globals, opens a file */
 	set_cron_cwd();
-	if (!allowed(User)) {
+	if (!allowed(RealUser, CRON_ALLOW, CRON_DENY)) {
 		fprintf(stderr,
 			"You (%s) are not allowed to use this program (%s)\n",
 			User, ProgramName);
@@ -384,8 +384,8 @@ edit_cmd(void) {
 		exit(ERROR_EXIT);
 	}
 
-	if ((editor = getenv("VISUAL")) == NULL &&
-	    (editor = getenv("EDITOR")) == NULL) {
+	if (((editor = getenv("VISUAL")) == NULL || *editor == '\0') &&
+	    ((editor = getenv("EDITOR")) == NULL || *editor == '\0')) {
 		editor = EDITOR;
 	}
 

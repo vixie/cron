@@ -19,9 +19,9 @@
  * SOFTWARE.
  */
 
-/* config.h - configurables for Vixie Cron
+/* config.h - configurables for ISC Cron
  *
- * $Id: config.h,v 1.8 2003/02/16 04:40:01 vixie Exp $
+ * $Id: config.h,v 1.9 2003/03/08 17:18:18 vixie Exp $
  */
 
 /*
@@ -41,7 +41,7 @@
 			 * (hint: MAILTO= was added for this reason).
 			 */
 
-#define MAILFMT "%s -FCronDaemon -odi -oem -or0s -oi -t" /*-*/
+#define MAILFMT "%s -FCronDaemon -odi -oem -oi -t" /*-*/
 			/* -Fx	 = Set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
 			 * -oem	 = Option Errors Mailedtosender
@@ -65,12 +65,6 @@
 			 * generate the Date: header.
 			 */
 
-			/* if ALLOW_FILE and DENY_FILE are not defined or are
-			 * defined but neither exists, should crontab(1) be
-			 * usable only by root?
-			 */
-/*#define ALLOW_ONLY_ROOT			/*-*/
-
 			/* if you want to use syslog(3) instead of appending
 			 * to CRONDIR/LOG_FILE (/var/cron/log, e.g.), define
 			 * SYSLOG here.  Note that quite a bit of logging
@@ -93,7 +87,7 @@
 
 			/* if you have a tm_gmtoff member in struct tm.
 			 * If not, we will have to compute the value ourselves.
-			*/
+			 */
 /*#define HAVE_TM_GMTOFF		/*-*/
 
 			/* if your OS supports a BSD-style login.conf file */
@@ -101,3 +95,11 @@
 
 			/* if your OS supports BSD authentication */
 /*#define BSD_AUTH			/*-*/
+
+			/* Define this to run crontab setgid instead of   
+			 * setuid root.  Group access will be used to read
+			 * the tabs/atjobs dirs and the allow/deny files.
+			 * If this is not defined then crontab and at
+			 * must be setuid root.
+			 */
+/*#define CRON_GROUP	"crontab"	/*-*/

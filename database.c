@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: database.c,v 1.5 2003/02/16 04:40:01 vixie Exp $";
+static char rcsid[] = "$Id: database.c,v 1.6 2003/03/08 17:18:18 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the log]
@@ -29,16 +29,6 @@ static char rcsid[] = "$Id: database.c,v 1.5 2003/02/16 04:40:01 vixie Exp $";
 #include "cron.h"
 
 #define TMAX(a,b) ((a)>(b)?(a):(b))
-
-/*
- * Because crontab files may be owned by their respective users we
- * take extreme care in opening them.  If the OS lacks the O_NOFOLLOW
- * we will just have to live without it.  In order for this to be an
- * issue an attacker would have to subvert group crontab.
- */
-#ifndef O_NOFOLLOW
-# define O_NOFOLLOW	0
-#endif
 
 static	void		process_crontab(const char *, const char *,
 					const char *, struct stat *,

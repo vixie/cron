@@ -1,5 +1,5 @@
 /*
- * $Id: macros.h,v 1.6 2003/02/21 21:16:18 vixie Exp $
+ * $Id: macros.h,v 1.7 2003/03/08 17:18:18 vixie Exp $
  */
 
 /*
@@ -119,8 +119,12 @@
 #define	LAST_DOW	7
 #define	DOW_COUNT	(LAST_DOW - FIRST_DOW + 1)
 
-			/* each user's crontab will be held as a list of
-			 * the following structure.
-			 *
-			 * These are the cron commands.
-			 */
+/*
+ * Because crontab/at files may be owned by their respective users we
+ * take extreme care in opening them.  If the OS lacks the O_NOFOLLOW
+ * we will just have to live without it.  In order for this to be an
+ * issue an attacker would have to subvert group CRON_GROUP.
+ */
+#ifndef O_NOFOLLOW
+#define O_NOFOLLOW	0
+#endif

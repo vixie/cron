@@ -17,16 +17,21 @@
 .\"ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 .\"SOFTWARE.
 .\"
-.\" $Id: crontab.1,v 1.4 2000/11/14 23:00:52 vixie Exp $
+.\" $Id: crontab.1,v 1.5 2003/03/08 17:18:18 vixie Exp $
 .\"
 .TH CRONTAB 1 "29 December 1993"
 .UC 4
 .SH NAME
 crontab \- maintain crontab files for individual users (V3)
 .SH SYNOPSIS
-crontab [ -u user ] file
+.B crontab
+.RB [ -u
+.IR user ] " file"
 .br
-crontab [ -u user ] { -l | -r | -e }
+.B crontab
+.RB [ -u
+.IR user ]
+.RB [ -l " | " -r " | " -e ]
 .SH DESCRIPTION
 .I Crontab
 is the program used to install, deinstall or list the tables
@@ -36,18 +41,16 @@ daemon in Vixie Cron.  Each user can have their own crontab, and though
 these are files in /var, they are not intended to be edited directly.
 .PP
 If the
-.I allow
+.I cron.allow
 file exists, then you must be listed therein in order to be allowed to use
 this command.  If the
-.I allow
+.I cron.allow
 file does not exist but the
-.I deny
+.I cron.deny
 file does exist, then you must \fBnot\fR be listed in the
-.I deny
-file in order to use this command.  If neither of these files exists, then
-depending on site-dependent configuration parameters, only the super user
-will be allowed to use this command, or all users will be able to use this
-command.
+.I cron.deny
+file in order to use this command.  If neither of these files exists,
+only the super user will be allowed to use this command.
 .PP
 If the
 .I -u
@@ -85,8 +88,8 @@ from the editor, the modified crontab will be installed automatically.
 crontab(5), cron(8)
 .SH FILES
 .nf
-/var/cron/allow
-/var/cron/deny
+/var/cron/cron.allow
+/var/cron/cron.deny
 .fi
 .SH STANDARDS
 The

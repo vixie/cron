@@ -19,7 +19,7 @@
 
 # Makefile for vixie's cron
 #
-# $Id: Makefile,v 1.7 2003/02/16 04:40:01 vixie Exp $
+# $Id: Makefile,v 1.8 2003/03/08 17:18:18 vixie Exp $
 #
 # vix 03mar88 [moved to RCS, rest of log is in there]
 # vix 30mar87 [goodbye, time.c; hello, getopt]
@@ -110,6 +110,8 @@ crontab		:	$(CRONTAB_OBJ)
 install		:	all
 			$(INSTALL) -c -m  111 -o root -s cron    $(DESTSBIN)/
 			$(INSTALL) -c -m 4111 -o root -s crontab $(DESTBIN)/
+#			$(INSTALL) -c -m  111 -o root -g crontab -s cron $(DESTSBIN)/
+#			$(INSTALL) -c -m 2111 -o root -g crontab -s crontab $(DESTBIN)/
 			sh putman.sh crontab.1 $(DESTMAN)
 			sh putman.sh cron.8    $(DESTMAN)
 			sh putman.sh crontab.5 $(DESTMAN)

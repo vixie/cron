@@ -53,10 +53,6 @@
 # include <syslog.h>
 #endif
 
-#if (defined(BSD)) && (BSD >= 199103) || defined(__linux) || defined(AIX)
-# include <paths.h>
-#endif /*BSD*/
-
 #if defined(LOGIN_CAP)
 # include <login_cap.h>
 #endif /*LOGIN_CAP*/
