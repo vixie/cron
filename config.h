@@ -21,7 +21,7 @@
 
 /* config.h - configurables for Vixie Cron
  *
- * $Id: config.h,v 1.3 2000/01/02 20:53:38 vixie Exp $
+ * $Id: config.h,v 1.4 2000/06/08 19:09:03 vixie Exp $
  */
 
 /*
@@ -41,11 +41,12 @@
 			 * (hint: MAILTO= was added for this reason).
 			 */
 
-#define MAILFMT "%s -FCronDaemon -odi -oem -or0s -t"	/*-*/
-			/* -Fx	 = set full-name of sender
+#define MAILFMT "%s -FCronDaemon -odi -oem -or0s -i -t"	/*-*/
+			/* -Fx	 = Set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
 			 * -oem	 = Option Errors Mailedtosender
 			 * -or0s = Option Readtimeout -- don't time out
+			 * -i    = Ignore "." alone on a line
 			 * -t    = Get recipient from headers
 			 */
 #define MAILARG _PATH_SENDMAIL				/*-*/
