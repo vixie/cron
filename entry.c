@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.13 2003/03/08 17:18:18 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.14 2003/03/08 17:22:14 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -253,7 +253,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			goto eof;
 		}
 		Debug(DPARS, ("load_entry()...uid %ld, gid %ld\n",
-			      (long)e->pwd->pw_uid, (long)e->pwd->pw_gid))
+			      (long)pw->pw_uid, (long)pw->pw_gid))
 	} else if (ch == '*') {
 		ecode = e_cmd;
 		goto eof;
