@@ -1,5 +1,5 @@
 /*
- * $Id: globals.h,v 1.9 2004/01/23 18:56:43 vixie Exp $
+ * $Id: globals.h,v 1.10 2004/01/23 19:03:33 vixie Exp $
  */
 
 /*
@@ -30,6 +30,7 @@
 XTRN const char *copyright[]
 #ifdef MAIN_PROGRAM
 	= {
+		"@(#) ISC Cron V4.1",
 		"@(#) Copyright 1988,1989,1990,1993,1994 by Paul Vixie",
 		"@(#) Copyright 1997,2000 by Internet Software Consortium, Inc.",
 		"@(#) Copyright 2004 by Internet Systems Consortium, Inc.",

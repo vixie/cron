@@ -17,12 +17,12 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 .\" OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.\" $Id: crontab.1,v 1.6 2004/01/23 18:56:42 vixie Exp $
+.\" $Id: crontab.1,v 1.7 2004/01/23 19:03:32 vixie Exp $
 .\"
 .TH CRONTAB 1 "29 December 1993"
 .UC 4
 .SH NAME
-crontab \- maintain crontab files for individual users (V3)
+crontab \- maintain crontab files for individual users (ISC Cron V4.1)
 .SH SYNOPSIS
 .B crontab
 .RB [ -u
@@ -37,7 +37,7 @@ crontab \- maintain crontab files for individual users (V3)
 is the program used to install, deinstall or list the tables
 used to drive the
 .IR cron (8)
-daemon in Vixie Cron.  Each user can have their own crontab, and though
+daemon in ISC Cron.  Each user can have their own crontab, and though
 these are files in /var, they are not intended to be edited directly.
 .PP
 If the

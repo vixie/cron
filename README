@@ -19,7 +19,8 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ##
 
-ISC Cron V4.0 - November, 2000
+ISC Cron - January 2004
+[V4.0 was November, 2000]
 [V4.0b1 was September 7, 1997]
 [V3.1 was some time after 1993]
 [V3.0 was December 27, 1993]
@@ -68,4 +69,4 @@ have to go edit a couple of files... So, here's the checklist:
 	if you like it, change your /etc/{rc,rc.local} to use it instead of
 		the old one.
 
-$Id: README,v 1.5 2004/01/23 18:56:42 vixie Exp $
+$Id: README,v 1.6 2004/01/23 19:03:32 vixie Exp $
