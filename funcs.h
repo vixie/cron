@@ -1,5 +1,5 @@
 /*
- * $Id: funcs.h,v 1.6 2003/02/16 04:40:01 vixie Exp $
+ * $Id: funcs.h,v 1.7 2003/02/21 21:16:18 vixie Exp $
  */
 
 /*
@@ -47,6 +47,7 @@ int		job_runqueue(void),
 		get_char(FILE *),
 		get_string(char *, int, FILE *, char *),
 		swap_uids(void),
+		swap_uids_back(void),
 		load_env(char *, FILE *),
 		cron_pclose(FILE *),
 		glue_strings(char *, size_t, const char *, const char *, char),

@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.13 2003/02/16 04:40:01 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.14 2003/02/21 21:16:18 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -209,8 +209,10 @@ set_cron_cwd(void) {
 
 	/* first check for CRONDIR ("/var/cron" or some such)
 	 */
-	if (stat(CRONDIR, &sb) < OK && errno == ENOENT) {
+	if (stat(CRONDIR, &sb) < OK) {
 		perror(CRONDIR);
+		if (errno != ENOENT)
+			exit(ERROR_EXIT);
 		if (OK == mkdir(CRONDIR, 0700)) {
 			fprintf(stderr, "%s: created\n", CRONDIR);
 			stat(CRONDIR, &sb);
@@ -244,7 +246,7 @@ set_cron_cwd(void) {
 			exit(ERROR_EXIT);
 		}
 	}
-	if ((sb.st_mode & S_IFDIR) == 0) {
+	if (!S_ISDIR(sb.st_mode)) {
 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
 			SPOOL_DIR);
 		exit(ERROR_EXIT);

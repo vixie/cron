@@ -107,7 +107,7 @@ extern	int optind, opterr, optopt;
  */
 extern	int		flock(int, int);
 
-/* not all systems who provice flock() provide these definitions.
+/* not all systems who provide flock() provide these definitions.
  */
 #ifndef LOCK_SH
 # define LOCK_SH 1

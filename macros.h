@@ -1,5 +1,5 @@
 /*
- * $Id: macros.h,v 1.5 2003/02/16 04:40:01 vixie Exp $
+ * $Id: macros.h,v 1.6 2003/02/21 21:16:18 vixie Exp $
  */
 
 /*
@@ -92,7 +92,7 @@
 			}
 
 #ifdef HAVE_TM_GMTOFF
-#define	get_gmtoff(c, t)	(t->tm_gmtoff)
+#define	get_gmtoff(c, t)	((t)->tm_gmtoff)
 #endif
 
 #define	SECONDS_PER_MINUTE	60

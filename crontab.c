@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.8 2003/02/16 04:40:01 vixie Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.9 2003/02/21 21:16:18 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -218,7 +218,7 @@ parse_args(int argc, char *argv[]) {
 				perror(Filename);
 				exit(ERROR_EXIT);
 			}
-			if (swap_uids() < OK) {
+			if (swap_uids_back() < OK) {
 				perror("swapping uids back");
 				exit(ERROR_EXIT);
 			}

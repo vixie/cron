@@ -1,5 +1,5 @@
 /*
- * $Id: globals.h,v 1.6 2003/02/16 04:40:01 vixie Exp $
+ * $Id: globals.h,v 1.7 2003/02/21 21:16:18 vixie Exp $
  */
 
 /*
@@ -57,7 +57,7 @@ XTRN const char *DowNames[]
 #endif
 	;
 
-XTRN const char *ProgramName INIT("amnesia");
+XTRN char	*ProgramName INIT("amnesia");
 XTRN int	LineNumber INIT(0);
 XTRN time_t	StartTime INIT(0);
 XTRN int	NoFork INIT(0);
