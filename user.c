@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (c) 1997 by Internet Software Consortium
+ * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: user.c,v 1.2 1998/08/14 00:32:41 vixie Exp $";
+static char rcsid[] = "$Id: user.c,v 1.3 2000/01/02 20:53:44 vixie Exp $";
 #endif
 
 /* vix 26jan87 [log is in RCS file]

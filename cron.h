@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (c) 1997 by Internet Software Consortium
+ * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,7 +21,7 @@
 
 /* cron.h - header for vixie's cron
  *
- * $Id: cron.h,v 1.3 1998/08/14 00:32:37 vixie Exp $
+ * $Id: cron.h,v 1.4 2000/01/02 20:53:39 vixie Exp $
  *
  * vix 14nov88 [rest of log is in RCS]
  * vix 14jan87 [0 or 7 can be sunday; thanks, mwm@berkeley]

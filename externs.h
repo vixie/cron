@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (c) 1997 by Internet Software Consortium
+ * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above

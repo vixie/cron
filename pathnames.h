@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright (c) 1997 by Internet Software Consortium
+ * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,7 +20,7 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.4 1998/08/14 00:32:41 vixie Exp $
+ * $Id: pathnames.h,v 1.5 2000/01/02 20:53:44 vixie Exp $
  */
 
 #ifndef CRONDIR

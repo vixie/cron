@@ -1,9 +1,9 @@
 /*
- * $Id: structs.h,v 1.1 1998/08/14 00:31:24 vixie Exp $
+ * $Id: structs.h,v 1.2 2000/01/02 20:53:44 vixie Exp $
  */
 
 /*
- * Copyright (c) 1997 by Internet Software Consortium
+ * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above

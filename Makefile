@@ -2,7 +2,7 @@
 # * All rights reserved
 # */
 
-## Copyright (c) 1997 by Internet Software Consortium.
+## Copyright (c) 1997,2000 by Internet Software Consortium, Inc..
 ##
 ## Permission to use, copy, modify, and distribute this software for any
 ## purpose with or without fee is hereby granted, provided that the above
@@ -19,7 +19,7 @@
 
 # Makefile for vixie's cron
 #
-# $Id: Makefile,v 1.2 1998/08/14 00:32:35 vixie Exp $
+# $Id: Makefile,v 1.3 2000/01/02 20:53:37 vixie Exp $
 #
 # vix 03mar88 [moved to RCS, rest of log is in there]
 # vix 30mar87 [goodbye, time.c; hello, getopt]
@@ -118,7 +118,7 @@ clean		:;	rm -f *.o cron crontab a.out core tags *~ #*
 tags		:;	ctags ${SOURCES}
 
 kit		:	$(SHAR_SOURCE)
-			makekit -m -s99k $(SHAR_SOURCE)
+			shar $(SHAR_SOURCE) >kit
 
 $(CRON_OBJ)	:	cron.h config.h externs.h pathnames.h Makefile
 $(CRONTAB_OBJ)	:	cron.h config.h externs.h pathnames.h Makefile

@@ -1,9 +1,9 @@
 /*
- * $Id: globals.h,v 1.1 1998/08/14 00:31:23 vixie Exp $
+ * $Id: globals.h,v 1.2 2000/01/02 20:53:42 vixie Exp $
  */
 
 /*
- * Copyright (c) 1997 by Internet Software Consortium
+ * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -31,7 +31,7 @@ XTRN const char *copyright[]
 #ifdef MAIN_PROGRAM
 	= {
 		"@(#) Copyright 1988,1989,1990,1993,1994 by Paul Vixie",
-		"@(#) Copyright 1997 by Internet Software Consortium",
+		"@(#) Copyright 1997 by Internet Software Consortium, Inc.",
 		"@(#) All rights reserved",
 		NULL
 	}
