@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: cron.c,v 1.10 2003/02/16 04:40:01 vixie Exp $";
+static char rcsid[] = "$Id: cron.c,v 1.11 2003/04/08 01:10:39 vixie Exp $";
 #endif
 
 #define	MAIN_PROGRAM
@@ -110,7 +110,6 @@ main(int argc, char *argv[]) {
 			break;
 		case 0:
 			/* child process */
-			log_it("CRON",getpid(),"STARTUP",CRON_VERSION);
 			(void) setsid();
 			if ((fd = open(_PATH_DEVNULL, O_RDWR, 0)) >= 0) {
 				(void) dup2(fd, STDIN);
@@ -119,6 +118,7 @@ main(int argc, char *argv[]) {
 				if (fd != STDERR)
 					(void) close(fd);
 			}
+			log_it("CRON",getpid(),"STARTUP",CRON_VERSION);
 			break;
 		default:
 			/* parent process should just die */
