@@ -1,5 +1,5 @@
 /*
- * $Id: funcs.h,v 1.2 2000/01/02 20:53:42 vixie Exp $
+ * $Id: funcs.h,v 1.3 2000/11/14 23:00:55 vixie Exp $
  */
 
 /*
@@ -43,15 +43,15 @@ void		set_cron_uid(void),
 		log_close(void);
 
 int		job_runqueue(void),
-		set_debug_flags(char *),
+		set_debug_flags(const char *),
 		get_char(FILE *),
 		get_string(char *, int, FILE *, char *),
 		swap_uids(void),
 		load_env(char *, FILE *),
 		cron_pclose(FILE *),
-		glue_strings(char *, int, char *, char *, int),
-		strcmp_until(const char *, const char *, int),
-		allowed(char *),
+		glue_strings(char *, size_t, const char *, const char *, char),
+		strcmp_until(const char *, const char *, char),
+		allowed(const char *),
 		strdtb(char *);
 
 size_t		strlens(const char *, ...);
@@ -67,7 +67,6 @@ char		*env_get(char *, char **),
 user		*load_user(int, struct passwd *, const char *),
 		*find_user(cron_db *, const char *);
 
-entry		*load_entry(FILE *, void (*)(),
-				 struct passwd *, char **);
+entry		*load_entry(FILE *, void (*)(), struct passwd *, char **);
 
 FILE		*cron_popen(char *, char *);

@@ -20,12 +20,10 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: job.c,v 1.3 2000/01/02 20:53:43 vixie Exp $";
+static char rcsid[] = "$Id: job.c,v 1.4 2000/11/14 23:00:56 vixie Exp $";
 #endif
 
-
 #include "cron.h"
-
 
 typedef	struct _job {
 	struct _job	*next;
@@ -33,15 +31,10 @@ typedef	struct _job {
 	user		*u;
 } job;
 
-
 static job	*jhead = NULL, *jtail = NULL;
 
-
 void
-job_add(e, u)
-	entry *e;
-	user *u;
-{
+job_add(entry *e, user *u) {
 	job *j;
 
 	/* if already on queue, keep going */
@@ -63,12 +56,10 @@ job_add(e, u)
 	jtail = j;
 }
 
-
 int
-job_runqueue()
-{
-	job	*j, *jn;
-	int	run = 0;
+job_runqueue(void) {
+	job *j, *jn;
+	int run = 0;
 
 	for (j = jhead; j; j = jn) {
 		do_command(j->e, j->u);

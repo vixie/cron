@@ -20,13 +20,12 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.7 2000/09/07 21:52:54 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.8 2000/11/14 23:00:56 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
  * vix 30dec86 [written]
  */
-
 
 #include "cron.h"
 #if SYS_TIME_H
@@ -36,12 +35,12 @@ static char rcsid[] = "$Id: misc.c,v 1.7 2000/09/07 21:52:54 vixie Exp $";
 #endif
 #include <sys/file.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 #include <errno.h>
 #include <fcntl.h>
 #if defined(SYSLOG)
 # include <syslog.h>
 #endif
-
 
 #if defined(SYSLOG) && defined(LOG_FILE)
 # undef LOG_FILE
@@ -51,12 +50,11 @@ static char rcsid[] = "$Id: misc.c,v 1.7 2000/09/07 21:52:54 vixie Exp $";
 # define LOG_CRON LOG_DAEMON
 #endif
 
-
 #ifndef FACILITY
 #define FACILITY LOG_CRON
 #endif
 
-static int		LogFD = ERR;
+static int LogFD = ERR;
 
 /*
  * glue_strings is the overflow-safe equivalent of
@@ -66,12 +64,8 @@ static int		LogFD = ERR;
  * glue_strings fails.
  */
 int
-glue_strings(buffer, buffer_size, a, b, separator)
-	char	*buffer;
-	int	buffer_size;	
-	char	*a;
-	char	*b;
-	int	separator;
+glue_strings(char *buffer, size_t buffer_size, const char *a, const char *b,
+	     char separator)
 {
 	char *buf;
 	char *buf_end;
@@ -98,7 +92,7 @@ glue_strings(buffer, buffer_size, a, b, separator)
 }
 
 int
-strcmp_until(const char *left, const char *right, int until) {
+strcmp_until(const char *left, const char *right, char until) {
 	while (*left && *left != until && *left == *right) {
 		left++;
 		right++;
@@ -111,13 +105,10 @@ strcmp_until(const char *left, const char *right, int until) {
 	return (*left - *right);
 }
 
-
 /* strdtb(s) - delete trailing blanks in string 's' and return new length
  */
 int
-strdtb(s)
-	char	*s;
-{
+strdtb(char *s) {
 	char	*x = s;
 
 	/* scan forward to the null
@@ -142,11 +133,8 @@ strdtb(s)
 	return (x - s);
 }
 
-
 int
-set_debug_flags(flags)
-	char	*flags;
-{
+set_debug_flags(const char *flags) {
 	/* debug flags are of the form    flag[,flag ...]
 	 *
 	 * if an error occurs, print a message to stdout and return FALSE.
@@ -160,7 +148,7 @@ set_debug_flags(flags)
 
 #else /* DEBUGGING */
 
-	char	*pc = flags;
+	const char *pc = flags;
 
 	DebugFlags = 0;
 
@@ -170,11 +158,10 @@ set_debug_flags(flags)
 
 		/* try to find debug flag name in our list.
 		 */
-		for (	test = DebugFlagNames, mask = 1;
-			*test != NULL && strcmp_until(*test, pc, ',');
-			test++, mask <<= 1
-		    )
-			;
+		for (test = DebugFlagNames, mask = 1;
+		     *test != NULL && strcmp_until(*test, pc, ',');
+		     test++, mask <<= 1)
+			NULL;
 
 		if (!*test) {
 			fprintf(stderr,
@@ -194,7 +181,7 @@ set_debug_flags(flags)
 	}
 
 	if (DebugFlags) {
-		int	flag;
+		int flag;
 
 		fprintf(stderr, "debug flags enabled:");
 
@@ -209,10 +196,8 @@ set_debug_flags(flags)
 #endif /* DEBUGGING */
 }
 
-
 void
-set_cron_uid()
-{
+set_cron_uid(void) {
 #if defined(BSD) || defined(POSIX)
 	if (seteuid(ROOT_UID) < OK) {
 		perror("seteuid");
@@ -226,11 +211,9 @@ set_cron_uid()
 #endif
 }
 
-
 void
-set_cron_cwd()
-{
-	struct stat	sb;
+set_cron_cwd(void) {
+	struct stat sb;
 
 	/* first check for CRONDIR ("/var/cron" or some such)
 	 */
@@ -245,7 +228,7 @@ set_cron_cwd()
 			exit(ERROR_EXIT);
 		}
 	}
-	if (!(sb.st_mode & S_IFDIR)) {
+	if ((sb.st_mode & S_IFDIR) == 0) {
 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
 			CRONDIR);
 		exit(ERROR_EXIT);
@@ -269,13 +252,12 @@ set_cron_cwd()
 			exit(ERROR_EXIT);
 		}
 	}
-	if (!(sb.st_mode & S_IFDIR)) {
+	if ((sb.st_mode & S_IFDIR) == 0) {
 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
 			SPOOL_DIR);
 		exit(ERROR_EXIT);
 	}
 }
-
 
 /* acquire_daemonlock() - write our PID into /etc/cron.pid, unless
  *	another daemon is already running, which we detect here.
@@ -287,13 +269,12 @@ set_cron_cwd()
  * it would be great if fflush() disassociated the file buffer.
  */
 void
-acquire_daemonlock(closeflag)
-	int closeflag;
-{
-	static	FILE	*fp = NULL;
-	char		buf[3*MAX_FNAME];
-	char		pidfile[MAX_FNAME];
-	int		fd, otherpid;
+acquire_daemonlock(int closeflag) {
+	static FILE *fp = NULL;
+	char buf[3*MAX_FNAME];
+	char pidfile[MAX_FNAME];
+	PID_T otherpid;
+	int fd;
 
 	if (closeflag && fp) {
 		fclose(fp);
@@ -345,10 +326,8 @@ acquire_daemonlock(closeflag)
 /* get_char(file) : like getc() but increment LineNumber on newlines
  */
 int
-get_char(file)
-	FILE	*file;
-{
-	int	ch;
+get_char(FILE *file) {
+	int ch;
 
 	ch = getc(file);
 	if (ch == '\n')
@@ -356,19 +335,14 @@ get_char(file)
 	return (ch);
 }
 
-
 /* unget_char(ch, file) : like ungetc but do LineNumber processing
  */
 void
-unget_char(ch, file)
-	int	ch;
-	FILE	*file;
-{
+unget_char(int ch, FILE *file) {
 	ungetc(ch, file);
 	if (ch == '\n')
 		Set_LineNum(LineNumber - 1)
 }
-
 
 /* get_string(str, max, file, termstr) : like fgets() but
  *		(1) has terminator string which should include \n
@@ -377,13 +351,8 @@ unget_char(ch, file)
  *		(4) returns EOF or terminating character, whichever
  */
 int
-get_string(string, size, file, terms)
-	char	*string;
-	int	size;
-	FILE	*file;
-	char	*terms;
-{
-	int	ch;
+get_string(char *string, int size, FILE *file, char *terms) {
+	int ch;
 
 	while (EOF != (ch = get_char(file)) && !strchr(terms, ch)) {
 		if (size > 1) {
@@ -398,14 +367,11 @@ get_string(string, size, file, terms)
 	return (ch);
 }
 
-
 /* skip_comments(file) : read past comment (if any)
  */
 void
-skip_comments(file)
-	FILE	*file;
-{
-	int	ch;
+skip_comments(FILE *file) {
+	int ch;
 
 	while (EOF != (ch = get_char(file))) {
 		/* ch is now the first character of a line.
@@ -438,16 +404,12 @@ skip_comments(file)
 		unget_char(ch, file);
 }
 
-
 /* int in_file(char *string, FILE *file)
  *	return TRUE if one of the lines in file matches string exactly,
  *	FALSE otherwise.
  */
 static int
-in_file(string, file)
-	char *string;
-	FILE *file;
-{
+in_file(const char *string, FILE *file) {
 	char line[MAX_TEMPSTR];
 
 	rewind(file);
@@ -460,18 +422,15 @@ in_file(string, file)
 	return (FALSE);
 }
 
-
-/* int allowed(char *username)
+/* int allowed(const char *username)
  *	returns TRUE if (ALLOW_FILE exists and user is listed)
  *	or (DENY_FILE exists and user is NOT listed)
  *	or (neither file exists but user=="root" so it's okay)
  */
 int
-allowed(username)
-	char *username;
-{
-	static int	init = FALSE;
-	static FILE	*allow, *deny;
+allowed(const char *username) {
+	static FILE *allow, *deny;
+	static int init = FALSE;
 
 	if (!init) {
 		init = TRUE;
@@ -497,19 +456,14 @@ allowed(username)
 #endif
 }
 
-
 void
-log_it(username, xpid, event, detail)
-	const char *username;
-	int	xpid;
-	const char *event;
-	const char *detail;
+log_it(const char *username, PID_T xpid, const char *event, const char *detail)
 {
-	PID_T		pid = xpid;
+	PID_T pid = xpid;
 #if defined(LOG_FILE)
-	char		*msg;
-	TIME_T		now = time((TIME_T) 0);
-	struct tm	*t = localtime(&now);
+	char *msg;
+	TIME_T now = time((TIME_T) 0);
+	struct tm *t = localtime(&now);
 #endif /*LOG_FILE*/
 
 #if defined(SYSLOG)
@@ -582,25 +536,25 @@ log_it(username, xpid, event, detail)
 #endif
 }
 
-
 void
-log_close() {
+log_close(void) {
 	if (LogFD != ERR) {
 		close(LogFD);
 		LogFD = ERR;
 	}
 }
 
-
-/* two warnings:
+/* char *first_word(char *s, char *t)
+ *	return pointer to first word
+ * parameters:
+ *	s - string we want the first word of
+ *	t - terminators, implicitly including \0
+ * warnings:
  *	(1) this routine is fairly slow
  *	(2) it returns a pointer to static storage
  */
 char *
-first_word(s, t)
-	char *s;	/* string we want the first word of */
-	char *t;	/* terminators, implicitly including \0 */
-{
+first_word(char *s, char *t) {
 	static char retbuf[2][MAX_TEMPSTR + 1];	/* sure wish C had GC */
 	static int retsel = 0;
 	char *rb, *rp;
@@ -624,7 +578,6 @@ first_word(s, t)
 	*rp = '\0';
 	return (rb);
 }
-
 
 /* warning:
  *	heavily ascii-dependent.
@@ -660,7 +613,6 @@ mkprint(dst, src, len)
 	*dst = '\0';
 }
 
-
 /* warning:
  *	returns a pointer to malloc'd storage, you must call free yourself.
  */
@@ -675,7 +627,6 @@ mkprints(src, len)
 
 	return (dst);
 }
-
 
 #ifdef MAIL_DATE
 /* Sat, 27 Feb 93 11:44:51 CST

@@ -1,5 +1,5 @@
 /*
- * $Id: structs.h,v 1.2 2000/01/02 20:53:44 vixie Exp $
+ * $Id: structs.h,v 1.3 2000/11/14 23:00:57 vixie Exp $
  */
 
 /*
@@ -59,4 +59,3 @@ typedef	struct _cron_db {
 				 * variables for the main program, just
 				 * extern them elsewhere.
 				 */
-

@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.4 2000/01/02 20:53:40 vixie Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.5 2000/11/14 23:00:53 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -69,7 +69,7 @@ usage(const char *msg) {
 
 int
 main(int argc, char *argv[]) {
-	int	exitstatus;
+	int exitstatus;
 
 	Pid = getpid();
 	ProgramName = argv[0];
@@ -221,7 +221,6 @@ parse_args(int argc, char *argv[]) {
 		      User, Filename, Options[(int)Option]))
 }
 
-
 static void
 list_cmd(void) {
 	char n[MAX_FNAME];
@@ -331,10 +330,8 @@ edit_cmd(void) {
 
 	/* ignore the top few comments since we probably put them there.
 	 */
-	for (x = 0; x < NHEADER_LINES; x++) {
-		ch = get_char(f);
-		if (EOF == ch)
-			break;
+	x = 0;
+	while (EOF != (ch = get_char(f))) {
 		if ('#' != ch) {
 			putc(ch, NewCrontab);
 			break;
@@ -342,7 +339,7 @@ edit_cmd(void) {
 		while (EOF != (ch = get_char(f)))
 			if (ch == '\n')
 				break;
-		if (EOF == ch)
+		if (++x >= NHEADER_LINES)
 			break;
 	}
 
@@ -458,10 +455,12 @@ edit_cmd(void) {
 			fflush(stdout);
 			q[0] = '\0';
 			(void) fgets(q, sizeof q, stdin);
-			switch (islower(q[0]) ? q[0] : tolower(q[0])) {
+			switch (q[0]) {
 			case 'y':
+			case 'Y':
 				goto again;
 			case 'n':
+			case 'N':
 				goto abandon;
 			default:
 				fprintf(stderr, "Enter Y or N\n");
@@ -483,7 +482,6 @@ edit_cmd(void) {
  done:
 	log_it(RealUser, Pid, "END EDIT", User);
 }
-	
 
 /* returns	0	on success
  *		-1	on syntax error

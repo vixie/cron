@@ -24,13 +24,11 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: popen.c,v 1.3 1998/08/14 00:32:41 vixie Exp $";
+static char rcsid[] = "$Id: popen.c,v 1.4 2000/11/14 23:00:56 vixie Exp $";
 static char sccsid[] = "@(#)popen.c	5.7 (Berkeley) 2/14/89";
 #endif /* not lint */
 
 #include "cron.h"
-
-#define WANT_GLOBBING 0
 
 /*
  * Special version of popen which avoids call to shell.  This insures noone
@@ -41,20 +39,12 @@ static PID_T *pids;
 static int fds;
 
 FILE *
-cron_popen(program, type)
-	char *program, *type;
-{
+cron_popen(char *program, char *type) {
 	char *cp;
 	FILE *iop;
 	int argc, pdes[2];
 	PID_T pid;
 	char *argv[100];
-#if WANT_GLOBBING
-	char **pop, *vv[2];
-	int gargc;
-	char *gargv[1000];
-	extern char **glob(), **copyblk();
-#endif
 
 	if ((*type != 'r' && *type != 'w') || type[1] != '\0')
 		return (NULL);
@@ -73,22 +63,6 @@ cron_popen(program, type)
 	for (argc = 0, cp = program;; cp = NULL)
 		if (!(argv[argc++] = strtok(cp, " \t\n")))
 			break;
-
-#if WANT_GLOBBING
-	/* glob each piece */
-	gargv[0] = argv[0];
-	for (gargc = argc = 1; argv[argc]; argc++) {
-		if (!(pop = glob(argv[argc]))) {	/* globbing failed */
-			vv[0] = argv[argc];
-			vv[1] = NULL;
-			pop = copyblk(vv);
-		}
-		argv[argc] = (char *)pop;		/* save to free later */
-		while (*pop && gargc < 1000)
-			gargv[gargc++] = *pop++;
-	}
-	gargv[gargc] = NULL;
-#endif
 
 	iop = NULL;
 	switch(pid = vfork()) {
@@ -112,11 +86,7 @@ cron_popen(program, type)
 			}
 			(void)close(pdes[1]);
 		}
-#if WANT_GLOBBING
-		execvp(gargv[0], gargv);
-#else
 		execvp(argv[0], argv);
-#endif
 		_exit(1);
 	}
 	/* parent; assume fdopen can't fail...  */
@@ -129,20 +99,12 @@ cron_popen(program, type)
 	}
 	pids[fileno(iop)] = pid;
 
-pfree:
-#if WANT_GLOBBING
-	for (argc = 1; argv[argc] != NULL; argc++) {
-/*		blkfree((char **)argv[argc]);	*/
-		free((char *)argv[argc]);
-	}
-#endif
+ pfree:
 	return (iop);
 }
 
 int
-cron_pclose(iop)
-	FILE *iop;
-{
+cron_pclose(FILE *iop) {
 	int fdes;
 	int omask;
 	WAIT_T stat_loc;

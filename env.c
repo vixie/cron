@@ -20,44 +20,35 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 1.4 2000/01/02 20:53:41 vixie Exp $";
+static char rcsid[] = "$Id: env.c,v 1.5 2000/11/14 23:00:54 vixie Exp $";
 #endif
-
 
 #include "cron.h"
 
-
 char **
-env_init()
-{
-	char	**p = (char **) malloc(sizeof(char **));
+env_init(void) {
+	char **p = (char **) malloc(sizeof(char **));
 
 	p[0] = NULL;
 	return (p);
 }
 
-
 void
-env_free(envp)
-	char	**envp;
-{
-	char	**p;
+env_free(char **envp) {
+	char **p;
 
-	for (p = envp;  *p;  p++)
+	for (p = envp; *p != NULL; p++)
 		free(*p);
 	free(envp);
 }
 
-
 char **
-env_copy(envp)
-	char	**envp;
-{
-	int	count, i;
-	char	**p;
+env_copy(char **envp) {
+	int count, i;
+	char **p;
 
-	for (count = 0;  envp[count] != NULL;  count++)
-		;
+	for (count = 0; envp[count] != NULL; count++)
+		NULL;
 	p = (char **) malloc((count+1) * sizeof(char *));  /* 1 for the NULL */
 	for (i = 0;  i < count;  i++)
 		p[i] = strdup(envp[i]);
@@ -65,14 +56,10 @@ env_copy(envp)
 	return (p);
 }
 
-
 char **
-env_set(envp, envstr)
-	char	**envp;
-	char	*envstr;
-{
-	int	count, found;
-	char	**p;
+env_set(char **envp, char *envstr) {
+	int count, found;
+	char **p;
 
 	/*
 	 * count the number of elements, including the null pointer;
@@ -107,20 +94,16 @@ env_set(envp, envstr)
 	return (p);
 }
 
-
 /* return	ERR = end of file
  *		FALSE = not an env setting (file was repositioned)
  *		TRUE = was an env setting
  */
 int
-load_env(envstr, f)
-	char	*envstr;
-	FILE	*f;
-{
-	long	filepos;
-	int	fileline;
-	char	name[MAX_ENVSTR], val[MAX_ENVSTR];
-	int	fields;
+load_env(char *envstr, FILE *f) {
+	long filepos;
+	int fileline;
+	char name[MAX_ENVSTR], val[MAX_ENVSTR];
+	int fields;
 
 	filepos = ftell(f);
 	fileline = LineNumber;
@@ -168,14 +151,10 @@ load_env(envstr, f)
 	return (TRUE);
 }
 
-
 char *
-env_get(name, envp)
-	char	*name;
-	char	**envp;
-{
-	int	len = strlen(name);
-	char	*p, *q;
+env_get(char *name, char **envp) {
+	int len = strlen(name);
+	char *p, *q;
 
 	while ((p = *envp++) != '\0') {
 		if (!(q = strchr(p, '=')))

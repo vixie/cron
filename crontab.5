@@ -17,7 +17,7 @@
 .\"ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 .\"SOFTWARE.
 .\"
-.\" $Id: crontab.5,v 1.3 2000/01/02 20:53:39 vixie Exp $
+.\" $Id: crontab.5,v 1.4 2000/11/14 23:00:53 vixie Exp $
 .\" 
 .TH CRONTAB 5 "24 January 1994"
 .UC 4
@@ -99,7 +99,7 @@ minute	0-59
 .br
 hour	0-23
 .br
-day of month	0-31
+day of month	1-31
 .br
 month	0-12 (or names, see below)
 .br
@@ -150,7 +150,6 @@ would cause a command to be run at 4:30 am on the 1st and 15th of each
 month, plus every Friday.
 .SH EXAMPLE CRON FILE
 .nf
-
 # use /bin/sh to run commands, no matter what /etc/passwd says
 SHELL=/bin/sh
 # mail any output to `paul', no matter whose crontab this is
@@ -187,4 +186,4 @@ feature can be turned off and no mail will be sent at all (SysV can't do this
 either).
 .SH AUTHOR
 .nf
-Paul Vixie <paul@vix.com>
+Paul Vixie <vixie@isc.org>

@@ -1,4 +1,4 @@
-#/* Copyright 1988,1990,1993 by Paul Vixie <paul@vix.com>
+#/* Copyright 1988,1990,1993 by Paul Vixie
 # * All rights reserved
 # */
 
@@ -17,7 +17,8 @@
 ## ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ## SOFTWARE.
 
-ISC Cron V4.0 - September 7, 1997
+ISC Cron V4.0 - November, 2000
+[V4.0b1 was September 7, 1997]
 [V3.1 was some time after 1993]
 [V3.0 was December 27, 1993]
 [V2.2 was some time in 1992]
@@ -25,7 +26,7 @@ ISC Cron V4.0 - September 7, 1997
 [V2.0 was July 5, 1990]
 [V2.0-beta was December 9, 1988]
 [V1.0 was May 6, 1987]
-Paul Vixie
+ftp://ftp.isc.org/isc/cron/
 
 This is a version of 'cron' that is known to run on most systems.  It
 is functionally based on the SysV cron, which means that each user can have
@@ -65,4 +66,4 @@ have to go edit a couple of files... So, here's the checklist:
 	if you like it, change your /etc/{rc,rc.local} to use it instead of
 		the old one.
 
-$Id: README,v 1.3 2000/01/02 20:53:37 vixie Exp $
+$Id: README,v 1.4 2000/11/14 23:00:51 vixie Exp $

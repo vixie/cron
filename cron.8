@@ -17,7 +17,7 @@
 .\"ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 .\"SOFTWARE.
 .\"
-.\" $Id: cron.8,v 1.3 2000/01/02 20:53:38 vixie Exp $
+.\" $Id: cron.8,v 1.4 2000/11/14 23:00:52 vixie Exp $
 .\" 
 .TH CRON 8 "10 January 1996""
 .UC 4
@@ -35,7 +35,7 @@ searches /var/cron/tabs for crontab files which are named after accounts in
 /etc/passwd; crontabs found are loaded into memory.
 .I Cron
 also searches for /etc/crontab which is in a different format (see
-.IR crontab (5)).
+.IR crontab (5) ).
 .I Cron
 then wakes up every minute, examining all stored crontabs, checking each
 command to see if it should be run in the current minute.  When executing
@@ -46,7 +46,7 @@ Additionally,
 .I cron
 checks each minute to see if its spool directory's modtime (or the modtime
 on
-.IR /etc/crontab)
+.IR /etc/crontab )
 has changed, and if it has,
 .I cron
 will then examine the modtime on all crontabs and reload those which have
@@ -70,4 +70,4 @@ will behave mysteriously if a system clock is reset backward by more than
 .IR crontab (5)
 .SH AUTHOR
 .nf
-Paul Vixie <paul@vix.com>
+Paul Vixie <vixie@isc.org>
