@@ -16,7 +16,7 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.2 1996/12/27 19:37:54 vixie Exp $
+ * $Id: pathnames.h,v 1.3 1996/12/29 04:00:55 vixie Exp $
  */
 
 #if (defined(BSD)) && (BSD >= 199103) || defined(__linux) || defined(AIX)
@@ -45,11 +45,13 @@
 			 * that ALLOW_FILE and DENY_FILE must both be defined
 			 * in order to enable the allow/deny code.  If neither
 			 * LOG_FILE or SYSLOG is defined, we don't log.  If
-			 * both are defined, we log both ways.
+			 * both are defined, we log both ways.  Note that if
+			 * LOG_CRON is defined by <syslog.h>, LOG_FILE will not
+			 * be used.
 			 */
-#define	ALLOW_FILE	"allow"		/*-*/
-#define DENY_FILE	"deny"		/*-*/
-#define LOG_FILE	"log"		/*-*/
+#define	ALLOW_FILE	"allow"
+#define DENY_FILE	"deny"
+#define LOG_FILE	"log"
 
 			/* where should the daemon stick its PID?
 			 */

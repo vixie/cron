@@ -16,7 +16,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.2 1996/12/27 19:37:54 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.3 1996/12/29 04:00:54 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -39,8 +39,12 @@ static char rcsid[] = "$Id: misc.c,v 1.2 1996/12/27 19:37:54 vixie Exp $";
 #endif
 
 
+#if defined(LOG_CRON) && defined(LOG_FILE)
+# undef LOG_FILE
+#endif
+
 #if defined(LOG_DAEMON) && !defined(LOG_CRON)
-#define LOG_CRON LOG_DAEMON
+# define LOG_CRON LOG_DAEMON
 #endif
 
 
