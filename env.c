@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 1.8 2003/02/21 21:17:38 vixie Exp $";
+static char rcsid[] = "$Id: env.c,v 1.9 2003/02/21 21:22:53 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -197,6 +197,7 @@ load_env(char *envstr, FILE *f) {
 			}
 			c++;
 			break;
+
 		case EQ2:
 		case FINI:
 			if (isspace((unsigned char)*c))
@@ -204,6 +205,9 @@ load_env(char *envstr, FILE *f) {
 			else
 				state++;
 			break;
+
+		default:
+			abort();
 		}
 	}
 	if (state != FINI && !(state == VALUE && !quotechar)) {
