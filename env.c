@@ -1,22 +1,26 @@
 /* Copyright 1988,1990,1993,1994 by Paul Vixie
  * All rights reserved
+ */
+
+/*
+ * Copyright (c) 1997 by Internet Software Consortium
  *
- * Distribute freely, except: don't remove my name from the source or
- * documentation (don't take credit for my work), mark your changes (don't
- * get me blamed for your possible bugs), don't alter or remove this
- * notice.  May be sold if buildable source is provided to buyer.  No
- * warrantee of any kind, express or implied, is included with this
- * software; use at your own risk, responsibility for damages (if any) to
- * anyone resulting from the use of this software rests entirely with the
- * user.
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  *
- * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
- * I'll try to keep a version up to date.  I can be reached as follows:
- * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+ * THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
+ * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
+ * CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ * SOFTWARE.
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 1.2 1996/12/27 19:37:53 vixie Exp $";
+static char rcsid[] = "$Id: env.c,v 1.3 1998/08/14 00:32:39 vixie Exp $";
 #endif
 
 
@@ -26,7 +30,7 @@ static char rcsid[] = "$Id: env.c,v 1.2 1996/12/27 19:37:53 vixie Exp $";
 char **
 env_init()
 {
-	register char	**p = (char **) malloc(sizeof(char **));
+	char	**p = (char **) malloc(sizeof(char **));
 
 	p[0] = NULL;
 	return (p);
@@ -47,10 +51,10 @@ env_free(envp)
 
 char **
 env_copy(envp)
-	register char	**envp;
+	char	**envp;
 {
-	register int	count, i;
-	register char	**p;
+	int	count, i;
+	char	**p;
 
 	for (count = 0;  envp[count] != NULL;  count++)
 		;
@@ -67,8 +71,8 @@ env_set(envp, envstr)
 	char	**envp;
 	char	*envstr;
 {
-	register int	count, found;
-	register char	**p;
+	int	count, found;
+	char	**p;
 
 	/*
 	 * count the number of elements, including the null pointer;
@@ -96,7 +100,7 @@ env_set(envp, envstr)
 	 * one, save our string over the old null pointer, and return resized
 	 * array.
 	 */
-	p = (char **) realloc((ANONPTR) envp,
+	p = (char **) realloc((void *) envp,
 			      (unsigned) ((count+1) * sizeof(char **)));
 	p[count] = p[count-1];
 	p[count-1] = strdup(envstr);
@@ -167,13 +171,13 @@ load_env(envstr, f)
 
 char *
 env_get(name, envp)
-	register char	*name;
-	register char	**envp;
+	char	*name;
+	char	**envp;
 {
-	register int	len = strlen(name);
-	register char	*p, *q;
+	int	len = strlen(name);
+	char	*p, *q;
 
-	while (p = *envp++) {
+	while ((p = *envp++) != '\0') {
 		if (!(q = strchr(p, '=')))
 			continue;
 		if ((q - p) == len && !strncmp(p, name, len))

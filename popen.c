@@ -24,12 +24,11 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: popen.c,v 1.2 1996/12/27 19:37:55 vixie Exp $";
+static char rcsid[] = "$Id: popen.c,v 1.3 1998/08/14 00:32:41 vixie Exp $";
 static char sccsid[] = "@(#)popen.c	5.7 (Berkeley) 2/14/89";
 #endif /* not lint */
 
 #include "cron.h"
-#include <signal.h>
 
 #define WANT_GLOBBING 0
 
@@ -45,7 +44,7 @@ FILE *
 cron_popen(program, type)
 	char *program, *type;
 {
-	register char *cp;
+	char *cp;
 	FILE *iop;
 	int argc, pdes[2];
 	PID_T pid;
@@ -57,18 +56,18 @@ cron_popen(program, type)
 	extern char **glob(), **copyblk();
 #endif
 
-	if (*type != 'r' && *type != 'w' || type[1])
-		return(NULL);
+	if ((*type != 'r' && *type != 'w') || type[1] != '\0')
+		return (NULL);
 
 	if (!pids) {
-		if ((fds = getdtablesize()) <= 0)
-			return(NULL);
+		if ((fds = sysconf(_SC_OPEN_MAX)) <= 0)
+			return (NULL);
 		if (!(pids = (PID_T *)malloc((u_int)(fds * sizeof(PID_T)))))
-			return(NULL);
+			return (NULL);
 		bzero((char *)pids, fds * sizeof(PID_T));
 	}
 	if (pipe(pdes) < 0)
-		return(NULL);
+		return (NULL);
 
 	/* break up string into pieces */
 	for (argc = 0, cp = program;; cp = NULL)
@@ -137,14 +136,14 @@ pfree:
 		free((char *)argv[argc]);
 	}
 #endif
-	return(iop);
+	return (iop);
 }
 
 int
 cron_pclose(iop)
 	FILE *iop;
 {
-	register int fdes;
+	int fdes;
 	int omask;
 	WAIT_T stat_loc;
 	PID_T pid;
@@ -154,7 +153,7 @@ cron_pclose(iop)
 	 * `popened' command, or, if already `pclosed'.
 	 */
 	if (pids == 0 || pids[fdes = fileno(iop)] == 0)
-		return(-1);
+		return (-1);
 	(void)fclose(iop);
 	omask = sigblock(sigmask(SIGINT)|sigmask(SIGQUIT)|sigmask(SIGHUP));
 	while ((pid = wait(&stat_loc)) != pids[fdes] && pid != -1)

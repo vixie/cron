@@ -1,22 +1,27 @@
-/* Copyright 1988,1990,1993,1994 by Paul Vixie
+/*
+ * Copyright 1988,1990,1993,1994 by Paul Vixie
  * All rights reserved
+ */
+
+/*
+ * Copyright (c) 1997 by Internet Software Consortium
  *
- * Distribute freely, except: don't remove my name from the source or
- * documentation (don't take credit for my work), mark your changes (don't
- * get me blamed for your possible bugs), don't alter or remove this
- * notice.  May be sold if buildable source is provided to buyer.  No
- * warrantee of any kind, express or implied, is included with this
- * software; use at your own risk, responsibility for damages (if any) to
- * anyone resulting from the use of this software rests entirely with the
- * user.
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  *
- * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
- * I'll try to keep a version up to date.  I can be reached as follows:
- * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+ * THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
+ * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
+ * CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ * SOFTWARE.
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.2 1996/12/27 19:37:52 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.3 1998/08/14 00:32:39 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -31,15 +36,10 @@ static char rcsid[] = "$Id: entry.c,v 1.2 1996/12/27 19:37:52 vixie Exp $";
 
 typedef	enum ecode {
 	e_none, e_minute, e_hour, e_dom, e_month, e_dow,
-	e_cmd, e_timespec, e_username
+	e_cmd, e_timespec, e_username, e_option
 } ecode_e;
 
-static char	get_list __P((bitstr_t *, int, int, char *[], int, FILE *)),
-		get_range __P((bitstr_t *, int, int, char *[], int, FILE *)),
-		get_number __P((int *, int, char *[], int, FILE *));
-static int	set_element __P((bitstr_t *, int, int, int));
-
-static char *ecodes[] =
+static const char *ecodes[] =
 	{
 		"no error",
 		"bad minute",
@@ -50,8 +50,13 @@ static char *ecodes[] =
 		"bad command",
 		"bad time specifier",
 		"bad username",
+		"bad option"
 	};
 
+static char	get_list(bitstr_t *, int, int, const char *[], int, FILE *),
+		get_range(bitstr_t *, int, int, const char *[], int, FILE *),
+		get_number(int *, int, const char *[], int, FILE *);
+static int	set_element(bitstr_t *, int, int, int);
 
 void
 free_entry(e)
@@ -238,7 +243,8 @@ load_entry(file, error_func, pw, envp)
 			ecode = e_username;
 			goto eof;
 		}
-		Debug(DPARS, ("load_entry()...uid %d, gid %d\n",e->uid,e->gid))
+		Debug(DPARS, ("load_entry()...uid %ld, gid %ld\n",
+			      (long)e->uid, (long)e->gid))
 	}
 
 	e->uid = pw->pw_uid;
@@ -286,10 +292,25 @@ load_entry(file, error_func, pw, envp)
 
 	Debug(DPARS, ("load_entry()...about to parse command\n"))
 
+	/* If the first character of the command is '-' it is a cron option.
+	 */
+	while ((ch = get_char(file)) == '-') {
+		switch (ch = get_char(file)) {
+		case 'q':
+			e->flags |= DONT_LOG;
+			Skip_Nonblanks(ch, file)
+			break;
+		default:
+			ecode = e_option;
+			goto eof;
+		}
+		Skip_Blanks(ch, file)
+	}
+	unget_char(ch, file);
+
 	/* Everything up to the next \n or EOF is part of the command...
 	 * too bad we don't know in advance how long it will be, since we
 	 * need to malloc a string for it... so, we limit it to MAX_COMMAND.
-	 * XXX - should use realloc().
 	 */ 
 	ch = get_string(cmd, MAX_COMMAND, file, "\n");
 
@@ -324,11 +345,11 @@ static char
 get_list(bits, low, high, names, ch, file)
 	bitstr_t	*bits;		/* one bit per flag, default=FALSE */
 	int		low, high;	/* bounds, impl. offset for bitstr */
-	char		*names[];	/* NULL or *[] of names for these elements */
+	const char	*names[];	/* NULL or *[] of names for these elements */
 	int		ch;		/* current character being processed */
 	FILE		*file;		/* file being read */
 {
-	register int	done;
+	int done;
 
 	/* we know that we point to a non-blank character here;
 	 * must do a Skip_Blanks before we exit, so that the
@@ -371,15 +392,14 @@ static char
 get_range(bits, low, high, names, ch, file)
 	bitstr_t	*bits;		/* one bit per flag, default=FALSE */
 	int		low, high;	/* bounds, impl. offset for bitstr */
-	char		*names[];	/* NULL or names of elements */
+	const char	*names[];	/* NULL or names of elements */
 	int		ch;		/* current character being processed */
 	FILE		*file;		/* file being read */
 {
 	/* range = number | number "-" number [ "/" number ]
 	 */
 
-	register int	i;
-	auto int	num1, num2, num3;
+	int	i, num1, num2, num3;
 
 	Debug(DPARS|DEXT, ("get_range()...entering, exit won't show\n"))
 
@@ -454,11 +474,11 @@ get_range(bits, low, high, names, ch, file)
 
 static char
 get_number(numptr, low, names, ch, file)
-	int	*numptr;	/* where does the result go? */
-	int	low;		/* offset applied to result if symbolic enum used */
-	char	*names[];	/* symbolic names, if any, for enums */
-	int	ch;		/* current character */
-	FILE	*file;		/* source */
+	int		*numptr;	/* where does the result go? */
+	int		low;		/* offset applied to enum result */
+	const char	*names[];	/* symbolic names, if any, for enums */
+	int		ch;		/* current character */
+	FILE		*file;		/* source */
 {
 	char	temp[MAX_TEMPSTR], *pc;
 	int	len, i, all_digits;

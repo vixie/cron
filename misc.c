@@ -1,22 +1,26 @@
 /* Copyright 1988,1990,1993,1994 by Paul Vixie
  * All rights reserved
+ */
+
+/*
+ * Copyright (c) 1997 by Internet Software Consortium
  *
- * Distribute freely, except: don't remove my name from the source or
- * documentation (don't take credit for my work), mark your changes (don't
- * get me blamed for your possible bugs), don't alter or remove this
- * notice.  May be sold if buildable source is provided to buyer.  No
- * warrantee of any kind, express or implied, is included with this
- * software; use at your own risk, responsibility for damages (if any) to
- * anyone resulting from the use of this software rests entirely with the
- * user.
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  *
- * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
- * I'll try to keep a version up to date.  I can be reached as follows:
- * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+ * THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
+ * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
+ * CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ * SOFTWARE.
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.4 1997/01/14 20:48:10 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.5 1998/08/14 00:32:40 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -90,13 +94,7 @@ glue_strings(buffer, buffer_size, a, b, separator)
 }
 
 int
-strcmp_until(left, right, until)
-	char	*left;
-	char	*right;
-	int	until;
-{
-	register int	diff;
-
+strcmp_until(const char *left, const char *right, int until) {
 	while (*left && *left != until && *left == *right) {
 		left++;
 		right++;
@@ -104,12 +102,9 @@ strcmp_until(left, right, until)
 
 	if ((*left=='\0' || *left == until) &&
 	    (*right=='\0' || *right == until)) {
-		diff = 0;
-	} else {
-		diff = *left - *right;
+		return (0);
 	}
-
-	return (diff);
+	return (*left - *right);
 }
 
 
@@ -166,13 +161,13 @@ set_debug_flags(flags)
 	DebugFlags = 0;
 
 	while (*pc) {
-		char	**test;
-		int	mask;
+		const char	**test;
+		int		mask;
 
 		/* try to find debug flag name in our list.
 		 */
 		for (	test = DebugFlagNames, mask = 1;
-			*test && strcmp_until(*test, pc, ',');
+			*test != NULL && strcmp_until(*test, pc, ',');
 			test++, mask <<= 1
 		    )
 			;
@@ -303,8 +298,9 @@ acquire_daemonlock(closeflag)
 	}
 
 	if (!fp) {
-		if (strlen(PIDDIR)+strlen(PIDFILE) >= sizeof pidfile) {
-			fprintf(stderr, "%s: path too long\n");
+		if (strlens(PIDDIR, PIDFILE, NULL) + 1 >= sizeof pidfile) {
+			fprintf(stderr, "%s%s: path too long\n",
+				PIDDIR, PIDFILE);
 			log_it("CRON", getpid(), "DEATH", "path too long");
 			exit(ERROR_EXIT);
 		}
@@ -333,7 +329,7 @@ acquire_daemonlock(closeflag)
 	}
 
 	rewind(fp);
-	fprintf(fp, "%d\n", getpid());
+	fprintf(fp, "%ld\n", (long)getpid());
 	fflush(fp);
 	(void) ftruncate(fileno(fp), ftell(fp));
 
@@ -505,15 +501,15 @@ log_it(username, xpid, event, detail)
 	const char *event;
 	const char *detail;
 {
-	PID_T			pid = xpid;
+	PID_T		pid = xpid;
 #if defined(LOG_FILE)
-	char			*msg;
-	TIME_T			now = time((TIME_T) 0);
-	register struct tm	*t = localtime(&now);
+	char		*msg;
+	TIME_T		now = time((TIME_T) 0);
+	struct tm	*t = localtime(&now);
 #endif /*LOG_FILE*/
 
 #if defined(SYSLOG)
-	static int		syslog_open = 0;
+	static int	syslog_open = 0;
 #endif
 
 #if defined(LOG_FILE)
@@ -576,8 +572,8 @@ log_it(username, xpid, event, detail)
 
 #if DEBUGGING
 	if (DebugFlags) {
-		fprintf(stderr, "log_it: (%s %d) %s (%s)\n",
-			username, pid, event, detail);
+		fprintf(stderr, "log_it: (%s %ld) %s (%s)\n",
+			username, (long)pid, event, detail);
 	}
 #endif
 }
@@ -598,12 +594,12 @@ log_close() {
  */
 char *
 first_word(s, t)
-	register char *s;	/* string we want the first word of */
-	register char *t;	/* terminators, implicitly including \0 */
+	char *s;	/* string we want the first word of */
+	char *t;	/* terminators, implicitly including \0 */
 {
 	static char retbuf[2][MAX_TEMPSTR + 1];	/* sure wish C had GC */
 	static int retsel = 0;
-	register char *rb, *rp;
+	char *rb, *rp;
 
 	/* select a return buffer */
 	retsel = 1-retsel;
@@ -631,9 +627,9 @@ first_word(s, t)
  */
 void
 mkprint(dst, src, len)
-	register char *dst;
-	register unsigned char *src;
-	register int len;
+	char *dst;
+	unsigned char *src;
+	int len;
 {
 	/*
 	 * XXX
@@ -642,7 +638,7 @@ mkprint(dst, src, len)
 	 */
 	while (len-- > 0)
 	{
-		register unsigned char ch = *src++;
+		unsigned char ch = *src++;
 
 		if (ch < ' ') {			/* control character */
 			*dst++ = '^';
@@ -666,10 +662,10 @@ mkprint(dst, src, len)
  */
 char *
 mkprints(src, len)
-	register unsigned char *src;
-	register unsigned int len;
+	unsigned char *src;
+	unsigned int len;
 {
-	register char *dst = malloc(len*4 + 1);
+	char *dst = malloc(len*4 + 1);
 
 	mkprint(dst, src, len);
 
@@ -702,7 +698,6 @@ arpadate(clock)
 }
 #endif /*MAIL_DATE*/
 
-
 #ifdef HAVE_SAVED_UIDS
 static int save_euid;
 int swap_uids() { save_euid = geteuid(); return (seteuid(getuid())); }
@@ -711,3 +706,16 @@ int swap_uids_back() { return (seteuid(save_euid)); }
 int swap_uids() { return (setreuid(geteuid(), getuid())); }
 int swap_uids_back() { return (swap_uids()); }
 #endif /*HAVE_SAVED_UIDS*/
+
+size_t
+strlens(const char *last, ...) {
+	va_list ap;
+	size_t ret = 0;
+	const char *str;
+
+	va_start(ap, last);
+	for (str = last; str != NULL; str = va_arg(ap, const char *))
+		ret += strlen(str);
+	va_end(ap);
+	return (ret);
+}

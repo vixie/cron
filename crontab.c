@@ -1,22 +1,26 @@
 /* Copyright 1988,1990,1993,1994 by Paul Vixie
  * All rights reserved
+ */
+
+/*
+ * Copyright (c) 1997 by Internet Software Consortium
  *
- * Distribute freely, except: don't remove my name from the source or
- * documentation (don't take credit for my work), mark your changes (don't
- * get me blamed for your possible bugs), don't alter or remove this
- * notice.  May be sold if buildable source is provided to buyer.  No
- * warrantee of any kind, express or implied, is included with this
- * software; use at your own risk, responsibility for damages (if any) to
- * anyone resulting from the use of this software rests entirely with the
- * user.
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  *
- * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
- * I'll try to keep a version up to date.  I can be reached as follows:
- * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+ * THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
+ * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
+ * CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ * SOFTWARE.
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: crontab.c,v 1.2 1996/12/27 19:37:49 vixie Exp $";
+static char rcsid[] = "$Id: crontab.c,v 1.3 1998/08/14 00:32:38 vixie Exp $";
 #endif
 
 /* crontab - install and manage per-user crontab files
@@ -24,39 +28,17 @@ static char rcsid[] = "$Id: crontab.c,v 1.2 1996/12/27 19:37:49 vixie Exp $";
  * vix 26jan87 [original]
  */
 
-
 #define	MAIN_PROGRAM
 
-
 #include "cron.h"
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/file.h>
-#include <sys/stat.h>
-#ifdef USE_UTIMES
-# include <sys/time.h>
-#else
-# include <time.h>
-# ifndef COHERENT
-#  include <utime.h>
-# else
-#  include <sys/types.h>
-# endif
-#endif
-#if defined(POSIX)
-# include <locale.h>
-#endif
-
 
 #define NHEADER_LINES 3
-
 
 enum opt_t	{ opt_unknown, opt_list, opt_delete, opt_edit, opt_replace };
 
 #if DEBUGGING
 static char	*Options[] = { "???", "list", "delete", "edit", "replace" };
 #endif
-
 
 static	PID_T		Pid;
 static	char		User[MAX_UNAME], RealUser[MAX_UNAME];
@@ -65,19 +47,16 @@ static	FILE		*NewCrontab;
 static	int		CheckErrorCount;
 static	enum opt_t	Option;
 static	struct passwd	*pw;
-static	void		list_cmd __P((void)),
-			delete_cmd __P((void)),
-			edit_cmd __P((void)),
-			poke_daemon __P((void)),
-			check_error __P((char *)),
-			parse_args __P((int c, char *v[]));
-static	int		replace_cmd __P((void));
-
+static	void		list_cmd(void),
+			delete_cmd(void),
+			edit_cmd(void),
+			poke_daemon(void),
+			check_error(const char *),
+			parse_args(int c, char *v[]);
+static	int		replace_cmd(void);
 
 static void
-usage(msg)
-	char *msg;
-{
+usage(const char *msg) {
 	fprintf(stderr, "%s: usage error: %s\n", ProgramName, msg);
 	fprintf(stderr, "usage:\t%s [-u user] file\n", ProgramName);
 	fprintf(stderr, "\t%s [-u user] { -e | -l | -r }\n", ProgramName);
@@ -88,20 +67,14 @@ usage(msg)
 	exit(ERROR_EXIT);
 }
 
-
 int
-main(argc, argv)
-	int	argc;
-	char	*argv[];
-{
+main(int argc, char *argv[]) {
 	int	exitstatus;
 
 	Pid = getpid();
 	ProgramName = argv[0];
 
-#if defined(POSIX)
 	setlocale(LC_ALL, "");
-#endif
 
 #if defined(BSD)
 	setlinebuf(stderr);
@@ -119,27 +92,29 @@ main(argc, argv)
 	}
 	exitstatus = OK_EXIT;
 	switch (Option) {
-	case opt_list:		list_cmd();
-				break;
-	case opt_delete:	delete_cmd();
-				break;
-	case opt_edit:		edit_cmd();
-				break;
-	case opt_replace:	if (replace_cmd() < 0)
-					exitstatus = ERROR_EXIT;
-				break;
+	case opt_list:
+		list_cmd();
+		break;
+	case opt_delete:
+		delete_cmd();
+		break;
+	case opt_edit:
+		edit_cmd();
+		break;
+	case opt_replace:
+		if (replace_cmd() < 0)
+			exitstatus = ERROR_EXIT;
+		break;
+	default:
+		abort();
 	}
 	exit(0);
 	/*NOTREACHED*/
 }
-	
 
 static void
-parse_args(argc, argv)
-	int	argc;
-	char	*argv[];
-{
-	int		argch;
+parse_args(int argc, char *argv[]) {
+	int argch;
 
 	if (!(pw = getpwuid(getuid()))) {
 		fprintf(stderr, "%s: your UID isn't in the passwd file.\n",
@@ -162,14 +137,12 @@ parse_args(argc, argv)
 				usage("bad debug option");
 			break;
 		case 'u':
-			if (MY_UID(pw) != ROOT_UID)
-			{
+			if (MY_UID(pw) != ROOT_UID) {
 				fprintf(stderr,
 					"must be privileged to use -u\n");
 				exit(ERROR_EXIT);
 			}
-			if (!(pw = getpwnam(optarg)))
-			{
+			if (!(pw = getpwnam(optarg))) {
 				fprintf(stderr, "%s:  user `%s' unknown\n",
 					ProgramName, optarg);
 				exit(ERROR_EXIT);
@@ -201,18 +174,16 @@ parse_args(argc, argv)
 	endpwent();
 
 	if (Option != opt_unknown) {
-		if (argv[optind] != NULL) {
+		if (argv[optind] != NULL)
 			usage("no arguments permitted after this option");
-		}
 	} else {
 		if (argv[optind] != NULL) {
 			Option = opt_replace;
 			if (strlen(argv[optind]) >= sizeof Filename)
 				usage("filename too long");
 			(void) strcpy (Filename, argv[optind]);
-		} else {
+		} else
 			usage("file name must be specified for replace");
-		}
 	}
 
 	if (Option == opt_replace) {
@@ -220,9 +191,9 @@ parse_args(argc, argv)
 		 * chdir(2) into /var/cron before we get around to
 		 * reading the file.
 		 */
-		if (!strcmp(Filename, "-")) {
+		if (!strcmp(Filename, "-"))
 			NewCrontab = stdin;
-		} else {
+		else {
 			/* relinquish the setuid status of the binary during
 			 * the open, lest nonroot users read files they should
 			 * not be able to read.  we can't use access() here
@@ -252,10 +223,10 @@ parse_args(argc, argv)
 
 
 static void
-list_cmd() {
-	char	n[MAX_FNAME];
-	FILE	*f;
-	int	ch;
+list_cmd(void) {
+	char n[MAX_FNAME];
+	FILE *f;
+	int ch;
 
 	log_it(RealUser, Pid, "LIST", User);
 	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
@@ -278,17 +249,16 @@ list_cmd() {
 	fclose(f);
 }
 
-
 static void
-delete_cmd() {
-	char	n[MAX_FNAME];
+delete_cmd(void) {
+	char n[MAX_FNAME];
 
 	log_it(RealUser, Pid, "DELETE", User);
 	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
 		fprintf(stderr, "path too long\n");
 		exit(ERROR_EXIT);
 	}
-	if (unlink(n)) {
+	if (unlink(n) != 0) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
 		else
@@ -298,25 +268,21 @@ delete_cmd() {
 	poke_daemon();
 }
 
-
 static void
-check_error(msg)
-	char	*msg;
-{
+check_error(const char *msg) {
 	CheckErrorCount++;
 	fprintf(stderr, "\"%s\":%d: %s\n", Filename, LineNumber-1, msg);
 }
 
-
 static void
-edit_cmd() {
-	char		n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
-	FILE		*f;
-	int		ch, t, x;
-	struct stat	statbuf;
-	time_t		mtime;
-	WAIT_T		waiter;
-	PID_T		pid, xpid;
+edit_cmd(void) {
+	char n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
+	FILE *f;
+	int ch, t, x;
+	struct stat statbuf;
+	time_t mtime;
+	WAIT_T waiter;
+	PID_T pid, xpid;
 
 	log_it(RealUser, Pid, "BEGIN EDIT", User);
 	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
@@ -336,7 +302,7 @@ edit_cmd() {
 		}
 	}
 
-	sprintf(q, "crontab.%d", Pid);
+	sprintf(q, "crontab.%ld", (long)Pid);
 	if (!glue_strings(Filename, sizeof Filename, _PATH_TMP, q, '/')) {
 		fprintf(stderr, "path too long\n");
 		goto fatal;
@@ -365,7 +331,7 @@ edit_cmd() {
 
 	/* ignore the top few comments since we probably put them there.
 	 */
-	for (x = 0;  x < NHEADER_LINES;  x++) {
+	for (x = 0; x < NHEADER_LINES; x++) {
 		ch = get_char(f);
 		if (EOF == ch)
 			break;
@@ -395,7 +361,8 @@ edit_cmd() {
 	if (ferror(NewCrontab)) {
 		fprintf(stderr, "%s: error while writing new crontab to %s\n",
 			ProgramName, Filename);
- fatal:		unlink(Filename);
+ fatal:
+		unlink(Filename);
 		exit(ERROR_EXIT);
 	}
 	if (fstat(t, &statbuf) < 0) {
@@ -404,9 +371,8 @@ edit_cmd() {
 	}
 	mtime = statbuf.st_mtime;
 
-	if ((!(editor = getenv("VISUAL")))
-	 && (!(editor = getenv("EDITOR")))
-	    ) {
+	if ((editor = getenv("VISUAL")) == NULL &&
+	    (editor = getenv("EDITOR")) == NULL) {
 		editor = EDITOR;
 	}
 
@@ -457,8 +423,8 @@ edit_cmd() {
 	/* parent */
 	xpid = wait(&waiter);
 	if (xpid != pid) {
-		fprintf(stderr, "%s: wrong PID (%d != %d) from \"%s\"\n",
-			ProgramName, xpid, pid, editor);
+		fprintf(stderr, "%s: wrong PID (%ld != %ld) from \"%s\"\n",
+			ProgramName, (long)xpid, (long)pid, editor);
 		goto fatal;
 	}
 	if (WIFEXITED(waiter) && WEXITSTATUS(waiter)) {
@@ -524,16 +490,16 @@ edit_cmd() {
  *		-2	on install error
  */
 static int
-replace_cmd() {
-	char	n[MAX_FNAME], envstr[MAX_ENVSTR], tn[MAX_FNAME];
-	FILE	*tmp;
-	int	ch, eof;
-	entry	*e;
-	time_t	now = time(NULL);
-	char	**envp = env_init();
+replace_cmd(void) {
+	char n[MAX_FNAME], envstr[MAX_ENVSTR], tn[MAX_FNAME];
+	FILE *tmp;
+	int ch, eof;
+	entry *e;
+	time_t now = time(NULL);
+	char **envp = env_init();
 	struct stat sb;
 
-	(void) sprintf(n, "tmp.%d", Pid);
+	(void) sprintf(n, "tmp.%ld", (long)Pid);
 	if (!glue_strings(tn, sizeof tn, SPOOL_DIR, n, '/')) {
 		fprintf(stderr, "path too long\n");
 		return (-2);
@@ -639,9 +605,6 @@ replace_cmd() {
 		unlink(tn);
 		return (-2);
 	}
-#ifdef RENAME_ISNT_ATOMIC
-	unlink(n);
-#endif
 	if (rename(tn, n)) {
 		fprintf(stderr, "%s: error renaming %s to %s\n",
 			ProgramName, tn, n);
@@ -656,25 +619,11 @@ replace_cmd() {
 	return (0);
 }
 
-
 static void
 poke_daemon() {
-#ifdef USE_UTIMES
-	struct timeval tvs[2];
-	struct timezone tz;
-
-	(void) gettimeofday(&tvs[0], &tz);
-	tvs[1] = tvs[0];
-	if (utimes(SPOOL_DIR, tvs) < OK) {
-		fprintf(stderr, "crontab: can't update mtime on spooldir\n");
-		perror(SPOOL_DIR);
-		return;
-	}
-#else
 	if (utime(SPOOL_DIR, NULL) < OK) {
 		fprintf(stderr, "crontab: can't update mtime on spooldir\n");
 		perror(SPOOL_DIR);
 		return;
 	}
-#endif /*USE_UTIMES*/
 }

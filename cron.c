@@ -1,65 +1,55 @@
 /* Copyright 1988,1990,1993,1994 by Paul Vixie
  * All rights reserved
+ */
+
+/*
+ * Copyright (c) 1997 by Internet Software Consortium
  *
- * Distribute freely, except: don't remove my name from the source or
- * documentation (don't take credit for my work), mark your changes (don't
- * get me blamed for your possible bugs), don't alter or remove this
- * notice.  May be sold if buildable source is provided to buyer.  No
- * warrantee of any kind, express or implied, is included with this
- * software; use at your own risk, responsibility for damages (if any) to
- * anyone resulting from the use of this software rests entirely with the
- * user.
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  *
- * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
- * I'll try to keep a version up to date.  I can be reached as follows:
- * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+ * THE SOFTWARE IS PROVIDED "AS IS" AND INTERNET SOFTWARE CONSORTIUM DISCLAIMS
+ * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL INTERNET SOFTWARE
+ * CONSORTIUM BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+ * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ * SOFTWARE.
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: cron.c,v 1.2 1996/12/27 19:37:44 vixie Exp $";
+static char rcsid[] = "$Id: cron.c,v 1.3 1998/08/14 00:32:36 vixie Exp $";
 #endif
-
 
 #define	MAIN_PROGRAM
 
-
 #include "cron.h"
-#include <signal.h>
-#if SYS_TIME_H
-# include <sys/time.h>
-#else
-# include <time.h>
-#endif
 
-
-static	void	usage __P((void)),
-		run_reboot_jobs __P((cron_db *)),
-		cron_tick __P((cron_db *)),
-		cron_sync __P((void)),
-		cron_sleep __P((void)),
-#ifdef USE_SIGCHLD
-		sigchld_handler __P((int)),
-#endif
-		sighup_arm __P((void)),
-		sighup_handler __P((int)),
-		parse_args __P((int c, char *v[]));
-
+static	void	usage(void),
+		run_reboot_jobs(cron_db *),
+		cron_tick(cron_db *),
+		cron_sync(void),
+		cron_sleep(void),
+		sigchld_handler(int),
+		sighup_arm(void),
+		sighup_handler(int),
+		parse_args(int c, char *v[]);
 
 static void
-usage() {
+usage(void) {
 	fprintf(stderr, "usage:  %s [-x debugflag[,...]]\n", ProgramName);
 	exit(ERROR_EXIT);
 }
 
-
 int
-main(argc, argv)
-	int	argc;
-	char	*argv[];
-{
+main(int argc, char *argv[]) {
 	cron_db	database;
 
 	ProgramName = argv[0];
+
+	setlocale(LC_ALL, "");
 
 #if defined(BSD)
 	setlinebuf(stdout);
@@ -68,20 +58,14 @@ main(argc, argv)
 
 	parse_args(argc, argv);
 
-#ifdef USE_SIGCHLD
 	(void) signal(SIGCHLD, sigchld_handler);
-#else
-	(void) signal(SIGCLD, SIG_IGN);
-#endif
 	(void) signal(SIGHUP, sighup_handler);
 
 	acquire_daemonlock(0);
 	set_cron_uid();
 	set_cron_cwd();
 
-#if defined(POSIX)
-	setenv("PATH", _PATH_DEFPATH, 1);
-#endif
+	putenv("PATH="_PATH_DEFPATH);
 
 	/* if there are no debug flags turned on, fork as a daemon should.
 	 */
@@ -90,7 +74,7 @@ main(argc, argv)
 # else
 	if (0) {
 # endif
-		(void) fprintf(stderr, "[%d] cron started\n", getpid());
+		(void) fprintf(stderr, "[%ld] cron started\n", (long)getpid());
 	} else {
 		switch (fork()) {
 		case -1:
@@ -133,33 +117,26 @@ main(argc, argv)
 	}
 }
 
-
 static void
-run_reboot_jobs(db)
-	cron_db *db;
-{
-	register user		*u;
-	register entry		*e;
+run_reboot_jobs(cron_db *db) {
+	user *u;
+	entry *e;
 
-	for (u = db->head;  u != NULL;  u = u->next) {
-		for (e = u->crontab;  e != NULL;  e = e->next) {
-			if (e->flags & WHEN_REBOOT) {
+	for (u = db->head; u != NULL; u = u->next) {
+		for (e = u->crontab; e != NULL; e = e->next) {
+			if (e->flags & WHEN_REBOOT)
 				job_add(e, u);
-			}
 		}
 	}
 	(void) job_runqueue();
 }
 
-
 static void
-cron_tick(db)
-	cron_db	*db;
-{
- 	register struct tm	*tm = localtime(&TargetTime);
-	register int		minute, hour, dom, month, dow;
-	register user		*u;
-	register entry		*e;
+cron_tick(cron_db *db) {
+	struct tm *tm = localtime(&TargetTime);
+	int minute, hour, dom, month, dow;
+	user *u;
+	entry *e;
 
 	/* make 0-based values out of these so we can use them as indicies
 	 */
@@ -169,8 +146,8 @@ cron_tick(db)
 	month = tm->tm_mon +1 /* 0..11 -> 1..12 */ -FIRST_MONTH;
 	dow = tm->tm_wday -FIRST_DOW;
 
-	Debug(DSCH, ("[%d] tick(%d,%d,%d,%d,%d)\n",
-		getpid(), minute, hour, dom, month, dow))
+	Debug(DSCH, ("[%ld] tick(%d,%d,%d,%d,%d)\n",
+		     (long)getpid(), minute, hour, dom, month, dow))
 
 	/* the dom/dow situation is odd.  '* * 1,15 * Sun' will run on the
 	 * first and fifteenth AND every Sunday;  '* * * * Sun' will run *only*
@@ -178,25 +155,23 @@ cron_tick(db)
 	 * is why we keep 'e->dow_star' and 'e->dom_star'.  yes, it's bizarre.
 	 * like many bizarre things, it's the standard.
 	 */
-	for (u = db->head;  u != NULL;  u = u->next) {
-		for (e = u->crontab;  e != NULL;  e = e->next) {
-			Debug(DSCH|DEXT, ("user [%s:%d:%d:...] cmd=\"%s\"\n",
+	for (u = db->head; u != NULL; u = u->next) {
+		for (e = u->crontab; e != NULL; e = e->next) {
+			Debug(DSCH|DEXT, ("user [%s:%ld:%ld:...] cmd=\"%s\"\n",
 					  env_get("LOGNAME", e->envp),
-					  e->uid, e->gid, e->cmd))
-			if (bit_test(e->minute, minute)
-			 && bit_test(e->hour, hour)
-			 && bit_test(e->month, month)
-			 && ( ((e->flags & DOM_STAR) || (e->flags & DOW_STAR))
+					  (long)e->uid, (long)e->gid, e->cmd))
+			if (bit_test(e->minute, minute) &&
+			    bit_test(e->hour, hour) &&
+			    bit_test(e->month, month) &&
+			    ( ((e->flags & DOM_STAR) || (e->flags & DOW_STAR))
 			      ? (bit_test(e->dow,dow) && bit_test(e->dom,dom))
 			      : (bit_test(e->dow,dow) || bit_test(e->dom,dom))
 			    )
-			   ) {
+			   )
 				job_add(e, u);
-			}
 		}
 	}
 }
-
 
 /* the task here is to figure out how long it's going to be until :00 of the
  * following minute and initialize TargetTime to this value.  TargetTime
@@ -208,23 +183,23 @@ cron_tick(db)
  * that's something sysadmin's know to expect what with crashing computers..
  */
 static void
-cron_sync() {
- 	register struct tm	*tm;
+cron_sync(void) {
+ 	struct tm *tm;
 
 	TargetTime = time((time_t*)0);
 	tm = localtime(&TargetTime);
 	TargetTime += (60 - tm->tm_sec);
 }
 
-
 static void
-cron_sleep() {
-	register int	seconds_to_wait;
+cron_sleep(void) {
+	int seconds_to_wait;
 
 	do {
 		seconds_to_wait = (int) (TargetTime - time((time_t*)0));
-		Debug(DSCH, ("[%d] TargetTime=%ld, sec-to-wait=%d\n",
-			     getpid(), TargetTime, seconds_to_wait))
+		Debug(DSCH, ("[%ld] TargetTime=%ld, sec-to-wait=%d\n",
+			     (long)getpid(), (long)TargetTime,
+			     seconds_to_wait))
 
 		/* if we intend to sleep, this means that it's finally
 		 * time to empty the job queue (execute it).
@@ -238,48 +213,40 @@ cron_sleep() {
 	} while (seconds_to_wait > 0 && job_runqueue());
 
 	while (seconds_to_wait > 0) {
-		Debug(DSCH, ("[%d] sleeping for %d seconds\n",
-			getpid(), seconds_to_wait))
+		Debug(DSCH, ("[%ld] sleeping for %d seconds\n",
+			     (long)getpid(), seconds_to_wait))
 		seconds_to_wait = (int) sleep((unsigned int) seconds_to_wait);
 	}
 }
 
-
-#ifdef USE_SIGCHLD
 static void
-sigchld_handler(x) {
-	WAIT_T		waiter;
-	PID_T		pid;
+sigchld_handler(int x) {
+	WAIT_T waiter;
+	PID_T pid;
 
 	for (;;) {
-#ifdef POSIX
 		pid = waitpid(-1, &waiter, WNOHANG);
-#else
-		pid = wait3(&waiter, WNOHANG, (struct rusage *)0);
-#endif
 		switch (pid) {
 		case -1:
 			Debug(DPROC,
-				("[%d] sigchld...no children\n", getpid()))
+			      ("[%ld] sigchld...no children\n",
+			       (long)getpid()))
 			return;
 		case 0:
 			Debug(DPROC,
-				("[%d] sigchld...no dead kids\n", getpid()))
+			      ("[%ld] sigchld...no dead kids\n",
+			       (long)getpid()))
 			return;
 		default:
 			Debug(DPROC,
-				("[%d] sigchld...pid #%d died, stat=%d\n",
-				getpid(), pid, WEXITSTATUS(waiter)))
+			      ("[%ld] sigchld...pid #%ld died, stat=%d\n",
+			       (long)getpid(), (long)pid, WEXITSTATUS(waiter)))
 		}
 	}
 }
-#endif /*USE_SIGCHLD*/
-
 
 static void
-sighup_arm()
-{
-#ifdef POSIX
+sighup_arm() {
 	struct sigaction sact;
 
 	sact.sa_handler = sighup_handler;
@@ -290,29 +257,19 @@ sighup_arm()
 	sact.sa_flags |= SA_RESTART;
 # endif
 	sigaction(SIGHUP, &sact, NULL);
-#else /*POSIX*/
-	signal(SIGHUP, sighup_handler);
-#endif
 }
 
-
 static void
-sighup_handler(x)
-	int	x;
-{
+sighup_handler(int x) {
 	log_close();
 #ifdef ATT
 	sighup_arm();
 #endif
 }
 
-
 static void
-parse_args(argc, argv)
-	int	argc;
-	char	*argv[];
-{
-	int	argch;
+parse_args(int argc, char *argv[]) {
+	int argch;
 
 	while (EOF != (argch = getopt(argc, argv, "x:"))) {
 		switch (argch) {
