@@ -20,7 +20,7 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.5 2000/01/02 20:53:44 vixie Exp $
+ * $Id: pathnames.h,v 1.6 2002/12/29 07:21:19 vixie Exp $
  */
 
 #ifndef CRONDIR
@@ -54,6 +54,7 @@
 #define LOG_FILE	"log"
 
 			/* where should the daemon stick its PID?
+			 * PIDDIR must end in '/'.
 			 */
 #ifdef _PATH_VARRUN
 # define PIDDIR	_PATH_VARRUN
@@ -61,6 +62,7 @@
 # define PIDDIR "/etc/"
 #endif
 #define PIDFILE		"cron.pid"
+#define _PATH_CRON_PID	PIDDIR PIDFILE
 
 			/* 4.3BSD-style crontab */
 #define SYSCRONTAB	"/etc/crontab"
@@ -84,4 +86,8 @@
 
 #ifndef _PATH_TMP
 # define _PATH_TMP "/tmp"
+#endif
+
+#ifndef _PATH_DEVNULL
+# define _PATH_DEVNULL "/dev/null"
 #endif

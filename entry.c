@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: entry.c,v 1.7 2002/07/07 03:37:04 vixie Exp $";
+static char rcsid[] = "$Id: entry.c,v 1.8 2002/12/29 07:21:19 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS'd; rest of log is in RCS file]
@@ -34,7 +34,7 @@ static char rcsid[] = "$Id: entry.c,v 1.7 2002/07/07 03:37:04 vixie Exp $";
 
 typedef	enum ecode {
 	e_none, e_minute, e_hour, e_dom, e_month, e_dow,
-	e_cmd, e_timespec, e_username, e_option
+	e_cmd, e_timespec, e_username, e_option, e_memory
 } ecode_e;
 
 static const char *ecodes[] =
@@ -48,7 +48,8 @@ static const char *ecodes[] =
 		"bad command",
 		"bad time specifier",
 		"bad username",
-		"bad option"
+		"bad option",
+		"out of memory"
 	};
 
 static char	get_list(bitstr_t *, int, int, const char *[], char, FILE *),
@@ -86,6 +87,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	int ch;
 	char cmd[MAX_COMMAND];
 	char envstr[MAX_ENVSTR];
+	char **tenvp;
 
 	Debug(DPARS, ("load_entry()...about to eat comments\n"))
 
@@ -147,12 +149,20 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
 		} else if (!strcmp("hourly", cmd)) {
 			bit_set(e->minute, 0);
-			bit_set(e->hour, (LAST_HOUR-FIRST_HOUR+1));
+			bit_nset(e->hour, 0, (LAST_HOUR-FIRST_HOUR+1));
 			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
 		} else {
 			ecode = e_timespec;
+			goto eof;
+		}
+		/* Advance past whitespace between shortcut and
+		 * username/command.
+		 */
+		Skip_Blanks(ch, file);
+		if (ch == EOF) {
+			ecode = e_cmd;
 			goto eof;
 		}
 	} else {
@@ -238,6 +248,9 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		}
 		Debug(DPARS, ("load_entry()...uid %ld, gid %ld\n",
 			      (long)e->uid, (long)e->gid))
+	} else if (ch == '*') {
+		ecode = e_cmd;
+		goto eof;
 	}
 
 	e->uid = pw->pw_uid;
@@ -246,40 +259,63 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	/* copy and fix up environment.  some variables are just defaults and
 	 * others are overrides.
 	 */
-	e->envp = env_copy(envp);
+	if ((e->envp = env_copy(envp)) == NULL) {
+		ecode = e_memory;
+		goto eof;
+	}
 	if (!env_get("SHELL", e->envp)) {
 		if (glue_strings(envstr, sizeof envstr, "SHELL",
-				 _PATH_BSHELL, '='))
-			e->envp = env_set(e->envp, envstr);
-		else
+				 _PATH_BSHELL, '=')) {
+			if ((tenvp = env_set(e->envp, envstr)) == NULL) {
+				ecode = e_memory;
+				goto eof;
+			}
+			e->envp = tenvp;
+		} else
 			log_it("CRON", getpid(), "error", "can't set SHELL");
 	}
 	if (!env_get("HOME", e->envp)) {
 		if (glue_strings(envstr, sizeof envstr, "HOME",
-				 pw->pw_dir, '='))
-			e->envp = env_set(e->envp, envstr);
-		else
+				 pw->pw_dir, '=')) {
+			if ((tenvp = env_set(e->envp, envstr)) == NULL) {
+				ecode = e_memory;
+				goto eof;
+			}
+			e->envp = tenvp;
+		} else
 			log_it("CRON", getpid(), "error", "can't set HOME");
 	}
 #if !defined(__bsdi__)
 	if (!env_get("PATH", e->envp)) {
 		if (glue_strings(envstr, sizeof envstr, "PATH",
-				 _PATH_DEFPATH, '='))
-			e->envp = env_set(e->envp, envstr);
-		else
+				 _PATH_DEFPATH, '=')) {
+			if ((tenvp = env_set(e->envp, envstr)) == NULL) {
+				ecode = e_memory;
+				goto eof;
+			}
+			e->envp = tenvp;
+		} else
 			log_it("CRON", getpid(), "error", "can't set PATH");
 	}
 #endif
 	if (glue_strings(envstr, sizeof envstr, "LOGNAME",
-			 pw->pw_name, '='))
-		e->envp = env_set(e->envp, envstr);
-	else
+			 pw->pw_name, '=')) {
+		if ((tenvp = env_set(e->envp, envstr)) == NULL) {
+			ecode = e_memory;
+			goto eof;
+		}
+		e->envp = tenvp;
+	} else
 		log_it("CRON", getpid(), "error", "can't set LOGNAME");
 #if defined(BSD)
 	if (glue_strings(envstr, sizeof envstr, "USER",
-			 pw->pw_name, '='))
-		e->envp = env_set(e->envp, envstr);
-	else
+			 pw->pw_name, '=')) {
+		if ((tenvp = env_set(e->envp, envstr)) == NULL) {
+			ecode = e_memory;
+			goto eof;
+		}
+		e->envp = tenvp;
+	} else
 		log_it("CRON", getpid(), "error", "can't set USER");
 #endif
 
@@ -316,7 +352,10 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 
 	/* got the command in the 'cmd' string; save it in *e.
 	 */
-	e->cmd = strdup(cmd);
+	if ((e->cmd = strdup(cmd)) == NULL) {
+		ecode = e_memory;
+		goto eof;
+	}
 
 	Debug(DPARS, ("load_entry()...returning successfully\n"))
 
@@ -325,6 +364,10 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	return (e);
 
  eof:
+	if (e->envp)
+		env_free(e->envp);
+	if (e->cmd)
+		free(e->cmd);
 	free(e);
 	if (ecode != e_none && error_func)
 		(*error_func)(ecodes[(int)ecode]);

@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 1.5 2000/11/14 23:00:54 vixie Exp $";
+static char rcsid[] = "$Id: env.c,v 1.6 2002/12/29 07:21:19 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -29,7 +29,8 @@ char **
 env_init(void) {
 	char **p = (char **) malloc(sizeof(char **));
 
-	p[0] = NULL;
+	if (p != NULL)
+		p[0] = NULL;
 	return (p);
 }
 
@@ -44,29 +45,38 @@ env_free(char **envp) {
 
 char **
 env_copy(char **envp) {
-	int count, i;
+	int count, i, save_errno;
 	char **p;
 
 	for (count = 0; envp[count] != NULL; count++)
 		NULL;
 	p = (char **) malloc((count+1) * sizeof(char *));  /* 1 for the NULL */
-	for (i = 0;  i < count;  i++)
-		p[i] = strdup(envp[i]);
-	p[count] = NULL;
+	if (p != NULL) {
+		for (i = 0; i < count; i++)
+			if ((p[i] = strdup(envp[i])) == NULL) {
+				save_errno = errno;
+				while (--i >= 0)
+					free(p[i]);
+				free(p);
+				errno = save_errno;
+				return (NULL);
+			}
+		p[count] = NULL;
+	}
 	return (p);
 }
 
 char **
 env_set(char **envp, char *envstr) {
 	int count, found;
-	char **p;
+	char **p, *envtmp;
 
 	/*
 	 * count the number of elements, including the null pointer;
 	 * also set 'found' to -1 or index of entry if already in here.
 	 */
 	found = -1;
-	for (count = 0;  envp[count] != NULL;  count++) {
+	for (count = 0; envp[count] != NULL; count++) {
 		if (!strcmp_until(envp[count], envstr, '='))
 			found = count;
 	}
@@ -77,8 +87,10 @@ env_set(char **envp, char *envstr) {
 		 * it exists already, so just free the existing setting,
 		 * save our new one there, and return the existing array.
 		 */
+		if ((envtmp = strdup(envstr)) == NULL)
+			return (NULL);
 		free(envp[found]);
-		envp[found] = strdup(envstr);
+		envp[found] = envtmp;
 		return (envp);
 	}
 
@@ -87,10 +99,16 @@ env_set(char **envp, char *envstr) {
 	 * one, save our string over the old null pointer, and return resized
 	 * array.
 	 */
+	if ((envtmp = strdup(envstr)) == NULL)
+		return (NULL);
 	p = (char **) realloc((void *) envp,
-			      (unsigned) ((count+1) * sizeof(char **)));
+			      (size_t) ((count+1) * sizeof(char **)));
+	if (p == NULL) {
+		free(envtmp);
+		return (NULL);
+	}
 	p[count] = p[count-1];
-	p[count-1] = strdup(envstr);
+	p[count-1] = envtmp;
 	return (p);
 }
 

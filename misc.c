@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 1.9 2002/07/07 03:37:00 vixie Exp $";
+static char rcsid[] = "$Id: misc.c,v 1.10 2002/12/29 07:21:19 vixie Exp $";
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
@@ -265,33 +265,29 @@ set_cron_cwd(void) {
  * note: main() calls us twice; once before forking, once after.
  *	we maintain static storage of the file pointer so that we
  *	can rewrite our PID into the PIDFILE after the fork.
- *
- * it would be great if fflush() disassociated the file buffer.
  */
 void
 acquire_daemonlock(int closeflag) {
-	static FILE *fp = NULL;
+	static int fd = -1;
 	char buf[3*MAX_FNAME];
-	char pidfile[MAX_FNAME];
-	PID_T otherpid;
-	int fd;
+	const char *pidfile;
+	char *ep;
+	long otherpid;
+	ssize_t num;
 
-	if (closeflag && fp) {
-		fclose(fp);
-		fp = NULL;
+	if (closeflag) {
+		/* close stashed fd for child so we don't leak it. */
+		if (fd != -1) {
+			close(fd);
+			fd = -1;
+		}
 		return;
 	}
 
-	if (!fp) {
-		if (strlens(PIDDIR, PIDFILE, NULL) + 1 >= sizeof pidfile) {
-			fprintf(stderr, "%s%s: path too long\n",
-				PIDDIR, PIDFILE);
-			log_it("CRON", getpid(), "DEATH", "path too long");
-			exit(ERROR_EXIT);
-		}
-		sprintf(pidfile, "%s%s", PIDDIR, PIDFILE);
-		if ((-1 == (fd = open(pidfile, O_RDWR|O_CREAT, 0644))) ||
-		    (NULL == (fp = fdopen(fd, "r+")))) {
+	if (fd == -1) {
+		pidfile = _PATH_CRON_PID;
+		/* Initial mode is 0600 to prevent flock() race/DoS. */
+		if ((fd = open(pidfile, O_RDWR|O_CREAT, 0600)) == -1) {
 			sprintf(buf, "can't open or create %s: %s",
 				pidfile, strerror(errno));
 			fprintf(stderr, "%s: %s\n", ProgramName, buf);
@@ -302,21 +298,32 @@ acquire_daemonlock(int closeflag) {
 		if (flock(fd, LOCK_EX|LOCK_NB) < OK) {
 			int save_errno = errno;
 
-			fscanf(fp, "%d", &otherpid);
-			sprintf(buf, "can't lock %s, otherpid may be %d: %s",
+			bzero(buf, sizeof(buf));
+			if ((num = read(fd, buf, sizeof(buf) - 1)) > 0 &&
+			    (otherpid = strtol(buf, &ep, 10)) > 0 &&
+			    ep != buf && *ep == '\n' && otherpid != LONG_MAX) {
+				sprintf(buf,
+				    "can't lock %s, otherpid may be %ld: %s",
+				    pidfile, otherpid, strerror(save_errno));
+			} else {
+				sprintf(buf,
+				    "can't lock %s, otherpid unknown: %s",
+				    pidfile, strerror(save_errno));
+			}
+			sprintf(buf, "can't lock %s, otherpid may be %ld: %s",
 				pidfile, otherpid, strerror(save_errno));
 			fprintf(stderr, "%s: %s\n", ProgramName, buf);
 			log_it("CRON", getpid(), "DEATH", buf);
 			exit(ERROR_EXIT);
 		}
-
+		(void) fchmod(fd, 0644);
 		(void) fcntl(fd, F_SETFD, 1);
 	}
 
-	rewind(fp);
-	fprintf(fp, "%ld\n", (long)getpid());
-	fflush(fp);
-	(void) ftruncate(fileno(fp), ftell(fp));
+	sprintf(buf, "%ld\n", (long)getpid());
+	(void) lseek(fd, (off_t)0, SEEK_SET);
+	num = write(fd, buf, strlen(buf));
+	(void) ftruncate(fd, num);
 
 	/* abandon fd and fp even though the file is open. we need to
 	 * keep it open and locked, but we don't need the handles elsewhere.
@@ -404,21 +411,30 @@ skip_comments(FILE *file) {
 		unget_char(ch, file);
 }
 
-/* int in_file(char *string, FILE *file)
+/* int in_file(const char *string, FILE *file, int error)
  *	return TRUE if one of the lines in file matches string exactly,
- *	FALSE otherwise.
+ *	FALSE if no lines match, and error on error.
  */
 static int
-in_file(const char *string, FILE *file) {
+in_file(const char *string, FILE *file, int error)
+{
 	char line[MAX_TEMPSTR];
+	char *endp;
 
-	rewind(file);
+	if (fseek(file, 0L, SEEK_SET))
+		return (error);
 	while (fgets(line, MAX_TEMPSTR, file)) {
-		if (line[0] != '\0')
-			line[strlen(line)-1] = '\0';
+		if (line[0] != '\0') {
+			endp = &line[strlen(line) - 1];
+			if (*endp != '\n')
+				return (error);
+			*endp = '\0';
+		}
 		if (0 == strcmp(line, string))
 			return (TRUE);
 	}
+	if (ferror(file))
+		return (error);
 	return (FALSE);
 }
 
@@ -429,35 +445,43 @@ in_file(const char *string, FILE *file) {
  */
 int
 allowed(const char *username) {
-	static FILE *allow, *deny;
-	static int init = FALSE;
+	FILE	*allow = NULL;
+	FILE	*deny = NULL;
+	int	isallowed;
 
-	if (!init) {
-		init = TRUE;
 #if defined(ALLOW_FILE) && defined(DENY_FILE)
-		allow = fopen(ALLOW_FILE, "r");
-		deny = fopen(DENY_FILE, "r");
-		Debug(DMISC, ("allow/deny enabled, %d/%d\n", !!allow, !!deny))
-#else
-		allow = NULL;
-		deny = NULL;
-#endif
-	}
+	isallowed = FALSE;
+	allow = fopen(ALLOW_FILE, "r");
+	if (allow == NULL && errno != ENOENT)
+		goto out;
+	deny = fopen(DENY_FILE, "r");
+	if (deny == NULL && errno != ENOENT)
+		goto out;
+	Debug(DMISC, ("allow/deny enabled, %d/%d\n", !!allow, !!deny))
 
-	if (allow)
-		fcntl(fileno(allow), F_SETFD, 1);
-	if (deny)
-		fcntl(fileno(deny), F_SETFD, 1);
-	if (allow)
-		return (in_file(username, allow));
-	if (deny)
-		return (!in_file(username, deny));
+	if (allow) {
+		isallowed = in_file(username, allow, FALSE);
+		goto out;
+	}
+	if (deny) {
+		isallowed = !in_file(username, deny, TRUE);
+		goto out;
+	}
+#endif
 
 #if defined(ALLOW_ONLY_ROOT)
-	return (strcmp(username, ROOT_USER) == 0);
+	isallowed = strcmp(username, ROOT_USER) == 0;
 #else
-	return (TRUE);
+	isallowed = TRUE;
 #endif
+
+out:
+	if (allow)
+		fclose(allow);
+	if (deny)
+		fclose(deny);
+
+	return (isallowed);
 }
 
 void
@@ -481,6 +505,8 @@ log_it(const char *username, PID_T xpid, const char *event, const char *detail)
 		     + strlen(event)
 		     + strlen(detail)
 		     + MAX_TEMPSTR);
+	if (msg == NULL)
+		return;
 
 	if (LogFD < OK) {
 		LogFD = open(LOG_FILE, O_WRONLY|O_APPEND|O_CREAT, 0600);
@@ -627,7 +653,8 @@ mkprints(src, len)
 {
 	char *dst = malloc(len*4 + 1);
 
-	mkprint(dst, src, len);
+	if (dst)
+		mkprint(dst, src, len);
 
 	return (dst);
 }

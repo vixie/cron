@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: cron.c,v 1.4 2000/01/02 20:53:38 vixie Exp $";
+static char rcsid[] = "$Id: cron.c,v 1.5 2002/12/29 07:21:19 vixie Exp $";
 #endif
 
 #define	MAIN_PROGRAM
@@ -33,9 +33,12 @@ static	void	usage(void),
 		cron_sync(void),
 		cron_sleep(void),
 		sigchld_handler(int),
-		sighup_arm(void),
 		sighup_handler(int),
+		sigchld_reaper(void),
+		quit(int),
 		parse_args(int c, char *v[]);
+
+static	volatile sig_atomic_t	got_sighup, got_sigchld;
 
 static void
 usage(void) {
@@ -45,7 +48,9 @@ usage(void) {
 
 int
 main(int argc, char *argv[]) {
+	struct sigaction sact;
 	cron_db	database;
+	int fd;
 
 	ProgramName = argv[0];
 
@@ -58,14 +63,28 @@ main(int argc, char *argv[]) {
 
 	parse_args(argc, argv);
 
-	(void) signal(SIGCHLD, sigchld_handler);
-	(void) signal(SIGHUP, sighup_handler);
+	bzero((char *)&sact, sizeof sact);
+	sigemptyset(&sact.sa_mask);
+	sact.sa_flags = 0;
+#ifdef SA_RESTART
+	sact.sa_flags |= SA_RESTART;
+#endif
+	sact.sa_handler = sigchld_handler;
+	(void) sigaction(SIGCHLD, &sact, NULL);
+	sact.sa_handler = sighup_handler;
+	(void) sigaction(SIGHUP, &sact, NULL);
+	sact.sa_handler = quit;
+	(void) sigaction(SIGINT, &sact, NULL);
+	(void) sigaction(SIGTERM, &sact, NULL);
 
 	acquire_daemonlock(0);
 	set_cron_uid();
 	set_cron_cwd();
 
-	putenv("PATH="_PATH_DEFPATH);
+	if (putenv("PATH="_PATH_DEFPATH) < 0) {
+		log_it("CRON", getpid(), "DEATH", "can't malloc");
+		exit(1);
+	}
 
 	/* if there are no debug flags turned on, fork as a daemon should.
 	 */
@@ -85,6 +104,13 @@ main(int argc, char *argv[]) {
 			/* child process */
 			log_it("CRON",getpid(),"STARTUP","fork ok");
 			(void) setsid();
+			if ((fd = open(_PATH_DEVNULL, O_RDWR, 0)) >= 0) {
+				(void) dup2(fd, STDIN);
+				(void) dup2(fd, STDOUT);
+				(void) dup2(fd, STDERR);
+				if (fd != STDERR)
+					(void) close(fd);
+			}
 			break;
 		default:
 			/* parent process should just die */
@@ -100,6 +126,15 @@ main(int argc, char *argv[]) {
 	run_reboot_jobs(&database);
 	cron_sync();
 	while (TRUE) {
+		if (got_sighup) {
+			got_sighup = 0;
+			log_close();
+		}
+		if (got_sigchld) {
+			got_sigchld = 0;
+			sigchld_reaper();
+		}
+
 # if DEBUGGING
 		if (!(DebugFlags & DTEST))
 # endif /*DEBUGGING*/
@@ -220,58 +255,55 @@ cron_sleep(void) {
 }
 
 static void
+sighup_handler(int x) {
+	got_sighup = 1;
+}
+
+static void
 sigchld_handler(int x) {
+	got_sigchld = 1;
+}
+
+static void
+quit(int x) {
+	(void) unlink(_PATH_CRON_PID);
+	_exit(0);
+}
+
+static void
+sigchld_reaper(void) {
 	WAIT_T waiter;
 	PID_T pid;
 
-	for (;;) {
+	do {
 		pid = waitpid(-1, &waiter, WNOHANG);
 		switch (pid) {
 		case -1:
+			if (errno == EINTR)
+				continue;
 			Debug(DPROC,
 			      ("[%ld] sigchld...no children\n",
 			       (long)getpid()))
-			return;
+			break;
 		case 0:
 			Debug(DPROC,
 			      ("[%ld] sigchld...no dead kids\n",
 			       (long)getpid()))
-			return;
+			break;
 		default:
 			Debug(DPROC,
 			      ("[%ld] sigchld...pid #%ld died, stat=%d\n",
 			       (long)getpid(), (long)pid, WEXITSTATUS(waiter)))
+			break;
 		}
-	}
-}
-
-static void
-sighup_arm() {
-	struct sigaction sact;
-
-	sact.sa_handler = sighup_handler;
-	sigemptyset(&sact.sa_mask);
-	sigaddset(&sact.sa_mask, SIGCHLD);
-	sact.sa_flags = 0;
-# ifdef SA_RESTART
-	sact.sa_flags |= SA_RESTART;
-# endif
-	sigaction(SIGHUP, &sact, NULL);
-}
-
-static void
-sighup_handler(int x) {
-	log_close();
-#ifdef ATT
-	sighup_arm();
-#endif
+	} while (pid > 0);
 }
 
 static void
 parse_args(int argc, char *argv[]) {
 	int argch;
 
-	while (EOF != (argch = getopt(argc, argv, "x:"))) {
+	while (-1 != (argch = getopt(argc, argv, "x:"))) {
 		switch (argch) {
 		default:
 			usage();

@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: job.c,v 1.4 2000/11/14 23:00:56 vixie Exp $";
+static char rcsid[] = "$Id: job.c,v 1.5 2002/12/29 07:21:19 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -43,8 +43,9 @@ job_add(entry *e, user *u) {
 			return;
 
 	/* build a job queue element */
-	j = (job*)malloc(sizeof(job));
-	j->next = (job*) NULL;
+	if ((j = (job *)malloc(sizeof(job))) == NULL)
+		return;
+	j->next = NULL;
 	j->e = e;
 	j->u = u;
 

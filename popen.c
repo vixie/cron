@@ -1,21 +1,34 @@
 /*
- * Copyright (c) 1988 The Regents of the University of California.
- * All rights reserved.
+ * Copyright (c) 1988, 1993, 1994
+ *	The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from software written by Ken Arnold and
  * published in UNIX Review, Vol. 6, No. 8.
  *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the University of California, Berkeley.  The name of the
- * University may not be used to endorse or promote products derived
- * from this software without specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  *
  */
 
@@ -24,14 +37,20 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: popen.c,v 1.4 2000/11/14 23:00:56 vixie Exp $";
-static char sccsid[] = "@(#)popen.c	5.7 (Berkeley) 2/14/89";
+#if 0
+static sccsid[] = "@(#)popen.c	8.3 (Berkeley) 4/6/94";
+#else
+static char rcsid[] = "$Id: popen.c,v 1.5 2002/12/29 07:21:19 vixie Exp $";
+#endif
 #endif /* not lint */
 
 #include "cron.h"
 
+#define MAX_ARGV	100
+#define MAX_GARGV	1000
+
 /*
- * Special version of popen which avoids call to shell.  This insures noone
+ * Special version of popen which avoids call to shell.  This ensures noone
  * may create a pipe to a hidden program as a side effect of a list or dir
  * command.
  */
@@ -44,7 +63,7 @@ cron_popen(char *program, char *type) {
 	FILE *iop;
 	int argc, pdes[2];
 	PID_T pid;
-	char *argv[100];
+	char *argv[MAX_ARGV];
 
 	if ((*type != 'r' && *type != 'w') || type[1] != '\0')
 		return (NULL);
@@ -52,36 +71,36 @@ cron_popen(char *program, char *type) {
 	if (!pids) {
 		if ((fds = sysconf(_SC_OPEN_MAX)) <= 0)
 			return (NULL);
-		if (!(pids = (PID_T *)malloc((u_int)(fds * sizeof(PID_T)))))
+		if (!(pids = (PID_T *)malloc((size_t)(fds * sizeof(PID_T)))))
 			return (NULL);
-		bzero((char *)pids, fds * sizeof(PID_T));
+		bzero(pids, fds * sizeof(PID_T));
 	}
 	if (pipe(pdes) < 0)
 		return (NULL);
 
 	/* break up string into pieces */
-	for (argc = 0, cp = program;; cp = NULL)
+	for (argc = 0, cp = program; argc < MAX_ARGV - 1; cp = NULL)
 		if (!(argv[argc++] = strtok(cp, " \t\n")))
 			break;
+	argv[MAX_ARGV-1] = NULL;
 
-	iop = NULL;
-	switch(pid = vfork()) {
+	switch (pid = vfork()) {
 	case -1:			/* error */
 		(void)close(pdes[0]);
 		(void)close(pdes[1]);
-		goto pfree;
+		return (NULL);
 		/* NOTREACHED */
 	case 0:				/* child */
 		if (*type == 'r') {
-			if (pdes[1] != 1) {
-				dup2(pdes[1], 1);
-				dup2(pdes[1], 2);	/* stderr, too! */
+			if (pdes[1] != STDOUT) {
+				dup2(pdes[1], STDOUT);
 				(void)close(pdes[1]);
 			}
+			dup2(STDOUT, STDERR);	/* stderr too! */
 			(void)close(pdes[0]);
 		} else {
-			if (pdes[0] != 0) {
-				dup2(pdes[0], 0);
+			if (pdes[0] != STDIN) {
+				dup2(pdes[0], STDIN);
 				(void)close(pdes[0]);
 			}
 			(void)close(pdes[1]);
@@ -89,6 +108,7 @@ cron_popen(char *program, char *type) {
 		execvp(argv[0], argv);
 		_exit(1);
 	}
+
 	/* parent; assume fdopen can't fail...  */
 	if (*type == 'r') {
 		iop = fdopen(pdes[0], type);
@@ -99,16 +119,15 @@ cron_popen(char *program, char *type) {
 	}
 	pids[fileno(iop)] = pid;
 
- pfree:
 	return (iop);
 }
 
 int
 cron_pclose(FILE *iop) {
 	int fdes;
-	int omask;
-	WAIT_T stat_loc;
 	PID_T pid;
+	WAIT_T status;
+	sigset_t sigset, osigset;
 
 	/*
 	 * pclose returns -1 if stream is not associated with a
@@ -117,10 +136,18 @@ cron_pclose(FILE *iop) {
 	if (pids == 0 || pids[fdes = fileno(iop)] == 0)
 		return (-1);
 	(void)fclose(iop);
-	omask = sigblock(sigmask(SIGINT)|sigmask(SIGQUIT)|sigmask(SIGHUP));
-	while ((pid = wait(&stat_loc)) != pids[fdes] && pid != -1)
-		;
-	(void)sigsetmask(omask);
+	sigemptyset(&sigset);
+	sigaddset(&sigset, SIGINT);
+	sigaddset(&sigset, SIGQUIT);
+	sigaddset(&sigset, SIGHUP);
+	sigprocmask(SIG_BLOCK, &sigset, &osigset);
+	while ((pid = waitpid(pids[fdes], &status, 0)) < 0 && errno == EINTR)
+		continue;
+	sigprocmask(SIG_SETMASK, &osigset, NULL);
 	pids[fdes] = 0;
-	return (pid == -1 ? -1 : WEXITSTATUS(stat_loc));
+	if (pid < 0)
+		return (pid);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (1);
 }

@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.4 2000/01/02 20:53:41 vixie Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.5 2002/12/29 07:21:19 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -87,10 +87,10 @@ child_process(entry *e, user *u) {
 
 	/* our parent is watching for our death by catching SIGCHLD.  we
 	 * do not care to watch for our children's deaths this way -- we
-	 * use wait() explictly.  so we have to disable the signal (which
+	 * use wait() explictly.  so we have to reset the signal (which
 	 * was inherited from the parent).
 	 */
-	(void) signal(SIGCHLD, SIG_IGN);
+	(void) signal(SIGCHLD, SIG_DFL);
 
 	/* create some pipes to talk to our future child
 	 */
@@ -102,17 +102,23 @@ child_process(entry *e, user *u) {
 	 *
 	 * if a % is present in the command, previous characters are the
 	 * command, and subsequent characters are the additional input to
-	 * the command.  Subsequent %'s will be transformed into newlines,
+	 * the command.  An escaped % will have the escape character stripped
+	 * from it.  Subsequent %'s will be transformed into newlines,
 	 * but that happens later.
 	 */
 	/*local*/{
 		int escaped = FALSE;
 		int ch;
+		char *p;
 
-		for (input_data = e->cmd;
+		for (input_data = p = e->cmd;
 		     (ch = *input_data) != '\0';
-		     input_data++) {
+		     input_data++, p++) {
+			if (p != input_data)
+				*p = ch;
 			if (escaped) {
+				if (ch == '%')
+					*--p = ch;
 				escaped = FALSE;
 				continue;
 			}
@@ -125,6 +131,7 @@ child_process(entry *e, user *u) {
 				break;
 			}
 		}
+		*p = '\0';
 	}
 
 	/* fork again, this time so we can exec the user's command.
@@ -172,14 +179,15 @@ child_process(entry *e, user *u) {
 		/* grandchild process.  make std{in,out} be the ends of
 		 * pipes opened by our daddy; make stderr go to stdout.
 		 */
-		close(STDIN);	dup2(stdin_pipe[READ_PIPE], STDIN);
-		close(STDOUT);	dup2(stdout_pipe[WRITE_PIPE], STDOUT);
-		close(STDERR);	dup2(STDOUT, STDERR);
-
-		/* close the pipes we just dup'ed.  The resources will remain.
-		 */
-		close(stdin_pipe[READ_PIPE]);
-		close(stdout_pipe[WRITE_PIPE]);
+		if (stdin_pipe[READ_PIPE] != STDIN) {
+			dup2(stdin_pipe[READ_PIPE], STDIN);
+			close(stdin_pipe[READ_PIPE]);
+		}
+		if (stdout_pipe[WRITE_PIPE] != STDOUT) {
+			dup2(stdout_pipe[WRITE_PIPE], STDOUT);
+			close(stdout_pipe[WRITE_PIPE]);
+		}
+		dup2(STDOUT, STDERR);
 
 		/* set our directory, uid and gid.  Set gid first, since once
 		 * we set uid, we've lost root privledges.
