@@ -21,7 +21,7 @@
 
 /* config.h - configurables for Vixie Cron
  *
- * $Id: config.h,v 1.5 2000/06/08 19:16:05 vixie Exp $
+ * $Id: config.h,v 1.6 2003/02/15 20:55:11 vixie Exp $
  */
 
 /*
@@ -86,3 +86,13 @@
 			 * places.
 			 */
 #define SYSLOG	 			/*-*/
+
+			/* if you want cron to capitalize its name in ps
+			 * when running a job.  Does not work on SYSV.
+			 */
+/*#define CAPITALIZE_FOR_PS		/*-*/
+
+			/* if you have a tm_gmtoff member in struct tm.
+			 * If not, we will have to compute the value ourselves.
+			*/
+/*#define HAVE_TM_GMTOFF		/*-*/
