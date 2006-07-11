@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.10 2006/07/11 02:44:58 vixie Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.11 2006/07/11 15:08:24 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -245,7 +245,11 @@ child_process(entry *e, user *u) {
 #if (defined(BSD)) && (BSD >= 199103)
 		setlogin(usernm);
 #endif /* BSD */
-		setuid(e->pwd->pw_uid);	/* we aren't root after this... */
+		if (setuid(e->pwd->pw_uid) < 0) {
+			perror("setuid");
+			_exit(ERROR_EXIT);
+		}
+		/* we aren't root after this... */
 
 #endif /* LOGIN_CAP */
 		chdir(env_get("HOME", e->envp));
