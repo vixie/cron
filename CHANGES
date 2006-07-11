@@ -1,5 +1,6 @@
 ISC Cron V4
 
+10.	[func]		add MAIL_FROMUSER option (see config.h comments).
 9.	[misc]		megapatch from tcmiller (posix compliance, etc).
 8.	[bug]		fix stepsize 0 infinite loop.
 7.	[evol]		"enum" version of freebsd fix to env-var settings.

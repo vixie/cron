@@ -21,7 +21,7 @@
 
 /* config.h - configurables for ISC Cron
  *
- * $Id: config.h,v 1.10 2004/01/23 18:56:42 vixie Exp $
+ * $Id: config.h,v 1.11 2006/07/11 02:44:58 vixie Exp $
  */
 
 /*
@@ -63,6 +63,11 @@
 			 * generated mail?  if you are using sendmail
 			 * as the mailer, it is better to let sendmail
 			 * generate the Date: header.
+			 */
+
+/* #define MAIL_FROMUSER			/*-*/
+			/* use this if you want all cron-job e-mail to come
+			 * from the executing user rather than from "root".
 			 */
 
 			/* if you want to use syslog(3) instead of appending

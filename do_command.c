@@ -20,7 +20,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.9 2004/01/23 18:56:42 vixie Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.10 2006/07/11 02:44:58 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -417,7 +417,11 @@ child_process(entry *e, user *u) {
 					perror(mailcmd);
 					(void) _exit(ERROR_EXIT);
 				}
+#ifdef MAIL_FROMUSER
+				fprintf(mail, "From: %s\n", usernm);
+#else
 				fprintf(mail, "From: root (Cron Daemon)\n");
+#endif
 				fprintf(mail, "To: %s\n", mailto);
 				fprintf(mail, "Subject: Cron <%s@%s> %s\n",
 					usernm, first_word(hostname, "."),
