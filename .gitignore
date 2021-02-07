@@ -1,3 +1,4 @@
 cron
 crontab
 kit
+*.o
