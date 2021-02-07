@@ -1,8 +1,5 @@
-/* Copyright 1988,1990,1993,1994 by Paul Vixie
- * All rights reserved
- */
-
 /*
+ * Copyright (c) 1988,1990,1993,1994,2021 by Paul Vixie ("VIXIE")
  * Copyright (c) 2004 by Internet Systems Consortium, Inc. ("ISC")
  * Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
  *
@@ -10,9 +7,9 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  *
- * THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED "AS IS" AND VIXIE DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL ISC BE LIABLE FOR
+ * MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL VIXIE BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
@@ -20,7 +17,7 @@
  */
 
 #if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 1.11 2006/07/11 15:08:24 vixie Exp $";
+static char rcsid[] = "$Id: do_command.c,v 1.12 2021/02/07 00:20:00 vixie Exp $";
 #endif
 
 #include "cron.h"
@@ -86,7 +83,7 @@ child_process(entry *e, user *u) {
 	mailto = env_get("MAILTO", e->envp);
 
 	/* our parent is watching for our death by catching SIGCHLD.  we
-	 * do not care to watch for our children's deaths this way -- we
+	 * do not care to watch for our childrens' deaths this way -- we
 	 * use wait() explicitly.  so we have to reset the signal (which
 	 * was inherited from the parent).
 	 */
@@ -97,7 +94,7 @@ child_process(entry *e, user *u) {
 	pipe(stdin_pipe);	/* child's stdin */
 	pipe(stdout_pipe);	/* child's stdout */
 	
-	/* since we are a forked process, we can diddle the command string
+	/* since we are a forked process, we can modify the command string
 	 * we were passed -- nobody else is going to use it again, right?
 	 *
 	 * if a % is present in the command, previous characters are the
@@ -294,8 +291,7 @@ child_process(entry *e, user *u) {
 	close(stdin_pipe[READ_PIPE]);
 	close(stdout_pipe[WRITE_PIPE]);
 
-	/*
-	 * write, to the pipe connected to child's stdin, any input specified
+	/* write, to the pipe connected to child's stdin, any input specified
 	 * after a % in the crontab entry.  while we copy, convert any
 	 * additional %'s to newlines.  when done, if some characters were
 	 * written and the last one wasn't a newline, write a newline.
@@ -360,8 +356,7 @@ child_process(entry *e, user *u) {
 
 	children++;
 
-	/*
-	 * read output from the grandchild.  it's stderr has been redirected to
+	/* read output from the grandchild.  its stderr has been redirected to
 	 * it's stdout, which has been redirected to our pipe.  if there is any
 	 * output, we'll be mailing it to the user whose crontab this is...
 	 * when the grandchild exits, we'll get EOF.
@@ -400,27 +395,39 @@ child_process(entry *e, user *u) {
 				mailto = usernm;
 			}
 		
+			/* if the resulting mailto isn't safe, don't use it.
+			 */
+			if (mailto != NULL && !safe_p(usernm, mailto))
+				mailto = NULL;
+
 			/* if we are supposed to be mailing, MAILTO will
 			 * be non-NULL.  only in this case should we set
 			 * up the mail command and subjects and stuff...
 			 */
-
-			if (mailto && safe_p(usernm, mailto)) {
-				char	**env;
+			if (mailto != NULL) {
 				char	mailcmd[MAX_COMMAND];
-				char	hostname[MAXHOSTNAMELEN];
 
-				gethostname(hostname, MAXHOSTNAMELEN);
 				if (strlens(MAILFMT, MAILARG, NULL) + 1
 				    >= sizeof mailcmd) {
 					fprintf(stderr, "mailcmd too long\n");
 					(void) _exit(ERROR_EXIT);
 				}
 				(void)sprintf(mailcmd, MAILFMT, MAILARG);
-				if (!(mail = cron_popen(mailcmd, "w", e->pwd))) {
+				mail = cron_popen(mailcmd, "w", e->pwd);
+				if (mail == NULL) {
 					perror(mailcmd);
-					(void) _exit(ERROR_EXIT);
+					mailto = NULL;
 				}
+			}
+
+			/* if we succeeded in getting a mailer opened up,
+			 * send the headers and first character of body.
+			 */
+			if (mailto != NULL) {
+				char	hostname[MAXHOSTNAMELEN];
+				char	**env;
+
+				gethostname(hostname, MAXHOSTNAMELEN);
 #ifdef MAIL_FROMUSER
 				fprintf(mail, "From: %s\n", usernm);
 #else
@@ -451,7 +458,7 @@ child_process(entry *e, user *u) {
 
 			while (EOF != (ch = getc(in))) {
 				bytes++;
-				if (mailto)
+				if (mailto != NULL)
 					putc(ch, mail);
 			}
 
@@ -459,7 +466,7 @@ child_process(entry *e, user *u) {
 			 * mailing...
 			 */
 
-			if (mailto) {
+			if (mailto != NULL) {
 				Debug(DPROC, ("[%ld] closing pipe to mail\n",
 					      (long)getpid()))
 				/* Note: the pclose will probably see

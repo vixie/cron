@@ -1,8 +1,5 @@
-#/* Copyright 1988,1990,1993,1994 by Paul Vixie
-# * All rights reserved
-# */
-
 ##
+## Copyright (c) 1988,1990,1993,1994,2021 by Paul Vixie ("VIXIE")
 ## Copyright (c) 2004 by Internet Systems Consortium, Inc. ("ISC")
 ## Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
 ##
@@ -10,16 +7,16 @@
 ## purpose with or without fee is hereby granted, provided that the above
 ## copyright notice and this permission notice appear in all copies.
 ##
-## THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES
+## THE SOFTWARE IS PROVIDED "AS IS" AND VIXIE DISCLAIMS ALL WARRANTIES
 ## WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-## MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL ISC BE LIABLE FOR
+## MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL VIXIE BE LIABLE FOR
 ## ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 ## WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ## ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ##
 
-# Makefile for ISC cron
+# Makefile for VIXIE cron
 #
 # $Id: Makefile,v 1.9 2004/01/23 18:56:42 vixie Exp $
 #
@@ -65,8 +62,8 @@ LIBS		=
 CDEBUG		=	-g
 #<<lint flags of choice?>>
 LINTFLAGS	=	-hbxa $(INCLUDE) $(DEBUGGING)
-#<<want to use a nonstandard CC?>>
-CC		=	gcc -Wall -Wno-unused -Wno-comment
+#<<assume gcc or clang>>
+CWARN		=	-Wall -Wno-unused -Wno-comment
 #<<manifest defines>>
 DEFS		=
 #(SGI IRIX systems need this)
@@ -79,7 +76,7 @@ LDFLAGS		=
 #################################### end configurable stuff
 
 SHELL		=	/bin/sh
-CFLAGS		=	$(CDEBUG) $(INCLUDE) $(DEFS)
+CFLAGS		=	$(CDEBUG) $(CWARN) $(INCLUDE) $(DEFS)
 
 INFOS		=	README CHANGES FEATURES INSTALL CONVERSION THANKS MAIL
 MANPAGES	=	bitstring.3 crontab.5 crontab.1 cron.8 putman.sh

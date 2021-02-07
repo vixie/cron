@@ -1,7 +1,4 @@
-.\"/* Copyright 1988,1990,1993 by Paul Vixie
-.\" * All rights reserved
-.\" */
-.\" 
+.\" Copyright (c) 1988,1990,1993,2021 by Paul Vixie ("VIXIE")
 .\" Copyright (c) 2004 by Internet Systems Consortium, Inc. ("ISC")
 .\" Copyright (c) 1997,2000 by Internet Software Consortium, Inc.
 .\"
@@ -9,9 +6,9 @@
 .\" purpose with or without fee is hereby granted, provided that the above
 .\" copyright notice and this permission notice appear in all copies.
 .\"
-.\" THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND VIXIE DISCLAIMS ALL WARRANTIES
 .\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-.\" MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL ISC BE LIABLE FOR
+.\" MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL VIXIE BE LIABLE FOR
 .\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 .\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
@@ -22,7 +19,7 @@
 .TH CRONTAB 1 "29 December 1993"
 .UC 4
 .SH NAME
-crontab \- maintain crontab files for individual users (ISC Cron V4.1)
+crontab \- maintain crontab files for individual users (Vixie Cron)
 .SH SYNOPSIS
 .B crontab
 .RB [ -u
@@ -37,7 +34,7 @@ crontab \- maintain crontab files for individual users (ISC Cron V4.1)
 is the program used to install, deinstall or list the tables
 used to drive the
 .IR cron (8)
-daemon in ISC Cron.  Each user can have their own crontab, and though
+daemon in Vixie Cron.  Each user can have their own crontab, and though
 these are files in /var, they are not intended to be edited directly.
 .PP
 If the
