@@ -249,6 +249,11 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			goto eof;
 		}
 
+		/* Need to have consumed blanks before checking for options
+		 * below. */
+		Skip_Blanks(ch, file)
+		unget_char(ch, file);
+		
 		pw = getpwnam(username);
 		if (pw == NULL) {
 			ecode = e_username;
