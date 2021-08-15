@@ -126,7 +126,7 @@ main(int argc, char *argv[]) {
 	acquire_daemonlock(0);
 	database.head = NULL;
 	database.tail = NULL;
-	database.mtime = (time_t) 0;
+	database.mtim.tv_sec = 0;
 	load_database(&database);
 	set_time(TRUE);
 	run_reboot_jobs(&database);

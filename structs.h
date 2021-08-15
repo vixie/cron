@@ -48,13 +48,13 @@ typedef	struct _entry {
 typedef	struct _user {
 	struct _user	*next, *prev;	/* links */
 	char		*name;
-	time_t		mtime;		/* last modtime of crontab */
+	struct timespec mtim;   	/* last modtime of crontab */
 	entry		*crontab;	/* this person's crontab */
 } user;
 
 typedef	struct _cron_db {
 	user		*head, *tail;	/* links */
-	time_t		mtime;		/* last modtime on spooldir */
+	struct timespec mtim;		/* last modtime on spooldir */
 } cron_db;
 				/* in the C tradition, we only create
 				 * variables for the main program, just
