@@ -38,6 +38,8 @@ is_greater_than(struct timespec left, struct timespec right) {
 	return left.tv_nsec > right.tv_nsec;
 }
 
+static const struct timespec ts_zero = {.tv_sec = 0, .tv_nsec = 0};
+
 static	void		process_crontab(const char *, const char *,
 					const char *, struct stat *,
 					cron_db *, cron_db *);
@@ -64,7 +66,7 @@ load_database(cron_db *old_db) {
 	/* track system crontab file
 	 */
 	if (stat(SYSCRONTAB, &syscron_stat) < OK) 
-		syscron_stat.st_mtim = (struct timespec){.tv_sec = 0, .tv_nsec = 0};
+		syscron_stat.st_mtim = ts_zero;
 
 	/* if spooldir's mtime has not changed, we don't need to fiddle with
 	 * the database.
@@ -87,7 +89,7 @@ load_database(cron_db *old_db) {
 	new_db.mtim = TMAX(statbuf.st_mtim, syscron_stat.st_mtim);
 	new_db.head = new_db.tail = NULL;
 
-	if (!TEQUAL(syscron_stat.st_mtim, ((struct timespec){.tv_sec = 0, .tv_nsec = 0})))
+	if (!TEQUAL(syscron_stat.st_mtim, ts_zero))
 		process_crontab("root", NULL, SYSCRONTAB, &syscron_stat,
 				&new_db, old_db);
 
