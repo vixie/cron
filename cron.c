@@ -126,7 +126,7 @@ main(int argc, char *argv[]) {
 	acquire_daemonlock(0);
 	database.head = NULL;
 	database.tail = NULL;
-	database.mtim = (struct timespec){.tv_sec = 0, .tv_nsec = 0};
+	database.mtim = ts_zero;
 	load_database(&database);
 	set_time(TRUE);
 	run_reboot_jobs(&database);

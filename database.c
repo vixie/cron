@@ -38,7 +38,7 @@ is_greater_than(struct timespec left, struct timespec right) {
 	return left.tv_nsec > right.tv_nsec;
 }
 
-static const struct timespec ts_zero = {.tv_sec = 0, .tv_nsec = 0};
+const struct timespec ts_zero = {.tv_sec = 0, .tv_nsec = 0};
 
 static	void		process_crontab(const char *, const char *,
 					const char *, struct stat *,
