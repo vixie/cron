@@ -100,8 +100,6 @@ extern	int optind, opterr, optopt;
  */
 extern	int		flock(int, int);
 
-extern const struct timespec ts_zero;
-
 /* not all systems who provide flock() provide these definitions.
  */
 #ifndef LOCK_SH
