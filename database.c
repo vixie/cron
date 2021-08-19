@@ -29,7 +29,7 @@ static char rcsid[] = "$Id: database.c,v 1.7 2004/01/23 18:56:42 vixie Exp $";
 #define TMAX(a,b) (is_greater_than(a,b)?(a):(b))
 #define TEQUAL(a,b) (a.tv_sec == b.tv_sec && a.tv_nsec == b.tv_nsec)
 
-bool
+static bool
 is_greater_than(struct timespec left, struct timespec right) {
 	if (left.tv_sec > right.tv_sec)
 		return TRUE;
@@ -64,7 +64,7 @@ load_database(cron_db *old_db) {
 
 	/* track system crontab file
 	 */
-	if (stat(SYSCRONTAB, &syscron_stat) < OK) 
+	if (stat(SYSCRONTAB, &syscron_stat) < OK)
 		syscron_stat.st_mtim = ts_zero;
 
 	/* if spooldir's mtime has not changed, we don't need to fiddle with
