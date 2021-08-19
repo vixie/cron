@@ -24,8 +24,20 @@ static char rcsid[] = "$Id: database.c,v 1.7 2004/01/23 18:56:42 vixie Exp $";
  */
 
 #include "cron.h"
+#include <stdbool.h>
 
-#define TMAX(a,b) ((a)>(b)?(a):(b))
+#define TMAX(a,b) (is_greater_than(a,b)?(a):(b))
+#define TEQUAL(a,b) (a.tv_sec == b.tv_sec && a.tv_nsec == b.tv_nsec)
+
+static bool
+is_greater_than(struct timespec left, struct timespec right) {
+	if (left.tv_sec > right.tv_sec)
+		return TRUE;
+	else if (left.tv_sec < right.tv_sec)
+		return FALSE;
+	return left.tv_nsec > right.tv_nsec;
+}
+
 
 static	void		process_crontab(const char *, const char *,
 					const char *, struct stat *,
@@ -53,7 +65,7 @@ load_database(cron_db *old_db) {
 	/* track system crontab file
 	 */
 	if (stat(SYSCRONTAB, &syscron_stat) < OK)
-		syscron_stat.st_mtime = 0;
+		syscron_stat.st_mtim = ts_zero;
 
 	/* if spooldir's mtime has not changed, we don't need to fiddle with
 	 * the database.
@@ -62,7 +74,7 @@ load_database(cron_db *old_db) {
 	 * so is guaranteed to be different than the stat() mtime the first
 	 * time this function is called.
 	 */
-	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
+	if (TEQUAL(old_db->mtim, TMAX(statbuf.st_mtim, syscron_stat.st_mtim))) {
 		Debug(DLOAD, ("[%ld] spool dir mtime unch, no load needed.\n",
 			      (long)getpid()))
 		return;
@@ -73,10 +85,10 @@ load_database(cron_db *old_db) {
 	 * actually changed.  Whatever is left in the old database when
 	 * we're done is chaff -- crontabs that disappeared.
 	 */
-	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
+	new_db.mtim = TMAX(statbuf.st_mtim, syscron_stat.st_mtim);
 	new_db.head = new_db.tail = NULL;
 
-	if (syscron_stat.st_mtime)
+	if (!TEQUAL(syscron_stat.st_mtim, ts_zero))
 		process_crontab("root", NULL, SYSCRONTAB, &syscron_stat,
 				&new_db, old_db);
 
@@ -223,7 +235,7 @@ process_crontab(const char *uname, const char *fname, const char *tabname,
 		/* if crontab has not changed since we last read it
 		 * in, then we can just use our existing entry.
 		 */
-		if (u->mtime == statbuf->st_mtime) {
+		if (TEQUAL(u->mtim, statbuf->st_mtim)) {
 			Debug(DLOAD, (" [no change, using old data]"))
 			unlink_user(old_db, u);
 			link_user(new_db, u);
@@ -244,7 +256,7 @@ process_crontab(const char *uname, const char *fname, const char *tabname,
 	}
 	u = load_user(crontab_fd, pw, fname);
 	if (u != NULL) {
-		u->mtime = statbuf->st_mtime;
+		u->mtim = statbuf->st_mtim;
 		link_user(new_db, u);
 	}
 
