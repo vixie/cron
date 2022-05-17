@@ -78,7 +78,17 @@ LDFLAGS		=
 SHELL		=	/bin/sh
 CFLAGS		=	$(CDEBUG) $(CWARN) $(INCLUDE) $(DEFS)
 
-INFOS		=	README CHANGES FEATURES INSTALL CONVERSION THANKS MAIL
+INFOS =							\
+	Documentation/Conversion.md \
+	Documentation/Changelog.md 	\
+	Documentation/Configure.md  \ 
+	Documentation/Features.md 	\
+	Documentation/Changes.md 	\
+	Documentation/Install.md 	\
+	Documentation/Thanks.md		\
+	Documentation/Mail.md		\
+	README.md
+
 MANPAGES	=	bitstring.3 crontab.5 crontab.1 cron.8 putman.sh
 HEADERS		=	bitstring.h cron.h config.h pathnames.h externs.h \
 			macros.h structs.h funcs.h globals.h
