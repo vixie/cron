@@ -14,25 +14,59 @@
 
 ---
 
+This version of **Cron** is functionally based on <br>
+**System V**s implementation and thus allows <br>
+every user to have their own **CronTab** file.
+
 </div>
 
 <br>
 
-This is a version of 'cron' that is known to run on most systems.
 
-It is functionally based on the SysV cron, which means that each user can have
-their own crontab file (all crontab files are stored in a read-protected
-directory, usually /var/cron/tabs).
 
-No direct support is provided for 'at'; you can continue to run 'atrun' from the crontab as you have been doing.
+<br>
 
-If you don't have atrun (i.e., System V) you are in trouble.
+## Tabs
 
-A messages is logged each time a command is executed; also, the files
-"allow" and "deny" in /var/cron can be used to control access to the
-"crontab" command (which installs crontabs).
+All crontab files are stored in a <br>
+read-protected folder, usually <br>
+in `/var/cron/tabs` .
 
-It hasn't been tested on SysV, although some effort has gone into making the port an easy one.
+<br>
+
+## At
+
+**No direct support is provided for `at` .**
+
+However you can still use `atrun` <br>
+from your **CronTab** as usual.
+
+⤷ If your system doesn't support `atrun` , <br>
+such as **System V**, you will have problem.
+
+<br>
+
+## Logging
+
+Every time a command is run, <br>
+a message will be logged.
+
+<br>
+
+## Access
+
+You can control access to the `crontab` <br>
+command by utilizing the `allow` and <br>
+`deny` files in `/var/cron` .
+
+*The command is used to install crontabs.*
+
+<br>
+
+## System V
+
+While it hasn't been tested yet, some effort <br>
+has gone into making porting to it easier.
 
 
 <!----------------------------------------------------------------------------->
