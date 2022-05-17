@@ -13,6 +13,8 @@
 [![Button Changes]][Changes]
 
 ---
+  
+<br>
 
 This version of **Cron** is functionally based on <br>
 **System V**s implementation and thus allows <br>
@@ -26,7 +28,7 @@ every user to have their own **CronTab** file.
 
 <br>
 
-## Tabs
+### Tabs
 
 All crontab files are stored in a <br>
 read-protected folder, usually <br>
@@ -34,7 +36,7 @@ in `/var/cron/tabs` .
 
 <br>
 
-## At
+### At
 
 **No direct support is provided for `at` .**
 
@@ -46,14 +48,14 @@ such as **System V**, you will have problem.
 
 <br>
 
-## Logging
+### Logging
 
 Every time a command is run, <br>
 a message will be logged.
 
 <br>
 
-## Access
+### Access
 
 You can control access to the `crontab` <br>
 command by utilizing the `allow` and <br>
@@ -63,7 +65,7 @@ command by utilizing the `allow` and <br>
 
 <br>
 
-## System V
+### System V
 
 While it hasn't been tested yet, some effort <br>
 has gone into making porting to it easier.
