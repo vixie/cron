@@ -1,17 +1,5 @@
 
 
-Vixie Cron - February 2021 and counting
-[V4.1 was January 2004]
-[V4.0 was November, 2000]
-[V4.0b1 was September 7, 1997]
-[V3.1 was some time after 1993]
-[V3.0 was December 27, 1993]
-[V2.2 was some time in 1992]
-[V2.1 was May 29, 1991]
-[V2.0 was July 5, 1990]
-[V2.0-beta was December 9, 1988]
-[V1.0 was May 6, 1987]
-https://github.com/vixie/cron/
 
 This is a version of 'cron' that is known to run on most systems.  It
 is functionally based on the SysV cron, which means that each user can have
