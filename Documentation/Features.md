@@ -1,4 +1,5 @@
-$Id: FEATURES,v 1.2 2004/01/23 18:56:42 vixie Exp $
+
+# Features
 
 Features of ISC cron relative to BSD 4.[23] and SysV crons:
 
@@ -29,37 +30,124 @@ Features of ISC cron relative to BSD 4.[23] and SysV crons:
 	useful if you decide on BINMAIL when configuring cron.h, since binmail
 	doesn't know anything about aliasing.
 
---	Weekdays can be specified by name.  Case is not significant, but only
-	the first three letters should be specified.
+<br>
 
---	Months can likewise be specified by name.  Three letters only.
+### Weekdays
 
---	Ranges and lists can be mixed.  Standard crons won't allow '1,3-5'.
+*You can specify weekdays by name.*
 
---	Ranges can specify 'step' values.  '10-16/2' is like '10,12,14,16'.
+You need to write the first `3` <br>
+characters in whatever you like.
 
---	Sunday is both day 0 and day 7 -- apparently BSD and ATT disagree
-	about this.
+<kbd> Mon </kbd>  
+<kbd> Tue </kbd>  
+<kbd> Wed </kbd>  
+<kbd> Thu </kbd>  
+<kbd> Fri </kbd>  
+<kbd> Sat </kbd>  
+<kbd> Sun </kbd>
 
---	Each user gets their own crontab file.  This is a win over BSD 4.2,
-	where only root has one, and over BSD 4.3, where they made the crontab
-	format incompatible and although the commands can be run by non-root
-	uid's, root is still the only one who can edit the crontab file.  This
-	feature mimics the SysV cron.
+<br>
 
---	The 'crontab' command is loosely compatible with SysV, but has more
-	options which just generally make more sense.  Running crontab with
-	no arguments will print a cute little summary of the command syntax.
+### Months
 
---	Comments and blank lines are allowed in the crontab file.  Comments
-	must be on a line by themselves; leading whitespace is ignored, and
-	a '#' introduces the comment.
+*You can specify months by name.*
 
---	(big win) If the `crontab' command changes anything in any crontab,
-	the 'cron' daemon will reload all the tables before running the
-	next iteration.  In some crons, you have to kill and restart the
-	daemon whenever you change a crontab.  In other crons, the crontab
-	file is reread and reparsed every minute even if it didn't change.
+You need to write the first `3` <br>
+characters in whatever you like.
+
+<kbd> Jan </kbd>  
+<kbd> Feb </kbd>  
+<kbd> Mar </kbd>  
+<kbd> Apr </kbd>  
+<kbd> May </kbd>  
+<kbd> Jun </kbd>  
+<kbd> Jul </kbd>  
+<kbd> Sep </kbd>  
+<kbd> Oct </kbd>  
+<kbd> Nov </kbd>  
+<kbd> Dec </kbd>
+
+<br>
+
+### Mixing
+
+Ranges & lists can be mixed.
+
+*Standard Cron doesn't allow `1,3-5`*
+
+<br>
+
+### Stepping
+
+Ranges can specify a **Step** value.
+
+`10-16/2`  **[≍]**  `10,12,14,16`
+
+<br>
+
+### Sunday
+
+Can be specified as both `0` & `7`.
+
+*Apparently **BSD** & **ATT** disagree on about this.*
+
+<br>
+
+### User
+
+Every user gets their own **CronTab** <br>
+file like in **System V**s version of **Cron**.
+
+#### BSD 4.2
+
+Only root was allowed to have one.
+
+#### BSD 4.3
+
+- The **CronTab** format was made incompatible.
+
+- Non-root UIDs could run the command.
+
+- Only root could edit the **CronTab** file.
+
+<br>
+
+### System V
+
+The `crontab` command is loosely compatible with <br>
+**System V**, but has been extended with more options.
+
+Running the command without arguments <br>
+shows a summary on how to use of the it.
+
+<br>
+
+### Comments
+
+- Must be on a line by themselves
+
+- Can have leading whitespace
+
+- `#` starts the comment
+
+<br>
+
+### Autoreload
+
+If the `crontab` command changes any **CronTab**, <br>
+the `cron` daemon will automatically reload all <br>
+tables before the next iteration.
+
+#### Other Crons
+
+- may require you have to kill & restart the daemon.
+
+- may unnecessarily read & parse the config continuously.
+
+<br>
+
+
 
 --	In order to support the automatic reload, the crontab files are not
 	readable or writable except by 'crontab' or 'cron'.  This is not a
@@ -82,3 +170,8 @@ Features of ISC cron relative to BSD 4.[23] and SysV crons:
 	act this way and do the more reasonable thing, which is (IMHO) to "or"
 	the various field-matches together.  In that sense this cron may not
 	be completely similar to some AT&T crons.
+
+
+<!----------------------------------------------------------------------------->
+
+[≍]: # 'Is equivalent to'
