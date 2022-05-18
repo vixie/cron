@@ -220,14 +220,22 @@ From seismo!uwvax!astroatc!nicmad!norvax!mann Sun Jan  4 13:04:01 1987
 <kbd>paul</kbd> <br>
 **Status:** `RO`
 
+### Message
 
-I'm not sure if it is in cron (either SysV or BSD ... if it is, I haven't
-figured it out ) but a comment feature would SURE BE NICE!.
-There are times when I want to comment out an entry
-for a period of time; it might also make it a lot more legible.
+> I'm not sure if it is in cron (either SysV or BSD ... <br>
+> if it is, I haven't figured it out ) but a comment <br>
+> feature would SURE BE NICE!.
+>
+> There are times when I want to comment out an <br>
+> entry for a period of time; it might also make it a <br>
+> lot more legible.
 
-<<	My cron allows blank lines and standard #-type comments.  I know
-	that one BSD4.2 cron I've used had it.  I don't know about SysV.  >>
+### Reply
+
+> My cron allows blank lines and standard #-type comments.
+>
+> I know that one BSD4.2 cron I've used had it. <br>
+> I don't know about SysV.
 
 From ptsfa!hoptoad!hugh Mon Jan  5 10:26:46 1987
 Date: Mon, 5 Jan 87 01:22:17 PST
@@ -235,18 +243,25 @@ From: hoptoad!hugh (Hugh Daniel)
 To: ptsfa!vixie!paul
 Status: RO
 
-  Hi, I do have a BIG one that I would like.  I want to log ALL output
-from command lines into a file for each line.  Thus I might have a chance
-of finding out why my crontab entry did not work.
-  This would seem to work best if done by cron, as it is now I have a google
-of shell scripts laying about just to put the error output where I can see
-it.
+### Message
 
-<<	My cron (and the SysV cron) will send mail to the owner of the
-	particular crontab file if a command generates any output on stdout
-	or stderr.  This can be irritating, but if you write a script such
-	that any output means a problem occurred, you can avoid most logfile
-	needs, and not generate mail except in unforeseen circumstances.   >>
+> Hi, I do have a BIG one that I would like.
+>
+> I want to log ALL output from command <br>
+> lines into a file for each line.
+>
+> Thus I might have a chance of finding <br>
+> out why my crontab entry did not work.
+>
+> This would seem to work best if done by cron, as it <br>
+> is now I have a google of shell scripts laying about <br>
+> just to put the error output where I can see it.
+
+### Reply
+
+> My cron (and the SysV cron) will send mail to the owner of the particular crontab file if a command generates any output on stdout or stderr.
+>
+> This can be irritating, but if you write a script such that any output means a problem occurred, you can avoid most logfile needs, and not generate mail except in unforeseen circumstances.
 
 From ptsfa!dual!ucbvax!ihnp4!anvil!es!Robert_Toxen Mon Jan  5 13:08:46 1987
 From: dual!ucbvax!ihnp4!anvil!es!Robert_Toxen
@@ -254,34 +269,56 @@ Date: Fri,  2 Jan 87 14:25:29 EST
 To: anvil!ihnp4!ucbvax!dual!ptsfa!vixie!paul
 Status: RO
 
-Here are some suggestions:
-1. Run it through the C preprocessor via "/lib/<whatever>".
+### Message
 
-<<	hmmm. this seems of limited utility, and if you really wanted
-	to do it that way, you could do it yourself (since users can
-	write to their own crontab files).  I'll add '-' (read stdin)
-	to the crontab installer program to facilitate this.		>>
+> Here are some suggestions:
+> 1. Run it through the C preprocessor via "/lib/<whatever>".
 
-2. Allow specifying every Nth day of week, i.e., every second Wednesday.
-   I did this to calendar by separating the day of week (Wed=4, which one
-   to start on and N with slashes).  I took modulo the day of year as a
-   starting point so that someone with a desk calendar documenting such
-   things can easily determine the offset (second number).  I did this
-   while at SGI; alas I don't have a copy of the code.
+### Reply
 
-<<	I can see how this could be useful, but I'm not sure how I'd
-	implement it.  Cron currently doesn't keep track of the last time
-	a given command was run; whether the current Wednesday is the first
-	or second since the command was last run would be pretty hard to
-	figure out.  I'd have to keep a database of commands and their
-	execution around, and purge it when the crontab was overwritten.
-	This is too much work for me, but if someone adds it, let me know.  >>
+> hmmm. this seems of limited utility, and if you really <br>
+> wanted to do it that way, you could do it yourself <br>
+> (since users can write to their own crontab files).
+>
+> I'll add '-' (read stdin) to the crontab <br>
+> installer program to facilitate this.
+
+### Message
+
+> 2. Allow specifying every Nth day of week, i.e., every second Wednesday.
+>
+>   I did this to calendar by separating the day of week <br>
+>   (Wed=4, which one to start on and N with slashes).
+>
+>   I took modulo the day of year as a starting point so <br>
+>   that someone with a desk calendar documenting <br>
+>   such things can easily determine the offset (second number).
+>
+>   I did this while at SGI; alas I don't have a copy of the code.
+
+### Reply
+
+> I can see how this could be useful, <br>
+> but I'm not sure how I'd implement it.
+>
+> Cron currently doesn't keep track of the last time a given <br>
+> command was run; whether the current Wednesday is the <br>
+> first or second since the command was last run would be <br>
+> pretty hard to figure out.
+>
+> I'd have to keep a database of commands and their execution <br>
+> around, and purge it when the crontab was overwritten.
+>
+> This is too much work for me, but if someone adds it, let me know.
+
 
 From ptsfa!ames!seismo!cbmvax!devon!paul Tue Jan  6 05:50:17 1987
 From: ames!seismo!cbmvax!devon!paul
 To: cbmvax!seismo!nike!ptsfa!vixie!paul
 Date: Mon Jan  5 09:29:57 1987
 Status: RO
+
+### Message
 
 One problem that has always plagued me with cron is the assumed ORing.
 I'd like to see some type of ANDing implemented.  I guess I can best
@@ -315,37 +352,48 @@ Get the picture?  This would be compatable with existing versions of
 cron (which wouldn't currently be using any special characters, so
 that old crontabs would be handled correctly).
 
-<<	This message made me aware of the actual boolean expression involved
-	in a crontab entry.  I'd assumed that it was
-		(minute && hour && DoM && month && DoW)
-	But it's really
-		(minute && hour && month && (DoM || DoW))
+### Reply
 
-	I can see some value in changing this, but with a fixed order of
-	fields, operators get to be kindof unary, which && and || really
-	aren't.  If someone has an idea on a syntax that allows useful
-	variations to the standard (&& && && (||)) default, please suggest. >>
+> This message made me aware of the actual <br>
+> boolean expression involved in a crontab entry.
+>
+> I'd assumed that it was
+>
+> (minute && hour && DoM && month && DoW)
+>
+> But it's really
+>
+> (minute && hour && month && (DoM || DoW))
+>
+> I can see some value in changing this, but with a <br>
+> fixed order of fields, operators get to be kindof <br>
+> unary, which && and || really aren't.    
+> 
+> If someone has an idea on a syntax that allows <br>
+> useful variations to the standard (&& && && (||)) <br>
+> default, please suggest.
 
 From bobkat!pedz Tue Jan  6 20:02:10 1987
 From: pedz@bobkat.UUCP (Pedz Thing)
 Date: 2 Jan 87 17:34:44 GMT
 Status: RO
 
-Log files!  It would be nice to be able to specify a log for cron
-itself and also a log for each program's stdout and stderr to go to.
-The latter can of course be done with > and 2> but it would be nice if
-there could be a single line with some sort of pattern like
-`> /usr/spool/log/%' and the command would be substituted for the %.
-Another thing which would be nice is to be able to specify which shell
-to call to give the command to.
+### Message
 
-<<	Log files are done with mail.  The '%' idea could be useful if
-	a different character were used (% is special to cron, see man
-	page); a different directory would have to be chosen, since each
-	user has their own crontab file; and something intelligent would
-	have to be done in the file naming, since the first word of the
-	command might be ambiguous (with other commands).  In short, it's
-	too much work.  Sorry.						  >>
+> Log files!  It would be nice to be able to specify a log for cron itself and also a log for each program's stdout and stderr to go to.
+>
+> The latter can of course be done with > and 2> but it would be nice if there could be a single line with some sort of pattern like `> /usr/spool/log/%' and the command would be substituted for the %.
+>
+> Another thing which would be nice is to be able to specify which shell to call to give the command to.
+
+### Reply
+
+> Log files are done with mail.
+>
+> The '%' idea could be useful if a different character were used (% is special to cron, see man page); a different directory would have to be chosen, since each user has their own crontab file; and something intelligent would have to be done in the file naming, since the first word of the command might be ambiguous (with other commands).
+>
+> In short, it's too much work. <br>
+> Sorry.
 
 From guy%gorodish@sun Tue Jan  6 20:03:13 1987
 From: guy%gorodish@sun (Guy Harris)
@@ -355,20 +403,20 @@ References: <429@vixie.UUCP> <359@bobkat.UUCP>
 Sender: news@sun.uucp
 Status: RO
 
+### Message
+
 > Another thing which would be nice is to be able to specify which shell
 > to call to give the command to.
+>
+> Well, the obvious choice would be the user's shell, but this wouldn't work for accounts like "uucico".
 
-Well, the obvious choice would be the user's shell, but this wouldn't work
-for accounts like "uucico".
+### Reply
 
-<<	I use the owning user's shell, and to handle "uucico" I check a
-	list of "acceptable shells" (currently compiled in, does anybody
-	mind?), substituting a default (compiled in) shell if the user's
-	shell isn't on the list.
-
-	BTW, "compiled in" means that it's in a .h file, easily changed
-	during installation, but requiring recompilation to modify.  You
-	don't have to go digging through the code to find it...		  >>
+> I use the owning user's shell, and to handle "uucico" I check a list of "acceptable shells" (currently compiled in, does anybody mind?), substituting a default (compiled in) shell if the user's shell isn't on the list.
+>
+> BTW, "compiled in" means that it's in a .h file, easily changed during installation, but requiring recompilation to modify.
+>
+> You don't have to go digging through the code to find it...
 
 From qantel!hplabs!ucbvax!mwm@violet.berkeley.edu Tue Jan  6 21:24:48 1987
 To: hplabs!qantel!vixie!paul (Paul Vixie Esq)
@@ -378,51 +426,72 @@ Status: RO
 
 <<[Discussion of RMS/FSF, and mwm's GNU Cron deleted]>>
 
-Oh, yeah - here are the extensions on my cron:
+### Message
 
-1) Sunday is both day 0 and day 7, so it complies with both SysV and
-BSD cron.
+> Oh, yeah - here are the extensions on my cron:
+>
+> 1) Sunday is both day 0 and day 7, so it complies with both SysV and BSD cron.
 
-<<	Good idea. I did it too, thanks for informing me.	>>
+### Reply
 
-2) At is integrated into the cron. Instead of atrun to scan the
-/usr/spool/at directory, at files are put into the /usr/lib/cron
-directory along with users cron files, and cron fabricates a line from
-a crontab file to run them. This is considered a major win by all who
-use it.
+> Good idea.
+> I did it too, thanks for informing me.
 
-<<	I don't use 'at', and my cron doesn't do anything with it.  To run
-	'at', I use 'atrun' the same way the current BSD cron does.  My
-	crontab files are in /usr/spool/cron/crontabs, in the SysV
-	tradition -- not in /usr/lib/cron.  This is a configuration
-	parameter, of course.						>>
+### Message
 
-There are two known restrictions:
+> 2) At is integrated into the cron.
+>
+>   Instead of atrun to scan the /usr/spool/at directory, at files are put into the /usr/lib/cron directory along with users cron files, and cron fabricates a line from a crontab file to run them.
 
-1) I don't support any of the SysV security hooks. I don't have a use
-for them, and RMS didn't like the idea at all :-).
+> This is considered a major win by all who use it.
 
-<<	This means cron.allow and cron.deny.  I plan to support them, as
-	they've been quite helpful at various HPUX sites I've administered. >>
+### Reply
 
-2) Cron expects to be able to create files with names longer than 14
-characters, which makes it hard to run on SysV. At least one person
-was working on a port, but I don't know how it's going. That might
-make for a good reason for releasing yours, right there.
+> I don't use 'at', and my cron doesn't do anything with it.
+>
+> To run 'at', I use 'atrun' the same way the current BSD cron does.
+>
+> My crontab files are in /usr/spool/cron/crontabs, in the SysV tradition -- not in /usr/lib/cron.
+>
+> This is a configuration parameter, of course.
 
-<<	If someone has SysV (with the 14-character limit), they probably
-	won't want my cron, since it doesn't add much to the standard
-	version (which they may have support for).  My cron is not currently
-	portable to non-BSD systems, since it relies on interval timers (I
-	needed to sleep for intervals more granular than seconds alone would
-	allow).  The port would be trivial, and I will do it if a lot of
-	people ask for it...						>>
+### Message
 
-Oh, yeah - I'm going to see about getting this cron integrated into
+> There are two known restrictions:
+>
+> 1) I don't support any of the SysV security hooks.
+>   I don't have a use for them, and RMS didn't like the idea at all :-).
+
+### Reply
+
+> This means cron.allow and cron.deny.
+>
+> I plan to support them, as they've been quite helpful at various HPUX sites I've administered.
+
+### Message
+
+> 2) Cron expects to be able to create files with names longer than 14 characters, which makes it hard to run on SysV. At least one person was working on a port, but I don't know how it's going.
+>
+> That might make for a good reason for releasing yours, right there.
+
+### Reply
+
+> If someone has SysV (with the 14-character limit), they probably won't want my cron, since it doesn't add much to the standard version (which they may have support for).
+>
+> My cron is not currently portable to non-BSD systems, since it relies on interval timers (I needed to sleep for intervals more granular than seconds alone would allow).
+>
+> The port would be trivial, and I will do it if a lot of people ask for it...
+
+### Message
+
+> Oh, yeah - I'm going to see about getting this cron integrated into
 the next 4BSD release.
 
-<<	How does one go about this?  I have a few nifty gadgets I'd like
-	to contribute, this cron being one of them...			>>
+### Reply
+
+> How does one go about this?
+> 
+> I have a few nifty gadgets I'd like to contribute, this cron being one of them...
 
 <<[more FSF/GNU discussion deleted]>>
 
@@ -433,21 +502,30 @@ From: hplabs!ames!ut-sally!ut-ngp!bigtex!james
 To: vixie!paul
 Status: RO
 
-Yes!!!  There are several critical failures in System V cron...
+### Message
 
-1. Pass all variables in cron's environment into the environment of things
+> Yes!!! <br>
+> There are several critical failures in System V cron...
+>
+> 1. Pass all variables in cron's environment into the environment of things
    cron starts up, or at least into the crontab entries started up (at jobs
-   will inherit the environment of the user).  If nothing else it is critically
-   important that the TZ variable be passed on.  PATH should be passed on too.
-   Basically, passing environment values allows one to design a standard
-   environment with TZ and PATH and have that run by everything.  If anyone
-   tells you this is no big deal, consider what happens when uucico is
-   started by cron in CA to make a long distance phone link...  Unless the
-   administrator is really on his/her toes, calls scheduled at 5pm will really
-   go at two in the afternoon, needlessly incurring huge phone bills, all
-   because System V refuses to pass the TZ from its environment down.  There
-   are work arounds, but only putting it in cron will really work.  This is
-   not a security hole.
+   will inherit the environment of the user).
+>
+>   If nothing else it is critically important that the TZ variable be passed on.
+>   PATH should be passed on too.
+>
+>   Basically, passing environment values allows one to design a standard
+   environment with TZ and PATH and have that run by everything.
+>
+>   If anyone tells you this is no big deal, consider what happens when uucico is started by cron in CA to make a long distance phone link...
+>
+>   Unless the administrator is really on his/her toes, calls scheduled at 5pm will really go at two in the afternoon, needlessly incurring huge phone bills, all
+   because System V refuses to pass the TZ from its environment down.
+>  There are work arounds, but only putting it in cron will really work.
+>
+>   This is not a security hole.
+
+### Reply
 
 <<	delete TERM and TERMCAP; modify HOME, USER, and CWD; pass TZ and
 	PATH through undisturbed.  any other requests out there?
