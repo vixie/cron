@@ -83,7 +83,6 @@ INFOS =							\
 	Documentation/Changelog.md 	\
 	Documentation/Configure.md  \
 	Documentation/Features.md 	\
-	Documentation/Changes.md 	\
 	Documentation/Install.md 	\
 	Documentation/Thanks.md		\
 	Documentation/Mail.md		\
