@@ -5,8 +5,12 @@
 `15 January 1990` <br>
 **Paul Vixie**
 
+<br>
+
 Many people have contributed to cron. <br>
 Many more than I can remember, in fact.
+
+<br>
 
 **[Rich Salz]** and **[Carl Gutekunst]** were <br>
 each of enormous help to me in V1.
@@ -52,12 +56,12 @@ most useful single batch of diffs I got from anybody.
 
 Changes attributable to Scott are: <br>
    🠖 Sendmail won't time out if the command is slow to generate output <br>
-   🠖 Day-of-week names aren't off by one anymore <br>
    🠖 Crontab says the right thing if you do something you shouldn't do <br>
+   🠖 Sequent "universe" support added (may also help on Pyramids) <br>
    🠖 Crontab(5) man page is longer and more informative <br>
    🠖 Misc changes related to the side effects of fclose() <br>
-   🠖 Sequent "universe" support added (may also help on Pyramids) <br>
-   🠖 Null pw_shell is dealt with now; default is /bin/sh
+   🠖 Null pw_shell is dealt with now; default is /bin/sh <br>
+   🠖 Day-of-week names aren't off by one anymore <br>
 
 
 <!----------------------------------------------------------------------------->
