@@ -3,354 +3,83 @@
   version of cron.  it is presented here for its entertainment value.
   --vix ]
 
-<br>
-<br>
 
-From ptsfa!lll-crg!ames!acornrc!bob Wed Dec 31 10:07:08 1986
 
-**Date:** 
-<kbd>1986 December 31</kbd> 
-<kbd>Wednesday</kbd> 
-<kbd>08:59:31 PST</kbd> <br>
-**From:** 
-<kbd>lll-crg</kbd> 
-<kbd>ames</kbd> 
-<kbd>acornrc</kbd> 
-<kbd>bob (Bob Weissman)</kbd> <br>
-**To:** 
-<kbd>ptsfa</kbd> 
-<kbd>vixie</kbd> 
-<kbd>paul</kbd> <br>
-**Status:** `RO`
 
-### Message
-
-> Sure, here's a suggestion:
->
-> I'd like to be able to run a program, say, every two hours. <br>
-> Current cron requires me to write <br>
->
-> 0,2,4,6,8,10,12,14,16,18,20,22 
-> 
-> in the hours field.
->
-> How about a notation to handle this more elegantly?
-
-### Reply
-
-> Okay, I've allowed 0-22/2 as a means of handling this.
->
-> The time specification for my cron is as follows:
->
->    specification = range {"," range} <br>
->    range = (start "-" finish ["/" step]) | single-unit
->
-> This allows "1,3,5-7", which the current cron doesn't <br>
-> (it won't do a range inside a list), and handles your specific need.
-
-<br>
-<br>
-
-From drw@mit-eddie Wed Dec 31 18:25:27 1986
+<!-- From ptsfa!ames!seismo!cbmvax!devon!paul Tue Jan  6 05:50:17 1987 -->
 
 **Date:** 
-<kbd>1986 December 31</kbd> 
-<kbd>Wednesday</kbd> 
-<kbd>14:28:19 EST</kbd> <br>
-**From:** 
-<kbd>drw@mit-eddie (Dale Worley)</kbd>  <br>
-**To:** 
-<kbd>mit-eddie</kbd> 
-<kbd>vixie</kbd> 
-<kbd>paul</kbd> <br>
-**Status:** `RO`
-
-### Message
-
-> We have a lot of lines in our crontab of the form
->
-> ```src
-> 00 12 * * * su user < /usr/users/user/script.file
-> ```
->
-> This barfs (silently!) on our system (Dec Ultrix 1.2 == 4.2bsd) if user's shell is csh.
->
-> This, I am told, is because csh requires that <br>
-> the environment be set up in certain ways, <br>
-> which cron doesn't do.
->
-> *Actually, I believe, it is because `/etc/rc`, which runs cron, <br>
-> doesn't set up the environment enough for csh to run, and <br>
-> cron just inherits the situation.*
->
-> Anyway, the point is that if you find out what csh really <br>
-> needs in its environment, you might want to set up cron <br>
-> to provide some reasonable defaults 
->
-> *if it isn't supplied by cron's parent.*
->
-> Also, could you tell me what csh needs, if <br>
-> you find out, so we can hack our `/etc/rc`?
-
-### Reply
-
-> well, the environment IS a problem.
->
-> processes that cron forks will inherit the environment <br>
-> of the person who ran the cron daemon... 
->
-> I plan to edit out such useless things as TERMCAP, <br>
-> TERM, and the like; supply correct values for HOME, <br>
-> USER, CWD, and whatever else comes to mind.
->    
-> I'll make sure csh works...
-
-<br>
-<br>
-
-From ptsfa!ames!seismo!dgis!generous Thu Jan  1 07:33:17 1987
-
-**Date:** 
-<kbd>1987 January 1st</kbd> 
-<kbd>Thursday</kbd> 
-<kbd>10:29:20</kbd> <br>
+<kbd>1987 January 5th</kbd> 
+<kbd>Monday</kbd> 
+<kbd>09:29:57</kbd> <br>
 **From:** 
 <kbd>ames</kbd> 
 <kbd>seismo</kbd> 
-<kbd>dgis</kbd> 
-<kbd>generous (Curtis Generous)</kbd>  <br>
+<kbd>cbmvax</kbd> 
+<kbd>devon</kbd> 
+<kbd>paul</kbd>  <br>
 **To:** 
+<kbd>cbmvax</kbd> 
+<kbd>seismo</kbd> 
 <kbd>nike</kbd> 
 <kbd>ptsfa</kbd> 
 <kbd>vixie</kbd> 
 <kbd>paul</kbd> <br>
-**Status:** `RO`
 
-### Paul
 
-> One of the limitations of the present versions of <br>
-> cron is the lack of the capability of specifying a <br>
-> way to execute a command every n units of time.
->
-> Here is a good example:
->
-> ```txt
-> # Present method to start up uucico
-> 02,12,22,32,42,52 * * * * 	exec /usr/lib/uucp/uucico -r1
->
->
-># New method ?? (the ':' here is just one possibility for syntax)
->02:10 * * * *			exec /usr/lib/uucp/uucico -r1
->```
->
-> This method would prove very helpful for those <br>
-> programs that get started every few minutes, <br>
-> making the entry long and not easily readable.
->
-> The first number would specify the base time, <br>
-> and the second number the repetition interval.
-
-### Reply
-
-> Good idea, but bob@acornrc beat you to it.
->
-> I used '/' instead of ':'.
->
-> This is my personal preference, and seems <br>
-> intuitive when you think of the divide operator <br>
-> in C... Does anyone have a preference?
-
-<br>
-<br>
-
-From ptsfa!lll-lcc!seismo!decuac!c3pe!c3engr!charles Thu Jan  1 17:04:24 1987
-
-**Date:** 
-<kbd>1987 January 1st</kbd> 
-<kbd>Thursday</kbd> 
-<kbd>19:22:47</kbd> <br>
-**From:** 
-<kbd>lll-lcc</kbd> 
-<kbd>seismo</kbd> 
-<kbd>c3pe</kbd> 
-<kbd>c3engr</kbd> 
-<kbd>charles (Charles Green)</kbd>  <br>
-**To:** 
-<kbd>c3pe</kbd> 
-<kbd>decuac</kbd> 
-<kbd>dolqci</kbd> 
-<kbd>vrdxhq</kbd> 
-<kbd>seismo</kbd> 
-<kbd>lll-lcc</kbd> 
-<kbd>vixie</kbd> 
-<kbd>paul</kbd> <br>
-**Status:** `RO`
+<!-- Status: RO -->
 
 ### Message
 
-> Well, this isn't a compatible extension, but I have <br>
-> in times past wondered about a facility to let you <br>
-> start a process at intervals of, say, 17 minutes, <br>
-> instead of particular minutes out of each hour.
-
-### Reply
-
-> This was a popular request!
-
-<br>
-<br>
-
-From seismo!uwvax!astroatc!nicmad!norvax!mann Sun Jan  4 13:04:01 1987
-
-**Date:** 
-<kbd>1987 January 2nd</kbd> 
-<kbd>Friday</kbd> 
-<kbd>09:23:53 CST</kbd> <br>
-**From:** 
-<kbd>lll-lcc</kbd> 
-<kbd>seismo</kbd> 
-<kbd>uwvax</kbd> 
-<kbd>astroatc</kbd> 
-<kbd>nicmad</kbd> 
-<kbd>norvax</kbd> 
-<kbd>mann (Tom Mann)</kbd>  <br>
-**To:** 
-<kbd>ptsfa</kbd> 
-<kbd>vixie</kbd> 
-<kbd>paul</kbd> <br>
-**Status:** `RO`
-
-### Message
-
-> I'm not sure if it is in cron (either SysV or BSD ... <br>
-> if it is, I haven't figured it out ) but a comment <br>
-> feature would SURE BE NICE!.
+> One problem that has always plagued <br>
+> me with cron is the assumed ORing.
 >
-> There are times when I want to comment out an <br>
-> entry for a period of time; it might also make it a <br>
-> lot more legible.
-
-### Reply
-
-> My cron allows blank lines and standard #-type comments.
+> I'd like to see some type of ANDing implemented.
 >
-> I know that one BSD4.2 cron I've used had it. <br>
-> I don't know about SysV.
-
-From ptsfa!hoptoad!hugh Mon Jan  5 10:26:46 1987
-Date: Mon, 5 Jan 87 01:22:17 PST
-From: hoptoad!hugh (Hugh Daniel)
-To: ptsfa!vixie!paul
-Status: RO
-
-### Message
-
-> Hi, I do have a BIG one that I would like.
+> I guess I can best describe this by example. <br>
+> Say I have the following line in my crontab
 >
-> I want to log ALL output from command <br>
-> lines into a file for each line.
+> file:
 >
-> Thus I might have a chance of finding <br>
-> out why my crontab entry did not work.
+> ```src
+> *  *  4-31  *  1-6	/usr/bin/command
+> ```
 >
-> This would seem to work best if done by cron, as it <br>
-> is now I have a google of shell scripts laying about <br>
-> just to put the error output where I can see it.
-
-### Reply
-
-> My cron (and the SysV cron) will send mail to the owner of the particular crontab file if a command generates any output on stdout or stderr.
+> What this does is run 'command' on the 4th thru 31st <br>
+> days of the month, AND on Monday thru Saturday; <br>
+> which probably means running it every day of the <br>
+> month (unless Sunday falls on days 1-3).
 >
-> This can be irritating, but if you write a script such that any output means a problem occurred, you can avoid most logfile needs, and not generate mail except in unforeseen circumstances.
-
-From ptsfa!dual!ucbvax!ihnp4!anvil!es!Robert_Toxen Mon Jan  5 13:08:46 1987
-From: dual!ucbvax!ihnp4!anvil!es!Robert_Toxen
-Date: Fri,  2 Jan 87 14:25:29 EST
-To: anvil!ihnp4!ucbvax!dual!ptsfa!vixie!paul
-Status: RO
-
-### Message
-
-> Here are some suggestions:
-> 1. Run it through the C preprocessor via "/lib/<whatever>".
-
-### Reply
-
-> hmmm. this seems of limited utility, and if you really <br>
-> wanted to do it that way, you could do it yourself <br>
-> (since users can write to their own crontab files).
+> This happens because cron runs the command <br>
+> if the day-of-month OR the day-of-week is true.
 >
-> I'll add '-' (read stdin) to the crontab <br>
-> installer program to facilitate this.
-
-### Message
-
-> 2. Allow specifying every Nth day of week, i.e., every second Wednesday.
+> What I'd like to happen with the above line is to run <br>
+> the command ONLY on Monday thru Saturday any <br>
+> time after the 3rd of the month, e.g. if the <br>
+> day-of-month AND the day-of-week are true.
 >
->   I did this to calendar by separating the day of week <br>
->   (Wed=4, which one to start on and N with slashes).
+> My proposal to you is to implement some <br>
+> special chars for the first five fields.
 >
->   I took modulo the day of year as a starting point so <br>
->   that someone with a desk calendar documenting <br>
->   such things can easily determine the offset (second number).
+> Examples:
 >
->   I did this while at SGI; alas I don't have a copy of the code.
-
-### Reply
-
-> I can see how this could be useful, <br>
-> but I'm not sure how I'd implement it.
+> ```src
+> *  *  !1-3  *  1-6	/usr/bin/command
 >
-> Cron currently doesn't keep track of the last time a given <br>
-> command was run; whether the current Wednesday is the <br>
-> first or second since the command was last run would be <br>
-> pretty hard to figure out.
+> (run command Mon-Sat, but NOT [!] on the first 3 days of the month)
 >
-> I'd have to keep a database of commands and their execution <br>
-> around, and purge it when the crontab was overwritten.
->
-> This is too much work for me, but if someone adds it, let me know.
-
-
-From ptsfa!ames!seismo!cbmvax!devon!paul Tue Jan  6 05:50:17 1987
-From: ames!seismo!cbmvax!devon!paul
-To: cbmvax!seismo!nike!ptsfa!vixie!paul
-Date: Mon Jan  5 09:29:57 1987
-Status: RO
-
-### Message
-
-One problem that has always plagued me with cron is the assumed ORing.
-I'd like to see some type of ANDing implemented.  I guess I can best
-describe this by example.  Say I have the following line in my crontab
-file:
-
-*  *  4-31  *  1-6	/usr/bin/command
-
-What this does is run 'command' on the 4th thru 31st days of the
-month, AND on Monday thru Saturday; which probably means running it
-every day of the month (unless Sunday falls on days 1-3).  This
-happens because cron runs the command if the day-of-month OR the
-day-of-week is true.
-
-What I'd like to happen with the above line is to run the command ONLY
-on Monday thru Saturday any time after the 3rd of the month, e.g. if
-the day-of-month AND the day-of-week are true.
-
-My proposal to you is to implement some special chars for the first
-five fields.  Examples:
-
-*  *  !1-3  *  1-6	/usr/bin/command
-
-(run command Mon-Sat, but NOT [!] on the first 3 days of the month)
-
-*  *  &4-31 *  &1-6	/usr/bin/command
-
-(run command if day-of-month AND day-of-week are true)
-
-Get the picture?  This would be compatable with existing versions of
-cron (which wouldn't currently be using any special characters, so
-that old crontabs would be handled correctly).
+> ```src
+> *  *  &4-31 *  &1-6	/usr/bin/command
+> ```
+> 
+> (run command if day-of-month AND day-of-week are true)
+> 
+> Get the picture?
+> 
+> This would be compatable with existing versions <br>
+> of cron (which wouldn't currently be using any <br>
+> special characters, so that old crontabs would <br>
+> be handled correctly).
 
 ### Reply
 
