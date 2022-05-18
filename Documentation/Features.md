@@ -156,7 +156,7 @@ Only root was allowed to have one.
 <br>
 <br>
 
-## System V Compatibility
+## System V
 
 The `crontab` command is loosely compatible with <br>
 **System V**, but has been extended with more options.
@@ -188,9 +188,9 @@ tables before the next iteration.
 
 ### Other Crons
 
-- may require you have to kill & restart the daemon.
+- May require you have to kill & restart the daemon.
 
-- may unnecessarily read & parse the config continuously.
+- May unnecessarily read & parse the config continuously.
 
 <br>
 <br>
@@ -276,6 +276,8 @@ various field - matches together.
 
 In that sense this **Cron** isn't completely <br>
 similar to some of the **AT&T Crons** .
+
+<br>
 
 
 <!----------------------------------------------------------------------------->
