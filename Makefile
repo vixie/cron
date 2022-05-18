@@ -81,7 +81,7 @@ CFLAGS		=	$(CDEBUG) $(CWARN) $(INCLUDE) $(DEFS)
 INFOS =							\
 	Documentation/Conversion.md \
 	Documentation/Changelog.md 	\
-	Documentation/Configure.md  \ 
+	Documentation/Configure.md  \
 	Documentation/Features.md 	\
 	Documentation/Changes.md 	\
 	Documentation/Install.md 	\
