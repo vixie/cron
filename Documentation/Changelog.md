@@ -19,17 +19,64 @@
 
 ### V4 vs V3
 
-11.	[security]	check setuid() result (reported by Thomas Pollet).
-10.	[func]		add MAIL_FROMUSER option (see config.h comments).
-9.	[misc]		megapatch from tcmiller (posix compliance, etc).
-8.	[bug]		fix stepsize 0 infinite loop.
-7.	[evol]		"enum" version of freebsd fix to env-var settings.
-6.	[evol]		changes #12-17 from tcmiller (for *BSD alignment).
-5.	[feature]	give cron a version number and display it.
-4.	[bug]		handle clock jumps (from freebsd pr# 24485)
-3.	[feature]	add -n to cron (for nofork).
-2.	[evol]		merge in many changes from *BSD and Linux.
-1.	[port]		fixups for nextstep, plus a syslog configuration bug.
+- [ Security ]
+
+	Check `setuid()` result.
+	
+	Reported by **Thomas Pollet**.
+
+- [ Func ]
+
+	Add `MAIL_FROMUSER` option.
+	
+	See `config.h` comments.
+	
+- [ Misc ]
+	
+	Megapatch from **tcmiller**
+	
+	(POSIX compliance, ..)
+	
+- [ Bug ]
+
+	Fix stepsize `0` infinite loop.
+
+- [ Evol ]
+
+	`enum` version of **FreeBSD** <br>
+	fix to `env-var` settings.
+	
+- [ Evol ]
+
+	Changes `#12 - 17` from **tcmiller** 
+	
+	For **BSD** alignment.
+	
+- [ Feature ]
+
+	Give cron a version number and display it.
+	
+- [ Bug ]
+
+	Handle clock jumps 
+	
+	From FreeBSD Pull Request `24485`
+	
+- [ Feature ]
+
+	Add `-n` to cron
+	
+	For nofork.
+	
+- [ Evol ]
+
+	Merge in many changes <br>
+	from **BSD** and **Linux**.
+	
+- [ Port ]
+
+	Fixups for nextstep, plus a <br>
+	syslog configuration bug.
 
 <br>
 <br>
@@ -40,11 +87,14 @@
 
 <kbd>12 Dec 1994</kbd>
 
-1. There was a problem in the way the environment was being imported.
+- `gethostname()` now available in `compat.c`.
 
-2. `gethostname()` now available in `compat.c` for systems that need it.
+- Fixed various `flock()` problems.
 
-3. `Coherent` now supported.  All kinds of `flock()` damage was repaired.
+- Fixed environment importing.
+
+- `Coherent` now supported.
+
 
 ### 3.1
 
@@ -219,15 +269,16 @@ and the mtime wouldn't change in that case.
 
 #### <kbd>1988 February 8th</kbd>
 
-Made it possible to use much larger environment variable strings.
+- Environment variables strings can be longer:
 
-V1 allowed 100 characters; V2 allows 1000.
+	`100`  🠖  `1000`
+	
+	*This was needed for `PATH`* <br>
+	*variables on some systems.*
+	
+	Thanks to **Toerless Eckert** for this idea.
 
-This was needed for PATH variables on some systems.
-
-Thanks to Toerless Eckert for this idea.
-
-E-mail: UUCP: ...pyramid!fauern!faui10!eckert
+<!-- E-mail: UUCP: ...pyramid!fauern!faui10!eckert -->
 
 <br>
 
