@@ -3,98 +3,223 @@
   version of cron.  it is presented here for its entertainment value.
   --vix ]
 
-$Id: MAIL,v 1.1 1996/12/16 19:39:47 halley Exp $
+<br>
+<br>
 
 From ptsfa!lll-crg!ames!acornrc!bob Wed Dec 31 10:07:08 1986
-Date: Wed, 31 Dec 86 08:59:31 pst
-From: lll-crg!ames!acornrc!bob (Bob Weissman)
-To: ptsfa!vixie!paul
-Status: RO
 
-Sure, here's a suggestion: I'd like to be able to run a program, say,
-every two hours.  Current cron requires me to write
-0,2,4,6,8,10,12,14,16,18,20,22 in the hours field.  How about a notation
-to handle this more elegantly?
+**Date:** 
+<kbd>1986 December 31</kbd> 
+<kbd>Wednesday</kbd> 
+<kbd>08:59:31 PST</kbd> <br>
+**From:** 
+<kbd>lll-crg</kbd> 
+<kbd>ames</kbd> 
+<kbd>acornrc</kbd> 
+<kbd>bob (Bob Weissman)</kbd> <br>
+**To:** 
+<kbd>ptsfa</kbd> 
+<kbd>vixie</kbd> 
+<kbd>paul</kbd> <br>
+**Status:** `RO`
 
-<<	Okay, I've allowed 0-22/2 as a means of handling this.
-	The time specification for my cron is as follows:
-		specification = range {"," range}
-		range = (start "-" finish ["/" step]) | single-unit
-	This allows "1,3,5-7", which the current cron doesn't (it won't
-	do a range inside a list), and handles your specific need.	>>
+### Message
+
+> Sure, here's a suggestion:
+>
+> I'd like to be able to run a program, say, every two hours. <br>
+> Current cron requires me to write <br>
+>
+> 0,2,4,6,8,10,12,14,16,18,20,22 
+> 
+> in the hours field.
+>
+> How about a notation to handle this more elegantly?
+
+### Reply
+
+> Okay, I've allowed 0-22/2 as a means of handling this.
+>
+> The time specification for my cron is as follows:
+>
+>    specification = range {"," range} <br>
+>    range = (start "-" finish ["/" step]) | single-unit
+>
+> This allows "1,3,5-7", which the current cron doesn't <br>
+> (it won't do a range inside a list), and handles your specific need.
+
+<br>
+<br>
 
 From drw@mit-eddie Wed Dec 31 18:25:27 1986
-Date: Wed, 31 Dec 86 14:28:19 est
-From: drw@mit-eddie (Dale Worley)
-To: mit-eddie!vixie!paul
-Status: RO
 
-We have a lot of lines in our crontab of the form
+**Date:** 
+<kbd>1986 December 31</kbd> 
+<kbd>Wednesday</kbd> 
+<kbd>14:28:19 EST</kbd> <br>
+**From:** 
+<kbd>drw@mit-eddie (Dale Worley)</kbd>  <br>
+**To:** 
+<kbd>mit-eddie</kbd> 
+<kbd>vixie</kbd> 
+<kbd>paul</kbd> <br>
+**Status:** `RO`
 
-	00 12 * * * su user < /usr/users/user/script.file
+### Message
 
-This barfs (silently!) on our system (Dec Ultrix 1.2 == 4.2bsd) if
-user's shell is csh.  This, I am told, is because csh requires that
-the environment be set up in certain ways, which cron doesn't do.
-(Actually, I believe, it is because /etc/rc, which runs cron, doesn't
-set up the environment enough for csh to run, and cron just inherits
-the situation.)  Anyway, the point is that if you find out what csh
-really needs in its environment, you might want to set up cron to
-provide some reasonable defaults (if it isn't supplied by cron's
-parent).  Also, could you tell me what csh needs, if you find out, so
-we can hack our /etc/rc?
+> We have a lot of lines in our crontab of the form
+>
+> ```src
+> 00 12 * * * su user < /usr/users/user/script.file
+> ```
+>
+> This barfs (silently!) on our system (Dec Ultrix 1.2 == 4.2bsd) if user's shell is csh.
+>
+> This, I am told, is because csh requires that <br>
+> the environment be set up in certain ways, <br>
+> which cron doesn't do.
+>
+> *Actually, I believe, it is because `/etc/rc`, which runs cron, <br>
+> doesn't set up the environment enough for csh to run, and <br>
+> cron just inherits the situation.*
+>
+> Anyway, the point is that if you find out what csh really <br>
+> needs in its environment, you might want to set up cron <br>
+> to provide some reasonable defaults 
+>
+> *if it isn't supplied by cron's parent.*
+>
+> Also, could you tell me what csh needs, if <br>
+> you find out, so we can hack our `/etc/rc`?
 
-<<	well, the environment IS a problem. processes that cron forks
-	will inherit the environment of the person who ran the cron
-	daemon... I plan to edit out such useless things as TERMCAP,
-	TERM, and the like; supply correct values for HOME, USER, CWD,
-	and whatever else comes to mind.  I'll make sure csh works...	>>
+### Reply
+
+> well, the environment IS a problem.
+>
+> processes that cron forks will inherit the environment <br>
+> of the person who ran the cron daemon... 
+>
+> I plan to edit out such useless things as TERMCAP, <br>
+> TERM, and the like; supply correct values for HOME, <br>
+> USER, CWD, and whatever else comes to mind.
+>    
+> I'll make sure csh works...
+
+<br>
+<br>
+
 From ptsfa!ames!seismo!dgis!generous Thu Jan  1 07:33:17 1987
-Date: Thu Jan 1 10:29:20 1987
-From: ames!seismo!dgis!generous (Curtis Generous)
-To: nike!ptsfa!vixie!paul
-Status: RO
 
-Paul:
+**Date:** 
+<kbd>1987 January 1st</kbd> 
+<kbd>Thursday</kbd> 
+<kbd>10:29:20</kbd> <br>
+**From:** 
+<kbd>ames</kbd> 
+<kbd>seismo</kbd> 
+<kbd>dgis</kbd> 
+<kbd>generous (Curtis Generous)</kbd>  <br>
+**To:** 
+<kbd>nike</kbd> 
+<kbd>ptsfa</kbd> 
+<kbd>vixie</kbd> 
+<kbd>paul</kbd> <br>
+**Status:** `RO`
 
-One of the limitations of the present versions of cron is the lack
-of the capability of specifying a way to execute a command every
-n units of time.
+### Paul
 
-Here is a good example:
+> One of the limitations of the present versions of <br>
+> cron is the lack of the capability of specifying a <br>
+> way to execute a command every n units of time.
+>
+> Here is a good example:
+>
+> ```txt
+> # Present method to start up uucico
+> 02,12,22,32,42,52 * * * * 	exec /usr/lib/uucp/uucico -r1
+>
+>
+># New method ?? (the ':' here is just one possibility for syntax)
+>02:10 * * * *			exec /usr/lib/uucp/uucico -r1
+>```
+>
+> This method would prove very helpful for those <br>
+> programs that get started every few minutes, <br>
+> making the entry long and not easily readable.
+>
+> The first number would specify the base time, <br>
+> and the second number the repetition interval.
 
-# Present method to start up uucico
-02,12,22,32,42,52 * * * * 	exec /usr/lib/uucp/uucico -r1
+### Reply
 
-# New method ?? (the ':' here is just one possibility for syntax)
-02:10 * * * *			exec /usr/lib/uucp/uucico -r1
+> Good idea, but bob@acornrc beat you to it.
+>
+> I used '/' instead of ':'.
+>
+> This is my personal preference, and seems <br>
+> intuitive when you think of the divide operator <br>
+> in C... Does anyone have a preference?
 
-This method would prove very helpful for those programs that get started
-every few minutes, making the entry long and not easily readable.  The first
-number would specify the base time, and the second number the repetition
-interval.
-
-<<	Good idea, but bob@acornrc beat you to it.  I used '/' instead of
-	':'.  This is my personal preference, and seems intuitive when you
-	think of the divide operator in C... Does anyone have a preference? >>
+<br>
+<br>
 
 From ptsfa!lll-lcc!seismo!decuac!c3pe!c3engr!charles Thu Jan  1 17:04:24 1987
-From: lll-lcc!seismo!c3pe!c3engr!charles (Charles Green)
-To: c3pe!decuac!dolqci!vrdxhq!seismo!lll-lcc!ptsfa!vixie!paul
-Date: Thu Jan  1 19:22:47 1987
-Status: RO
 
-Well, this isn't a compatible extension, but I have in times past wondered
-about a facility to let you start a process at intervals of, say, 17 minutes,
-instead of particular minutes out of each hour.
+**Date:** 
+<kbd>1987 January 1st</kbd> 
+<kbd>Thursday</kbd> 
+<kbd>19:22:47</kbd> <br>
+**From:** 
+<kbd>lll-lcc</kbd> 
+<kbd>seismo</kbd> 
+<kbd>c3pe</kbd> 
+<kbd>c3engr</kbd> 
+<kbd>charles (Charles Green)</kbd>  <br>
+**To:** 
+<kbd>c3pe</kbd> 
+<kbd>decuac</kbd> 
+<kbd>dolqci</kbd> 
+<kbd>vrdxhq</kbd> 
+<kbd>seismo</kbd> 
+<kbd>lll-lcc</kbd> 
+<kbd>vixie</kbd> 
+<kbd>paul</kbd> <br>
+**Status:** `RO`
 
-<<	This was a popular request!	>>
+### Message
+
+> Well, this isn't a compatible extension, but I have <br>
+> in times past wondered about a facility to let you <br>
+> start a process at intervals of, say, 17 minutes, <br>
+> instead of particular minutes out of each hour.
+
+### Reply
+
+> This was a popular request!
+
+<br>
+<br>
 
 From seismo!uwvax!astroatc!nicmad!norvax!mann Sun Jan  4 13:04:01 1987
-Date: Fri, 2 Jan 87 09:23:53 cst
-From: lll-lcc!seismo!uwvax!astroatc!nicmad!norvax!mann (Tom Mann)
-To: ptsfa!vixie!paul
-Status: RO
+
+**Date:** 
+<kbd>1987 January 2nd</kbd> 
+<kbd>Friday</kbd> 
+<kbd>09:23:53 CST</kbd> <br>
+**From:** 
+<kbd>lll-lcc</kbd> 
+<kbd>seismo</kbd> 
+<kbd>uwvax</kbd> 
+<kbd>astroatc</kbd> 
+<kbd>nicmad</kbd> 
+<kbd>norvax</kbd> 
+<kbd>mann (Tom Mann)</kbd>  <br>
+**To:** 
+<kbd>ptsfa</kbd> 
+<kbd>vixie</kbd> 
+<kbd>paul</kbd> <br>
+**Status:** `RO`
+
 
 I'm not sure if it is in cron (either SysV or BSD ... if it is, I haven't
 figured it out ) but a comment feature would SURE BE NICE!.
