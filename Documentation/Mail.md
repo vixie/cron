@@ -1,6 +1,10 @@
 
+<div align = center>
+
 # Mail
 
+  <br>
+  
 ```
 This is really old  mail  that  came  to me in response 
 to  my  1986  posting  to  Usenet  asking  for  feature 
@@ -11,8 +15,7 @@ It is presented here for its entertainment value.
 ```
 
 <br>
-
-<div align = center>
+<br>
 
 # 1986 <br>December
 
@@ -37,6 +40,8 @@ It is presented here for its entertainment value.
 | `16th` | [![A]][1987 / 01 / 16 / A]
 
 </div>
+
+<br>
 
 
 <!--------------------------------{ Mails }------------------------------------>
