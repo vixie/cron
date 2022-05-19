@@ -11,9 +11,9 @@ in the following you will find a checklist.
 
 *The following files:*
 
-- **[FEATURES]**
-- **[INSTALL]**
-- **[CONVERSION]**
+- **[`Features.md`]**
+- **[`Install.md`]**
+- **[`Conversion.md`]**
 
 <br>
 
@@ -109,8 +109,8 @@ in the following you will find a checklist.
 		
 <!----------------------------------------------------------------------------->
 
-[CONVERSION]: ../CONVERSION
-[FEATURES]: ../FEATURES
+[`Conversion.md`]: Conversion.md
+[`Features.md`]: Features.md
+[`Install.md`]: Install.md
 [Makefile]: ../Makefile
-[INSTALL]: ../INSTALL
 [Config]: ../config.h
