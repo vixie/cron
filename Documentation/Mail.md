@@ -68,7 +68,7 @@ It is presented here for its entertainment value.
 
 [1987 / 01 / 08 / A]: Mails/1987%20January%208th.md
 
-[1987 / 01 / 13 / A]: Mails/1987%20January%2015th.md
+[1987 / 01 / 13 / A]: Mails/1987%20January%2013th.md
 
 [1987 / 01 / 16 / A]: Mails/1987%20January%2016th.md
 

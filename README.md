@@ -10,7 +10,8 @@
 ---
 
 [![Button Configure]][Configure]  
-[![Button Changes]][Changes]
+[![Button Changes]][Changes]  
+[![Button Mails]][Mails]
 
 ---
   
@@ -75,11 +76,13 @@ has gone into making porting to it easier.
 
 [Configure]: Documentation/Configure.md
 [Changes]: Documentation/Changelog.md
+[Mails]: Documentation/Mail.md
 
 
 <!-------------------------------{ Buttons }----------------------------------->
 
-[Button Changes]: https://img.shields.io/badge/Changelog-2478b5?style=for-the-badge
-[Button Configure]: https://img.shields.io/badge/Configure-d74078?style=for-the-badge
+[Button Configure]: https://img.shields.io/badge/Configure-d74078?style=for-the-badge&logo=WindowsTerminal&logoColor=white
+[Button Changes]: https://img.shields.io/badge/Changelog-2478b5?style=for-the-badge&logo=Git&logoColor=white
+[Button Mails]: https://img.shields.io/badge/Mails-yellow?style=for-the-badge&logo=GMail&logoColor=white
 
 
