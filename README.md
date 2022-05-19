@@ -11,7 +11,8 @@
 
 [![Button Configure]][Configure]  
 [![Button Changes]][Changes]  
-[![Button Mails]][Mails]
+[![Button Mails]][Mails]  
+[![Button Thanks]][Thanks]
 
 ---
   
@@ -76,13 +77,15 @@ has gone into making porting to it easier.
 
 [Configure]: Documentation/Configure.md
 [Changes]: Documentation/Changelog.md
+[Thanks]: Documentation/Thanks.md
 [Mails]: Documentation/Mail.md
 
 
 <!-------------------------------{ Buttons }----------------------------------->
 
-[Button Configure]: https://img.shields.io/badge/Configure-d74078?style=for-the-badge&logo=WindowsTerminal&logoColor=white
+[Button Configure]: https://img.shields.io/badge/Configure-179287?style=for-the-badge&logo=WindowsTerminal&logoColor=white
 [Button Changes]: https://img.shields.io/badge/Changelog-2478b5?style=for-the-badge&logo=Git&logoColor=white
+[Button Thanks]: https://img.shields.io/badge/Thanks-d74078?style=for-the-badge&logo=GitHubSponsors&logoColor=white
 [Button Mails]: https://img.shields.io/badge/Mails-yellow?style=for-the-badge&logo=GMail&logoColor=white
 
 
