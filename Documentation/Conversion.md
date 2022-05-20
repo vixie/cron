@@ -33,7 +33,7 @@ fulfill specific roles.
 
 ## Super User
 
-Please remove all the `su` from the `cron` commands.
+Please remove all the `su` from the **Cron** commands.
 
 *On `4.3`, there's no need for `su` since* <br>
 *the user name appears on in command,* <br>
@@ -100,7 +100,7 @@ to examine, replace and delete a **CronTab**.
 
 *On this version your config might look like this:*
 
-```src
+```crontab
 5 * * * *   su uucp < /usr/lib/uucp/uudemon.hr
 10 4 * * *  su uucp < /usr/lib/uucp/uudemon.day
 15 5 * * 0  su uucp < /usr/lib/uucp/uudemon.wk
@@ -108,7 +108,7 @@ to examine, replace and delete a **CronTab**.
 
 *or this:*
 
-```src
+```crontab
 5 * * * *   echo /usr/lib/uucp/uudemon.hr | su uucp
 10 4 * * *  echo /usr/lib/uucp/uudemon.day | su uucp
 15 5 * * 0  echo /usr/lib/uucp/uudemon.wk | su uucp
@@ -120,7 +120,7 @@ to examine, replace and delete a **CronTab**.
 
 *Here they might look a little bit better already:*
 
-```src
+```crontab
 5 * * * *   uucp  /usr/lib/uucp/uudemon.hr
 10 4 * * *  uucp  /usr/lib/uucp/uudemon.day
 15 5 * * 0  uucp  /usr/lib/uucp/uudemon.wk
@@ -136,7 +136,7 @@ commands into.
 
 *The converted config might look like this:*
 
-```src
+```crontab
 # UUCP's Crontab
 # at /usr/lib/uucp/crontab.src
 

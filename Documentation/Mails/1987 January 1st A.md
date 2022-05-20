@@ -26,7 +26,7 @@
 >
 > Here is a good example:
 >
-> ```src
+> ```crontab
 > # Present method to start up uucico
 > 02,12,22,32,42,52 * * * * 	exec /usr/lib/uucp/uucico -r1
 >

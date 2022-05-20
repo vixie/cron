@@ -18,7 +18,7 @@
 
 > We have a lot of lines in our crontab of the form
 >
-> ```src
+> ```crontab
 > 00 12 * * * su user < /usr/users/user/script.file
 > ```
 >

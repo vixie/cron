@@ -33,7 +33,7 @@
 >
 > file:
 >
-> ```src
+> ```crontab
 > *  *  4-31  *  1-6	/usr/bin/command
 > ```
 >
@@ -55,13 +55,13 @@
 >
 > Examples:
 >
-> ```src
+> ```crontab
 > *  *  !1-3  *  1-6	/usr/bin/command
 > ```
 >
 > (run command Mon-Sat, but NOT [!] on the first 3 days of the month)
 >
-> ```src
+> ```crontab
 > *  *  &4-31 *  &1-6	/usr/bin/command
 > ```
 > 

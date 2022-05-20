@@ -126,7 +126,7 @@
 >
 > As in:
 >
-> ```src
+> ```crontab
 > 2,12,22,32,42,52 * * * * -q /usr/lib/uucp/uudemon.hr
 > ```
 >
