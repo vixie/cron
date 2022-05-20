@@ -86,7 +86,7 @@ has gone into making porting to it easier.
 <!-------------------------------{ Buttons }----------------------------------->
 
 [Button Configure]: https://img.shields.io/badge/Configure-31A8FF?style=for-the-badge&logo=WindowsTerminal&logoColor=white
-[Button Features]: https://img.shields.io/badge/Features-68BC71?style=for-the-badge&logo=Git&logoColor=white
+[Button Features]: https://img.shields.io/badge/Features-68BC71?style=for-the-badge&logo=AddThis&logoColor=white
 [Button Changes]: https://img.shields.io/badge/Changelog-66459B?style=for-the-badge&logo=Git&logoColor=white
 [Button Thanks]: https://img.shields.io/badge/Thanks-d74078?style=for-the-badge&logo=GitHubSponsors&logoColor=white
 [Button Mails]: https://img.shields.io/badge/Mails-yellow?style=for-the-badge&logo=GMail&logoColor=white
