@@ -1,70 +1,119 @@
 
+[<img height = 2000 width = 26% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 2000 width = 26% align = right src = '../Resources/Space.svg' >][#]
+
+<div align = center>
+
 # Thanks
 
-
-`15 January 1990` <br>
-**Paul Vixie**
+`Paul Vixie - 15 January 1990`
 
 <br>
 
-Many people have contributed to cron. <br>
-Many more than I can remember, in fact.
+Many people have contributed to Cron,  
+many more than I can remember, in fact.
 
 <br>
+<br>
 
-**[Rich Salz]** and **[Carl Gutekunst]** were <br>
+</div><div align = right>
+
+**[Rich Salz]** and **[Carl Gutekunst]** were  
 each of enormous help to me in V1.
 
-Carl for helping me understand UNIX <br>
-well enough to write it, and Rich for <br>
+Carl for helping me understand UNIX  
+well enough to write it, and Rich for  
 helping me get the features right.
 
 <br>
+<br>
 
-**[John Gilmore]** wrote me a wonderful review of V2, which <br>
-took me a whole year to answer even though it made me <br>
-clean up some really awful things in the code.
+</div><div align = left>
 
-*According to John the most awful things are still in here, of course.*
+**[John Gilmore]** wrote me a wonderful review of version 2,  
+which took me a whole year to answer, even though it  
+made me clean up some really awful things in the code.
+
+*Of course according to John the most awful things are still in there.*
+
+<br>
+<br>
+
+</div><div align = right>
+
+**Paul Close** made a suggestion led to the creation  
+of  `/etc/crond.pid`  and the mutex locking on it.
+
+<br>
+<br>
+
+</div><div align = left>
+
+**Kevin Braunsdorf of Purdue** made a suggestion  
+that led to  `@reboot`  and its brothers and sisters.
+
+He also sent in some diffs that lead Cron towards  
+compile-ability with **System V**, however without  
+at (1) capabilities, this cron isn't going to be that  
+useful on System V.
+
+<br>
+<br>
+
+</div><div align = right>
+
+**Bob Alverson** fixed a silly bug  
+in the line number counting.
+
+<br>
+<br>
+
+</div><div align = left>
+
+**[Brian Reid]** suggestions led to the run queue  
+& the source-file labeling in installed crontabs.
+
+<br>
+<br>
+
+</div><div align = right>
+
+**Scott Narveson** ported version 2 to a Sequent, and sent  
+in the single most useful batch of diffs I've ever gotten.
 
 <br>
 
-**Paul Close** made a suggestion which led to <br>
-`/etc/crond.pid` and the mutex locking on it.
+##### Changes attributable to Scott
+
+Sendmail will not timeout if the  
+cmd is slow to generate output
+
+Crontab says the correct thing when  
+you do something you shouldn't do
+
+Sequent-verse support added  
+*( may also help on Pyramids )*
+
+The Crontab ( 5 ) man page is longer  
+and it's content is more informative
+
+Misc changes related to the  
+side effects of  `fclose()`
+
+Null  `pw_shell`  is dealt with  
+now and defaults to  `/bin/sh`
+
+Day-of-week names aren't  
+off by one day anymore
+
+</div>
 
 <br>
-
-**Kevin Braunsdorf of Purdue** made a suggestion that led <br>
-to `@reboot` and its brothers and sisters; he also sent some <br>
-diffs that lead cron toward compile-ability with **System V**, <br>
-though without at (1) capabilities, this cron isn't going to <br>
-be that useful on System V.
-
-<br>
-
-**Bob Alverson** fixed a silly bug in the line number counting.
-
-<br>
-
-**[Brian Reid]** made suggestions which led to the run <br>
-queue and the source-file labeling in installed crontabs.
-
-<br>
-
-**Scott Narveson** ported V2 to a Sequent, and sent in the <br>
-most useful single batch of diffs I got from anybody.
-
-Changes attributable to Scott are: <br>
-   🠖 Sendmail won't time out if the command is slow to generate output <br>
-   🠖 Crontab says the right thing if you do something you shouldn't do <br>
-   🠖 Sequent "universe" support added (may also help on Pyramids) <br>
-   🠖 Crontab(5) man page is longer and more informative <br>
-   🠖 Misc changes related to the side effects of fclose() <br>
-   🠖 Null pw_shell is dealt with now; default is /bin/sh <br>
-   🠖 Day-of-week names aren't off by one anymore <br>
 
 
 <!----------------------------------------------------------------------------->
+
+[#]: #
 
 [Carl Gutekunst]: https://github.com/alameth
 [John Gilmore]: https://en.wikipedia.org/wiki/John_Gilmore_(activist)
