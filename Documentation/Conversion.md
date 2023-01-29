@@ -1,6 +1,6 @@
 
-[<img height = 1900 width = 22% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1900 width = 22% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1900 width = 20% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1900 width = 20% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -96,8 +96,8 @@ It's recommended to name your config files
 <br>
 <br>
 
-[<img height = 1700 width = 22% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1700 width = 22% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1700 width = 20% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1700 width = 20% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = left>
 
@@ -187,8 +187,8 @@ output from your **Cron** commands.
 <br>
 <br>
 
-[<img height = 400 width = 22% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 400 width = 22% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 400 width = 20% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 400 width = 20% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = left>
 
