@@ -409,8 +409,12 @@ child_process(entry *e, user *u) {
 				const char *msg = NULL;
 
 				if (Mailer != NULL) {
-					if (strstrcount(Mailer, "%s") == 1) {
-						if (strlens(Mailer, mailto) + 1
+					if (strcountstr(Mailer, "%s") == 1) {
+						if (strlens(Mailer,
+							    mailto,
+							    NULL)
+						    - strlen("%s")
+						    + sizeof ""
 						    > sizeof mailcmd) {
 							msg = "Mailer ovf 1";
 						} else {
@@ -419,7 +423,7 @@ child_process(entry *e, user *u) {
 								       mailto);
 						}
 					} else {
-						if (strlen(Mailer) + 1
+						if (strlen(Mailer) + sizeof ""
 						    > sizeof mailcmd) {
 							msg = "Mailer ovf 2";
 						} else {
@@ -428,7 +432,8 @@ child_process(entry *e, user *u) {
 						}
 					}
 				} else {
-					if (strlens(MAILFMT, MAILARG, NULL) + 1
+					if (strlens(MAILFMT, MAILARG, NULL)
+					    + sizeof ""
 					    > sizeof mailcmd) {
 						msg = "mailcmd too long";
 					} else {

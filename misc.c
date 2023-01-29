@@ -123,7 +123,7 @@ strdtb(char *s) {
 }
 
 int
-strstrcount(const char *s, const char *t) {
+strcountstr(const char *s, const char *t) {
 	const char *u;
 	int ret = 0;
 

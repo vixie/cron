@@ -55,7 +55,7 @@ int		job_runqueue(void),
 		strcmp_until(const char *, const char *, char),
 		allowed(const char *, const char *, const char *),
 		strdtb(char *),
-		strstrcount(const char *, const char *);
+		strcountstr(const char *, const char *);
 
 size_t		strlens(const char *, ...);
 

@@ -22,7 +22,7 @@
 cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
 .B cron
-.RB [ \-m
+.RB [ \-M
 .IR mailer ]
 .RB [ \-n ]
 .RB [ \-x
@@ -47,7 +47,7 @@ commands, any output is mailed to the owner of the crontab (or to the user
 named in the MAILTO environment variable in the crontab, if such exists).
 .PP
 The default mailer command is /usr/sbin/sendmail unless overridden with the
-\-m command line option when
+\-M command line option when
 .I Cron
 is invoked. If exactly one %s is present this command string, it will be
 replaced by the user name of the invoking cron tab.
