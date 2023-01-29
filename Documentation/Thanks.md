@@ -1,6 +1,6 @@
 
-[<img height = 2000 width = 26% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 2000 width = 26% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 2000 width = 24% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 2000 width = 24% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -83,28 +83,21 @@ in the single most useful batch of diffs I've ever gotten.
 
 <br>
 
-##### Changes attributable to Scott
+#### Changes attributable to Scott
 
-Sendmail will not timeout if the  
-cmd is slow to generate output
+<kbd> <br> Sequent-verse support added <br> ( may also help on Pyramids ) <br> </kbd>   
+<kbd> <br> Sendmail will not timeout if the <br> cmd is slow to generate output <br> </kbd>
+    
+<kbd> <br> Misc changes related to the <br> side effects of  `fclose()` <br> </kbd> 
+<kbd> <br> Crontab says the correct thing when <br> you do something you shouldn't do <br> </kbd>
+    
+    
+<kbd> <br> Day-of-week names aren't  <br> off by one day anymore <br> </kbd>   
+<kbd> <br> The Crontab ( 5 ) man page is longer <br> and it's content is more informative <br> </kbd>
 
-Crontab says the correct thing when  
-you do something you shouldn't do
-
-Sequent-verse support added  
-*( may also help on Pyramids )*
-
-The Crontab ( 5 ) man page is longer  
-and it's content is more informative
-
-Misc changes related to the  
-side effects of  `fclose()`
-
-Null  `pw_shell`  is dealt with  
-now and defaults to  `/bin/sh`
-
-Day-of-week names aren't  
-off by one day anymore
+    
+<kbd> <br> Null `pw_shell` is dealt with <br> now and defaults to `/bin/sh` <br> </kbd>
+    
 
 </div>
 
