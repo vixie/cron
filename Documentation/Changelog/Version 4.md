@@ -1,17 +1,32 @@
 
+[<img height = 2000 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 2000 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+
+<div align = center>
+
 # Version 4
 
-## 4.1  <kbd>  2004 | January  </kbd>
+</div>
+    
+<br>
+<br>
+    
+<div align = left>
+
+## 4.1
+<kbd>  2004 | January  </kbd>
 
 <br>
 <br>
 
-## 4.0  <kbd>  2000 | November  </kbd>
+## 4.0
+<kbd>  2000 | November  </kbd>
 
 <br>
 <br>
 
-## 4.0 - B1  <kbd>  1997 | September 7th  </kbd>
+## 4.0 - B1
+<kbd>  1997 | September 7th  </kbd>
 
 <br>
 <br>
@@ -20,7 +35,7 @@
 
 <br>
 
-#### 🚨  Security
+### 🚨  Security
 
 -   Check `setuid()` result.
     
@@ -28,7 +43,7 @@
     
 <br>
 
-#### 🧰  Functionality
+### 🧰  Functionality
 
 -   Added `MAIL_FROMUSER` option.
 
@@ -36,16 +51,15 @@
 
 <br>
 
-#### 📦  Miscellaneous 
+### 📦  Miscellaneous 
 
 -   Megapatch from **tcmiller**
 
-    -   POXIS compliance
-    -   ...
+    *POXIS compliance & more*
 
 <br>
 
-#### 🪳  Bugs
+### 🪳  Bugs
 
 -	Fixed stepsize `0` infinite loop.
 
@@ -55,7 +69,7 @@
 
 <br>
 
-#### 🎁  Features
+### 🎁  Features
 
 -   Give Cron a version number and display it.
 
@@ -63,7 +77,7 @@
 
 <br>
 
-#### 🔬  Evolution
+### 🔬  Evolution
 
 -   `enum` version of **FreeBSD** fixed to `env-var` settings.
 
@@ -76,12 +90,13 @@
 
 <br>
 
-#### 💾  Porting
+### 💾  Porting
     
 -   Fixed syslog configuration bug.
 
 -   Fixups for nextstep.
 
+</div>
 
 <br>
 
@@ -89,3 +104,4 @@
 <!----------------------------------------------------------------------------->
 
 [`config.h`]: ../../config.h
+[#]: #
