@@ -96,8 +96,8 @@ It's recommended to name your config files
 <br>
 <br>
 
-[<img height = 1750 width = 22% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1750 width = 22% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1700 width = 22% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1700 width = 22% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = left>
 
@@ -116,43 +116,44 @@ to examine, replace and delete a **CronTab**.
 
 ### 4.2
 
-*On this version your config might look like this:*
+*On this version your config might look like this*
 
 ```crontab
-5 * * * *   su uucp < /usr/lib/uucp/uudemon.hr
+ 5 * * * *  su uucp < /usr/lib/uucp/uudemon.hr
 10 4 * * *  su uucp < /usr/lib/uucp/uudemon.day
 15 5 * * 0  su uucp < /usr/lib/uucp/uudemon.wk
 ```
 
-*or this:*
+*Or this*
 
 ```crontab
-5 * * * *   echo /usr/lib/uucp/uudemon.hr | su uucp
+ 5 * * * *  echo /usr/lib/uucp/uudemon.hr  | su uucp
 10 4 * * *  echo /usr/lib/uucp/uudemon.day | su uucp
-15 5 * * 0  echo /usr/lib/uucp/uudemon.wk | su uucp
+15 5 * * 0  echo /usr/lib/uucp/uudemon.wk  | su uucp
 ```
 
 <br>
 
 ### 4.3
 
-*Here they might look a little bit better already:*
+*Here they might look a little bit better already*
 
 ```crontab
-5 * * * *   uucp  /usr/lib/uucp/uudemon.hr
-10 4 * * *  uucp  /usr/lib/uucp/uudemon.day
-15 5 * * 0  uucp  /usr/lib/uucp/uudemon.wk
+ 5 * * * *  uucp /usr/lib/uucp/uudemon.hr
+10 4 * * *  uucp /usr/lib/uucp/uudemon.day
+15 5 * * 0  uucp /usr/lib/uucp/uudemon.wk
 ```
 
 <br>
 
 ### Converted
 
-In the updated version you'd want to create a dedicated file, <br>
-like `/usr/lib/uucp/crontab.src` to put the `uucp` specific <br>
-commands into.
+In the updated version you would want to create use a dedicated file like  
+`/usr/lib/uucp/crontab.src`  to put the  `uucp`  specific commands into.
 
-*The converted config might look like this:*
+<br>
+
+*It might look something like this:*
 
 ```crontab
 # UUCP's Crontab
@@ -162,7 +163,7 @@ SHELL = /bin/sh
 PATH = /usr/lib/uucp:/bin:/usr/bin
 HOME = /usr/lib/uucp
 
-5 * * * *   uudemon.hr
+ 5 * * * *  uudemon.hr
 10 4 * * *  uudemon.day
 15 5 * * 0  uudemon.wk
 ```
@@ -171,17 +172,15 @@ HOME = /usr/lib/uucp
 
 ### Alternative
 
-If you run a `4.2` derived **Cron**, you can of <br>
-course just install your current **CronTab** in <br>
-`toto` as the root's **CronTab**.
+If you run a  `BSD 4.2`  derived **Cron**, you can of course just  
+install your current **CronTab** in toto as the root's **CronTab**.
 
-It would work exactly the way your current <br>
-one does, barring the additional steps in <br>
-installing or changing it.
+It would work exactly the way your current one does,  
+barring the additional steps in installing / changing it.
 
-There would still be advantages to this **Cron**, <br>
-mostly that you get mail if there is any output <br>
-from your **Cron** commands.
+There would still be advantages to this **Cron** ,  
+mainly getting mail every time there is some  
+output from your **Cron** commands.
 
 </div>
 
@@ -193,19 +192,19 @@ from your **Cron** commands.
 
 <div align = left>
 
-## Mail
+## ✉  Mail
 
-You will likely find that after install this version of **Cron** <br>
-that your commands are generating a lot of output.
+It is likely you will find your commands to generate  
+a lot of output, after installing this version of **Cron**.
 
-To mitigate this, you can redirect all ***expected*** output <br>
-to a per-execution log file, to only keep the last time <br>
-the command was run.
+To mitigate this, you can redirect all **expected**  
+output to a per-execution log file, to only keep  
+the output from the last execution.
 
-This way only ***unexpected*** output will be mailed to you.
+*This way only **unexpected** output will be mailed to you.*
 
-*This might take a while to get right, however once it <br>
-works, it will be very convenient and worth the effort.*
+This might take a while to get right, however once it  
+works, it will be very convenient and worth the effort.
 
 </div>
 
