@@ -1,7 +1,10 @@
 
+[<img height = 220 width = 24% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 220 width = 24% align = right src = '../Resources/Space.svg' >][#]
+
 <div align = center>
 
-# Mail
+# Mail Archive
 
   <br>
   
@@ -44,6 +47,11 @@ It is presented here for its entertainment value.
 <br>
 
 
+<!----------------------------------------------------------------------------->
+
+[#]: #
+
+
 <!--------------------------------{ Mails }------------------------------------>
 
 [1986 / 12 / 31 / A]: Mails/1986%20December%2031st%20A.md
@@ -79,9 +87,3 @@ It is presented here for its entertainment value.
 [B]: https://img.shields.io/badge/B-red?style=for-the-badge
 [C]: https://img.shields.io/badge/C-green?style=for-the-badge
 [D]: https://img.shields.io/badge/D-yellow?style=for-the-badge
-
-
-
-
-
-
