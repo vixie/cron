@@ -1,12 +1,12 @@
 
-[<img height = 220 width = 24% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 220 width = 24% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 300 width = 22% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 300 width = 22% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = center>
 
 # Mail Archive
 
-  <br>
+<br>
   
 ```
 This is really old  mail  that  came  to me in response 
@@ -19,7 +19,12 @@ It is presented here for its entertainment value.
 
 <br>
 <br>
+    
+[<img height = 700 width = 33% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 700 width = 33% align = right src = '../Resources/Space.svg' >][#]
 
+<div align = center>
+    
 # 1986 <br>December
 
 | Day | Mails |
