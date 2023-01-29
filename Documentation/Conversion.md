@@ -1,100 +1,118 @@
 
+[<img height = 1900 width = 26% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1900 width = 26% align = right src = '../Resources/Space.svg' >][#]
+
+<div align = center>
+
 # Conversion
 
 *of **BSD** **Crontab** files.*
 
-BSD: `4.2 - 4.3`
+<kbd> BSD 4.2  </kbd> 
+<kbd> BSD 4.3  </kbd>
+
+</div>
 
 <br>
 
-## Backup
+<div align = left>
 
-Please make sure you either make a backup of or <br>
-keep your original `/usr/lib/crontab` config file.
+## 📦  Backup
 
-*While **Cron** now doesn't use it anymore, it might <br>
-still come in handy if something goes south.*
-
-<br>
-<br>
-
-## Splitting Up
-
-The main goal in the conversion is to edit your <br>
-current config into smaller bite sized ones that <br>
-fulfill specific roles.
-
-*The biggest feature of this **Cron** is that you can* <br>
-*move `news` and `uucp` **Cron** commands into* <br>
-*files owned and maintainable by those users.*
+While **Cron** doesn't use  `/usr/lib/crontab`  config files anymore,  
+you should keep it or make a backup in case something goes south.
 
 <br>
 <br>
 
-## Super User
+## 🪓  Separation
 
-Please remove all the `su` from the **Cron** commands.
+The main goal of the conversion is split your existing config  
+into smaller bite sized pieces that each fulfill a specific role.
 
-*On `4.3`, there's no need for `su` since* <br>
-*the user name appears on in command,* <br>
-*however I'd still rather have separate* <br>
-***Crontabs*** *with separate environments.*
-
-<br>
-<br>
-
-## Root
-
-Most commands in most **CronTabs** <br>
-🠖 **Are** run by root <br>
-⤷ **Have** to be run by root <br>
-⤷ **Should** continue be run by root
+*The most significant feature of this Cron is the ability  
+to move `news` & `uucp` commands into files owned  
+and maintained by those users.*
 
 <br>
 <br>
 
-## Structure
+## 🛡  Super User
 
-***Recommended*** *directory structure for your config files.*
+Please remove all the `su` commands from your config.
+
+*On `BSD 4.3`, there's no need for `su` since the username*  
+*appears in the command, however I would recommend*  
+*using separate **Crontabs** for separate environments.*
+
+<br>
+<br>
+
+## 🥇  Root
+
+Most commands in your most **CronTabs**
+
+
+**Are** run by **Ｒｏｏｔ**  
+**Have** to be run by **Ｒｏｏｔ**  
+**Should** continue be run by **Ｒｏｏｔ**
+
+<br>
+<br>
+
+## 🏗  Structure
+
+The **recommended** folder layout for your configs.
 
 <br>
 
 ### Copying
 
-As the `crontab` command copies all used configs into <br>
-a protected directory under `<CRONDIR>/SPOOL_DIR`, a <br>
-good location doesn't matter but will keep things tidy.
+The  `crontab`  command copies all used configs  
+into a protected folder at  `<CRONDIR>/SPOOL_DIR`.
+
+This means that it generally doesn't matter where  
+you keep your configs, however choosing a good  
+location helps to keep things tidy.
 
 <br>
 
 ### Naming
 
-It is **suggested** to use `crontab.src` <br>
-as the name for your config files.
+It's recommended to name your config files
+
+`crontab.src`
 
 <br>
 
 | Type | Suggested Location
-|:----:|:------------------
+|:----:|:------------------:
 | ***Root*** | `/etc/crontab.src`  **or**  <br>`/usr/adm/crontab.src`
 | ***News*** | `/usr/lib/news/crontab.src`
 | ***UUCP*** | `/usr/lib/uucp/crontab.src`
 
+</div>
+
 <br>
 <br>
 
-## Install
+[<img height = 1750 width = 26% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1750 width = 26% align = right src = '../Resources/Space.svg' >][#]
 
-Install the configs with the `crontab` command, <br>
-probably with `-u <Username>`  🠖  Man Pages.
+<div align = left>
 
-The `crontab` command can also be used <br>
+## 📥  Installation
+
+Install your configs with the  `crontab`  command, <br>
+probably with  `-u <Username>`  ( See man pages )
+
+The  `crontab`  command can also be used  
 to examine, replace and delete a **CronTab**.
 
 <br>
 <br>
 
-## Examples
+## 🎬  Examples
 
 ### 4.2
 
@@ -165,8 +183,15 @@ There would still be advantages to this **Cron**, <br>
 mostly that you get mail if there is any output <br>
 from your **Cron** commands.
 
+</div>
+
 <br>
 <br>
+
+[<img height = 2000 width = 26% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 2000 width = 26% align = right src = '../Resources/Space.svg' >][#]
+
+<div align = left>
 
 ## Mail
 
@@ -182,4 +207,11 @@ This way only ***unexpected*** output will be mailed to you.
 *This might take a while to get right, however once it <br>
 works, it will be very convenient and worth the effort.*
 
+</div>
 
+<br>
+
+
+<!----------------------------------------------------------------------------->
+
+[#]: #
