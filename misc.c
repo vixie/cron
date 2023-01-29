@@ -123,6 +123,18 @@ strdtb(char *s) {
 }
 
 int
+strstrcount(const char *s, const char *t) {
+	const char *u;
+	int ret = 0;
+
+	while ((u = strstr(s, t)) != NULL) {
+		s = u + strlen(t);
+		ret++;
+	}
+	return (ret);
+}
+
+int
 set_debug_flags(const char *flags) {
 	/* debug flags are of the form    flag[,flag ...]
 	 *

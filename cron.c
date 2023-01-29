@@ -431,13 +431,18 @@ static void
 parse_args(int argc, char *argv[]) {
 	int argch;
 
-	while (-1 != (argch = getopt(argc, argv, "nx:"))) {
+	while (-1 != (argch = getopt(argc, argv, "nm:x:"))) {
 		switch (argch) {
 		default:
 			usage();
 		case 'x':
 			if (!set_debug_flags(optarg))
 				usage();
+			break;
+		case 'm':
+			if (strlen(optarg) == 0)
+				usage();
+			Mailer = optarg;
 			break;
 		case 'n':
 			NoFork = 1;
