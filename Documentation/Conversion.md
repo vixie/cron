@@ -1,6 +1,6 @@
 
-[<img height = 1900 width = 26% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1900 width = 26% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1900 width = 22% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1900 width = 22% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -69,7 +69,7 @@ The **recommended** folder layout for your configs.
 ### Copying
 
 The  `crontab`  command copies all used configs  
-into a protected folder at  `<CRONDIR>/SPOOL_DIR`.
+into a protected folder at  `<CRONDIR>/SPOOL_DIR`
 
 This means that it generally doesn't matter where  
 you keep your configs, however choosing a good  
@@ -96,8 +96,8 @@ It's recommended to name your config files
 <br>
 <br>
 
-[<img height = 1750 width = 26% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1750 width = 26% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1750 width = 22% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1750 width = 22% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = left>
 
@@ -188,8 +188,8 @@ from your **Cron** commands.
 <br>
 <br>
 
-[<img height = 2000 width = 26% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 2000 width = 26% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 400 width = 22% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 400 width = 22% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = left>
 
