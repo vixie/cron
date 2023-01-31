@@ -1,6 +1,6 @@
 
-[<img height = 1950 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
-[<img height = 1950 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+[<img height = 1600 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1600 width = 24% align = right src = '../../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -78,7 +78,14 @@ some people had with their  `PATH`  files.
 
 `100`  🠖  `1000`
 
+</div>
+
 <br>
+
+[<img height = 1400 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1400 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+
+<div align = left>
 
 ### <kbd>  1988 | February 16th  </kbd>
 
@@ -100,14 +107,7 @@ some people had with their  `PATH`  files.
     
 	*Hint, use  `/usr/{lib,spool}/at`*
 
-</div>
-
 <br>
-
-[<img height = 1000 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
-[<img height = 1000 width = 24% align = right src = '../../Resources/Space.svg' >][#]
-
-<div align = left>
 
 ### <kbd>  1988 | February 22nd  </kbd>
 
