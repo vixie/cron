@@ -11,9 +11,8 @@
 ```
 This is really old  mail  that  came  to me in response 
 to  my  1986  posting  to  Usenet  asking  for  feature 
-suggestions before releasing the first version of Cron.
-
-It is presented here for its entertainment value.
+suggestions  before releasing the first version of Cron.
+It  is  presented  here  for  its  entertainment  value.
 -- Vix
 ```
 
@@ -26,6 +25,8 @@ It is presented here for its entertainment value.
 <div align = center>
     
 # 1986 <br>December
+    
+<br>
 
 | Day | Mails |
 |:---:|:-----:|
@@ -36,14 +37,16 @@ It is presented here for its entertainment value.
 
 # 1987 <br> January
 
+<br>
+    
 |  Day  | Mails
 |:-----:|:-----
-| `1st` | [![A]][1987 / 01 / 01 / A]   [![B]][1987 / 01 / 01 / B]   [![C]][1987 / 01 / 01 / C]
-| `2nd` | [![A]][1987 / 01 / 02 / A]   [![B]][1987 / 01 / 02 / B]   [![C]][1987 / 01 / 02 / C]   [![D]][1987 / 01 / 02 / D]
-| `3rd` | [![A]][1987 / 01 / 03 / A]
-| `4th` | [![A]][1987 / 01 / 04 / A]
-| `5th` | [![A]][1987 / 01 / 05 / A]   [![B]][1987 / 01 / 05 / B]   [![C]][1987 / 01 / 05 / C]
-| `8th` | [![A]][1987 / 01 / 08 / A]
+|  `1st` | [![A]][1987 / 01 / 01 / A]   [![B]][1987 / 01 / 01 / B]   [![C]][1987 / 01 / 01 / C]
+|  `2nd` | [![A]][1987 / 01 / 02 / A]   [![B]][1987 / 01 / 02 / B]   [![C]][1987 / 01 / 02 / C]   [![D]][1987 / 01 / 02 / D]
+|  `3rd` | [![A]][1987 / 01 / 03 / A]
+|  `4th` | [![A]][1987 / 01 / 04 / A]
+|  `5th` | [![A]][1987 / 01 / 05 / A]   [![B]][1987 / 01 / 05 / B]   [![C]][1987 / 01 / 05 / C]
+|  `8th` | [![A]][1987 / 01 / 08 / A]
 | `13th` | [![A]][1987 / 01 / 13 / A]
 | `16th` | [![A]][1987 / 01 / 16 / A]
 
