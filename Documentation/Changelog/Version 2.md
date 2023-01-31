@@ -1,106 +1,153 @@
-## Version 2
 
-### 2.2
+[<img height = 1950 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1950 width = 24% align = right src = '../../Resources/Space.svg' >][#]
 
-<kbd>Some time in 1992</kbd>
+<div align = center>
 
-### 2.1
+# Version 2
 
-<kbd>May 29, 1991</kbd>
+</div>
 
-### 2.0
+<br>
+<br>
 
-<kbd>July 5, 1990</kbd>
+<div align = left>
 
-### 2.0-beta
+## 2.2
 
-<kbd>December 9, 1988</kbd>
+<kbd>  1992  </kbd>
 
-### V2 vs V1
+<br>
+<br>
 
-<kbd>1988 February 8th</kbd>
+## 2.1
 
-Many changes were made in a rash of activity <br>
-about six months ago, the exact list of which <br>
-is no longer clear in my memory.
+<kbd>  1991 | May 29th  </kbd>
 
-I know that V1 used a file called `POKECRON` in <br>
-`/usr/spool/cron` to tell it that it was time to <br>
-re-read all the crontab files.
+<br>
+<br>
 
-V2 uses the `modtime` the `crontab` directory <br>
-as a flag to check out the crontab files; those <br>
-whose modtime has changed will be re-read, <br>
-and the others left alone.
+## 2.0
 
-Note that the crontab(1) command will do a <br>
-`utimes` call to make sure the `mtime` of the <br>
-dir changes, since the filename / inode will <br>
-often remain the same after a replacement <br>
-and the mtime wouldn't change in that case.
+<kbd>  1990 | July 5th  </kbd>
+
+<br>
+<br>
+
+## 2.0 - Beta
+
+<kbd>  1988 | December 9th  </kbd>
+
+<br>
+<br>
+
+## Version 1 ⟷ 2
+
+<kbd>  1988 | February 8th  </kbd>
 
 <br>
 
-#### <kbd>1988 February 8th</kbd>
+Many changes were made in a rash of activity  
+about six months ago, the exact list of which  
+is no longer that clear in my memory.
 
-- Environment variables strings can be longer:
+I know that version 1 used a file called  `POKECRON` ,  
+in the  `/usr/spool/cron`  directory, to tell if it was  
+time to re-read all CronTab configs.
 
-	`100`  🠖  `1000`
-	
-	*This was needed for `PATH`* <br>
-	*variables on some systems.*
-	
-	Thanks to **Toerless Eckert** for this idea.
+Version 2 uses the modification time of config  
+files in the CronTab directory, where it re-reads  
+those files whose modification time has changed.
 
-<!-- E-mail: UUCP: ...pyramid!fauern!faui10!eckert -->
+Note that the crontab (1) command will do a  `utimes`  call to  
+check if the modification time of the directory has changed.
 
-<br>
-
-#### <kbd>1988 February 16th</kbd>
-
-- Moved `/usr/spool/cron/crontabs` to `/usr/lib/cron/tabs`
-
-- Added `allow` / `deny`
-
-	⤷ `/usr/lib/cron/{allow,deny}`
-	
-	⤷ Since the **System V** naming for this depends on <br>
-	`at` using the same directory, which would be stupid.
-	
-	*Hint: Use `/usr/{lib,spool}/at`*
+This is done since the filename / inode will often remain  
+the same after a replacement and the modification time  
+wouldn't change in that case.
 
 <br>
 
-#### <kbd>1988 February 22nd</kbd>
+### <kbd>  1988 | February 8th  </kbd>
 
-Use `getpwent()` to read `passwds` <br>and try to open each crontab.
+<br>
+
+**Toerless Eckert** gave me the idea to increase the  
+environment variable string limit to fix problems  
+some people had with their  `PATH`  files.
+
+`100`  🠖  `1000`
+
+<br>
+
+### <kbd>  1988 | February 16th  </kbd>
+
+<br>
+
+-   Moved  `/usr/spool/cron/crontabs`  
+    to  `/usr/lib/cron/tabs`
+
+    <br>
+
+-   Added  `allow`  /  `deny`
+
+	⤷  `/usr/lib/cron/{allow,deny}`
+	
+	⤷  Since the **System V** naming for this depends on  `at`  
+         using the same directory, which would be stupid.
+	
+    <br>
+    
+	*Hint, use  `/usr/{lib,spool}/at`*
+
+</div>
+
+<br>
+
+[<img height = 1000 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1000 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+
+<div align = left>
+
+### <kbd>  1988 | February 22nd  </kbd>
+
+<br>
+
+Use  `getpwent()`  to read  `passwds`  
+and try to open each CronTab config.
 
                       🠗
 
 Read the `spool` directory for crontabs <br>
-& look each one up using `getpwnam()`.
+& look each one up using `getpwnam()`
 
 <br>
 
-#### <kbd>1988 December 9th</kbd>
+### <kbd>  1988 | December 9th  </kbd>
 
-- Now syncs to `00` after every minute
+<br>
+
+-   Now syncs to  `00`  after every minute
 
 	⤷ Makes **Cron** predictable.
 	
-- Added logging to `/var/cron/log`.
+    <br>
+    
+-   Added logging to  `/var/cron/log`
 
 <br>
 
-#### <kbd>1990 April 14th</kbd>
+### <kbd>  1990 | April 14th  </kbd>
 
-*Actually, changes since December 1989*
+<br>
 
-- Fixed a number of bugs reported by **John Gilmore**.
+*Changes since December 1989*
 
-- Added `syslog` per **Keith Bostic**.
+-   Fixed a number of bugs reported by **John Gilmore**.
 
-- Added security features:
+-   Added  `syslog`  as per **Keith Bostic**.
+
+-   Added security features:
 
 	Commands can only be run by, the owner <br>
 	of / with write permission to, the crontab.
@@ -108,5 +155,11 @@ Read the `spool` directory for crontabs <br>
 	*Not working well yet*
 
 
+</div>
+
 <br>
-<br>
+
+
+<!----------------------------------------------------------------------------->
+
+[#]: #

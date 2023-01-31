@@ -1,5 +1,27 @@
-## Version 1
 
-### 1.0
+[<img height = 400 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 400 width = 24% align = right src = '../../Resources/Space.svg' >][#]
 
-<kbd>May 6, 1987</kbd>
+<div align = center>
+
+# Version 1
+
+</div>
+
+<br>
+<br>
+
+<div align = left>
+
+## 1.0
+
+<kbd>  1987 | May 6th  </kbd>
+
+</div>
+
+<br>
+
+
+<!----------------------------------------------------------------------------->
+
+[#]: #
