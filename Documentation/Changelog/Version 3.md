@@ -1,6 +1,6 @@
 
-[<img height = 1800 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
-[<img height = 1800 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+[<img height = 1940 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1940 width = 24% align = right src = '../../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -96,8 +96,8 @@
     
     <br>
     
-[<img height = 1940 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
-[<img height = 1940 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+[<img height = 1850 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1850 width = 24% align = right src = '../../Resources/Space.svg' >][#]
 
 -   The daemon used to be extraordinarily sloppy in its use of  
     file descriptors, as it left a lot of them open in spawned jobs.
@@ -186,6 +186,9 @@
     
     <br>
 
+[<img height = 1600 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
+[<img height = 1600 width = 24% align = right src = '../../Resources/Space.svg' >][#]
+        
 -   Lots of folks complained that the auto-generated  `Date:`  
     header wasn't in **ARPA** format, which I didn't understand.
 
@@ -206,10 +209,6 @@
     **Colin Plumb** sent in the first and most polite request.
 
     <br>
-    
-[<img height = 2000 width = 24% align = left  src = '../../Resources/Space.svg' >][#]
-[<img height = 2000 width = 24% align = right src = '../../Resources/Space.svg' >][#]
-
 
 -   As with every release of **Cron**,  `BIND`  and seemingly  
     everything else I do has one user stand out with the   
