@@ -228,8 +228,8 @@ The  `crontab`  command is loosely compatible with
 Running the command without arguments  
 shows a summary on how to use of the it.
 
-[<img height = 2000 width = 24% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 2000 width = 24% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1500 width = 24% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1500 width = 24% align = right src = '../Resources/Space.svg' >][#]
 
 <br>
 <br>
@@ -301,6 +301,9 @@ The email messages header will include:
     
 <br>
 <br>
+
+[<img height = 1000 width = 24% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1000 width = 24% align = right src = '../Resources/Space.svg' >][#]
 
 ## DOM / DOW
 
