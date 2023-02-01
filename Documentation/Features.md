@@ -1,20 +1,32 @@
 
+<br>
+
+[<img height = 2000 width = 24% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 2000 width = 24% align = right src = '../Resources/Space.svg' >][#]
+
+
+<div align = center>
+
 # Features
 
-*of **ISC** Cron relative to **BSD 4.2 - 4.3** & **System V** Crons*
+Comparison of ISC to  
+BSD 4.2 / 3 & System V
 
+</div>
+
+<br>
 <br>
 
 ## Environment Variables
 
-*Variables can be set per **CronTab**.*
+These can be set on a per CronTab basis.
 
 <br>
 
 ### Syntax
 
-```
-SHELL=/bin/sh
+```env
+SHELL = /bin/sh
 PATH = .:/bin:/usr/bin
 Test = 'This is a test'
 Hello = "World"
@@ -23,84 +35,123 @@ Values = With Spaces
 
 <br>
 
-### Variales
+### Variables
 
-*With special meanings.*
+*with special meanings.*
 
-#### `LOGNAME`
+#### $\huge\texttt{\textcolor{SkyBlue}{LOGNAME}}$
 
-Defaults to data in the users `passwd` entry.
+<pre>
+Defaults to data in the users passwd entry.
+</pre>
 
-#### `MAILTO`
+<br>
 
-If set, will mail the output of **Cron** to <br>
+#### $\huge\texttt{\textcolor{LimeGreen}{MAILTO}}$
+
+<pre>
+If set, will mail the output of Cron to  
 the user with the specified login name.
+<br>
+Useful if you decide to use BINMAIL in cron.h  
+as it doesn't know anything about aliasing.  
+</pre>
 
-Useful if you decide to use `BINMAIL` in `cron.h` <br>
-as it doesn't know anything about aliasing.
+#### $\huge\texttt{\textcolor{SkyBlue}{SHELL}}$
 
-#### `SHELL`
-
+<pre>
 Defaults to `/bin/sh`.
+</pre>
 
-#### `USER`
+<br>
 
-Read from the users `passwd` <br>
+#### $\huge\texttt{\textcolor{LimeGreen}{USER}}$
+
+<pre>
+Read from the users `passwd`
 entry and cannot be changed.
+</pre>
 
+#### $\huge\texttt{\textcolor{SkyBlue}{HOME}}$
 
-#### `HOME`
-
+<pre>
 Defaults to data in the users `passwd` entry.
+</pre>
 
+<br>
 
-#### `PATH`
+#### $\huge\texttt{\textcolor{LimeGreen}{PATH}}$
 
+<pre>
 
-#### `TZ`
+</pre>
 
+#### $\huge\texttt{\textcolor{SkyBlue}{TZ}}$
+
+<pre>
 Can be set, but ignored other <br>
 than for the command it runs.
+</pre>
 
 <br>
 <br>
+
+```math
+\definecolor{Day-A}{RGB}{169,88,78}
+\definecolor{Day-B}{RGB}{156,96,101}
+\definecolor{Day-C}{RGB}{141,103,125}
+\definecolor{Day-D}{RGB}{129,110,147}
+\definecolor{Day-E}{RGB}{113,119,174}
+\definecolor{Day-F}{RGB}{102,124,191}
+\definecolor{Day-G}{RGB}{83,134,223}
+```
 
 ## Weekdays
 
-*You can specify weekdays by name.*
+can be specified with their first  `3`  
+letters in whatever case you prefer.
 
-You need to write the first `3` <br>
-characters in whatever you like.
-
-<kbd> Mon </kbd>  
-<kbd> Tue </kbd>  
-<kbd> Wed </kbd>  
-<kbd> Thu </kbd>  
-<kbd> Fri </kbd>  
-<kbd> Sat </kbd>  
-<kbd> Sun </kbd>
+<kbd>  $\huge\texttt{\textcolor{Day-A}{Mon}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Day-B}{Tue}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Day-C}{Wen}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Day-D}{Thu}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Day-E}{Fri}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Day-F}{Sat}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Day-F}{Sun}}$  </kbd>
 
 <br>
 <br>
+
+[<img height = 2000 width = 24% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 2000 width = 24% align = right src = '../Resources/Space.svg' >][#]
+
+```math
+\definecolor{Month-A}{RGB}{102,191,148}
+\definecolor{Month-B}{RGB}{118,190,136}
+\definecolor{Month-C}{RGB}{136,190,125}
+\definecolor{Month-D}{RGB}{155,189,111}
+\definecolor{Month-E}{RGB}{175,189,98}
+\definecolor{Month-F}{RGB}{197,188,83}
+```
 
 ## Months
 
-*You can specify months by name.*
+can be specified with their first  `3`  
+letters in whatever case you prefer.
 
-You need to write the first `3` <br>
-characters in whatever you like.
+<kbd>  $\huge\texttt{\textcolor{Month-A}{Jan}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-B}{Feb}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-C}{Mar}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-D}{Apr}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-E}{May}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-F}{Jun}}$  </kbd>
 
-<kbd> Jan </kbd>  
-<kbd> Feb </kbd>  
-<kbd> Mar </kbd>  
-<kbd> Apr </kbd>  
-<kbd> May </kbd>  
-<kbd> Jun </kbd>  
-<kbd> Jul </kbd>  
-<kbd> Sep </kbd>  
-<kbd> Oct </kbd>  
-<kbd> Nov </kbd>  
-<kbd> Dec </kbd>
+<kbd>  $\huge\texttt{\textcolor{Month-A}{Jul}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-B}{Aug}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-C}{Sep}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-D}{Oct}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-E}{Nov}}$  </kbd>  
+<kbd>  $\huge\texttt{\textcolor{Month-F}{Dec}}$  </kbd>  
 
 <br>
 <br>
@@ -277,7 +328,13 @@ various field - matches together.
 In that sense this **Cron** isn't completely <br>
 similar to some of the **AT&T Crons** .
 
+
 <br>
+
+
+<!----------------------------------------------------------------------------->
+
+[#]: #
 
 
 <!----------------------------------------------------------------------------->
