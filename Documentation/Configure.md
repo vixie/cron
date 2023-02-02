@@ -1,48 +1,69 @@
 
+<br>
+
+[<img height = 900 width = 30% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 900 width = 30% align = right src = '../Resources/Space.svg' >][#]
+
+<div align = center>
+
 # Configure
 
-As there isn't a `Configure` script, you unfortunately <br>
-will have to manually edit a couple of files, however <br>
-in the following you will find a checklist.
+Currently there is no configuration script, as  
+such you will have to manually edit a couple  
+of files, however a checklist is provided below.
 
+
+<br>
 <br>
 
 ## Read
 
-*The following files:*
+the following sections first.
 
-- **[`Features.md`]**
-- **[`Install.md`]**
-- **[`Conversion.md`]**
+<br>
 
+[![Button Features]][Features]  
+[![Button Install]][Install]  
+[![Button Conversion]][Conversion]
+
+</div>
+
+<br>
 <br>
 
 ## Edit
 
-*The following code:*
+The following files have to be adjusted by  
+the instructions contained within them.
 
-- [`config.h`][Config]
+<br>
 
-	*The file contains instructions on what to edit.*
+-   [`config.h`]
+
+	The file contains instructions on what to edit.
 	
-	*Some things are defined in the **Makefile** and* <br>
-	*do not need to be changed in the config itself.*
+	Some things are defined in the **Makefile** and  
+	do not need to be changed in the config itself.
 	
-	*They will be surrounded by `#ifndef` & `#endif`.*
+	They will be surrounded by  `#ifndef`  guards.
 
 	<br>
 
-- [`Makefile`][Makefile]
-
-	*This file also contains instructions.*
+-   [`Makefile`]
 	
 <br>
+<br>
+
+[<img height = 1500 width = 30% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1500 width = 30% align = right src = '../Resources/Space.svg' >][#]
 
 ## Execute
 
-*The following commands:*
+Call the following list of commands in order.
 
-1. Build with:
+<br>
+
+1.  **Build** with the program with:
 
 	```sh
 	make
@@ -50,7 +71,7 @@ in the following you will find a checklist.
 	
 	<br>
 	
-2. Install with:
+2. **Install** the built binary with:
 
 	```sh
 	su
@@ -61,56 +82,70 @@ in the following you will find a checklist.
 
 	<br>
 
-3. Kill the existing **Cron** process
+3.  **Kill** the existing **Cron** process
 
 	<br>
 
-4. Create new **CronTabs** using:
+4.  **Create** new **CronTabs** using:
 
-	`/usr/lib/{crontab,crontab.local}`
+	```
+    /usr/lib/{crontab,crontab.local}
+    ```
 	
 	<br>
 	
-	*Either put all of them in the roots **Crontab** or:* <br>
-	
-	- Divide it up 
-	
-	- Remove all the `su` commands
-	
-	- Collapse the lengthy lists into ranges with steps 
-	
-	<br>
-	
-	Basically, this step is as much work as you want to make it.
+    #### Root
+    
+    You **can** place all of your settings in the root's CronTab.
+    
+    <br>
+    
+    #### User
+    
+    To keep things tidy and manageable, it is advised to  
+    divide your config into purpose based configurations.
+    
+    You should also remove all  `su`  commands  
+    and turn lengthy lists into simple ranges.
 
 	<br>
 
-5. Start the new **Cron**
+5.  Start the new **Cron** with root privileges.
 
-	*Requires root*
-	
 	<br>
 	
-6. Test it with:
+6.  Test and watch the daemon track your changes with:
 
 	```sh
 	crontab -r
 	```
 	
-	*And watch the daemon track your changes.*
-	
 	<br>
 	
-7. To keep it, adjust `/etc/{rc,rc.local}` <br>
-   to use the new version of **Cron**
+7.  To keep it your changes, adjust the files found at  
+the path listed below to use this version of **Cron**.
+
+    ```
+    /etc/{rc,rc.local}
+    ```
    
+
 <br>
-		
-		
+
+
 <!----------------------------------------------------------------------------->
 
-[`Conversion.md`]: Conversion.md
-[`Features.md`]: Features.md
-[`Install.md`]: Install.md
-[Makefile]: ../Makefile
-[Config]: ../config.h
+[`config.h`]: ../config.h
+[`Makefile`]: ../Makefile
+[#]: #
+
+[Conversion]: Conversion.md
+[Features]: Features.md
+[Install]: Installation.md
+
+
+<!-------------------------------{ Buttons }----------------------------------->
+
+[Button Conversion]: https://img.shields.io/badge/Conversion-00B0B9?style=for-the-badge&logo=GitExtensions&logoColor=white
+[Button Features]: https://img.shields.io/badge/Features-68BC71?style=for-the-badge&logo=AddThis&logoColor=white
+[Button Install]: https://img.shields.io/badge/Installation-31A8FF?style=for-the-badge&logo=WindowsTerminal&logoColor=white
