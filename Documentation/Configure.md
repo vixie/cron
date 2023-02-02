@@ -1,8 +1,8 @@
 
 <br>
 
-[<img height = 900 width = 30% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 900 width = 30% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 950 width = 28% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 950 width = 28% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -54,8 +54,8 @@ the instructions contained within them.
 <br>
 <br>
 
-[<img height = 1500 width = 30% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1500 width = 30% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1500 width = 28% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1500 width = 28% align = right src = '../Resources/Space.svg' >][#]
 
 ## Execute
 
@@ -148,4 +148,4 @@ the path listed below to use this version of **Cron**.
 
 [Button Conversion]: https://img.shields.io/badge/Conversion-00B0B9?style=for-the-badge&logo=GitExtensions&logoColor=white
 [Button Features]: https://img.shields.io/badge/Features-68BC71?style=for-the-badge&logo=AddThis&logoColor=white
-[Button Install]: https://img.shields.io/badge/Installation-31A8FF?style=for-the-badge&logo=WindowsTerminal&logoColor=white
+[Button Install]: https://img.shields.io/badge/Install-31A8FF?style=for-the-badge&logo=WindowsTerminal&logoColor=white
