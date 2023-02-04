@@ -78,14 +78,14 @@ LDFLAGS		=
 SHELL		=	/bin/sh
 CFLAGS		=	$(CDEBUG) $(CWARN) $(INCLUDE) $(DEFS)
 
-INFOS =							\
-	Documentation/Conversion.md \
-	Documentation/Changelog.md 	\
-	Documentation/Configure.md  \
-	Documentation/Features.md 	\
-	Documentation/Install.md 	\
-	Documentation/Thanks.md		\
-	Documentation/Mail.md		\
+INFOS =								\
+	Documentation/Installation.md	\
+	Documentation/Conversion.md 	\
+	Documentation/Changelog.md 		\
+	Documentation/Configure.md  	\
+	Documentation/Features.md 		\
+	Documentation/Thanks.md			\
+	Documentation/Mail.md			\
 	README.md
 
 MANPAGES	=	bitstring.3 crontab.5 crontab.1 cron.8 putman.sh
