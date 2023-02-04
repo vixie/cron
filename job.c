@@ -20,51 +20,124 @@
 static char rcsid[] = "$Id: job.c,v 1.6 2004/01/23 18:56:43 vixie Exp $";
 #endif
 
+#include <stdbool.h>
 #include "cron.h"
 
+
+//  TODO : Rename definitions
+
+typedef entry Entry;
+typedef user User;
+
+
 typedef	struct _job {
-	struct _job	*next;
-	entry		*e;
-	user		*u;
-} job;
 
-static job	*jhead = NULL, *jtail = NULL;
+	struct _job	* next ;
+	Entry * entry ;
+	User * user ;
 
-void
-job_add(entry *e, user *u) {
-	job *j;
+} Job;
 
-	/* if already on queue, keep going */
-	for (j = jhead; j != NULL; j = j->next)
-		if (j->e == e && j->u == u)
-			return;
 
-	/* build a job queue element */
-	if ((j = (job *)malloc(sizeof(job))) == NULL)
-		return;
-	j->next = NULL;
-	j->e = e;
-	j->u = u;
+static Job
+    * head = NULL ,
+    * tail = NULL ;
 
-	/* add it to the tail */
-	if (jhead == NULL)
-		jhead = j;
-	else
-		jtail->next = j;
-	jtail = j;
+
+/**
+ * @brief Creates a new job with the given config
+ */
+
+Job * job_new ( Entry * entry , User * user ){
+
+    Job * job = (Job *) malloc(sizeof(Job));
+
+    if( job == NULL )
+		return NULL;
+
+	job -> entry = entry;
+	job -> user = user;
+    job -> next = NULL;
+
+    return job;
 }
 
-int
-job_runqueue(void) {
-	job *j, *jn;
-	int run = 0;
 
-	for (j = jhead; j; j = jn) {
-		do_command(j->e, j->u);
-		jn = j->next;
-		free(j);
-		run++;
+/**
+ * @brief Checks if the given configuration is already queued
+ */
+
+bool job_isQueued ( Entry * entry , User * user ){
+
+    for ( Job * job = head ; job != NULL ; job = job -> next )
+		if( job -> entry == entry && job -> user == user )
+			return true;
+
+    return false;
+}
+
+
+/**
+ * @brief Adds the given job to the queue
+ */
+
+void job_queue ( Job * job ){
+
+    if( head == NULL )
+		head = job;
+	else
+		tail -> next = job;
+
+	tail = job;
+}
+
+
+/**
+ * @brief Creates a job and queues it
+ * @details Does nothing if a job with the
+ * same configuration has already been queued
+ */
+
+void job_add ( Entry * entry , User * user ){
+
+    if( job_isQueued(entry,user) )
+        return;
+
+    Job * job = job_new(entry,user);
+
+	if( job == NULL )
+		return;
+
+    job_queue(job);
+}
+
+
+/**
+ * @brief Runs all queued jobs
+ * @return The count of jobs that have been run
+ */
+
+int job_runqueue (){
+
+	Job * next ;
+
+    int runs = 0;
+
+	for ( Job * job = head ; job ; job = next ){
+
+		do_command(
+            job -> entry ,
+            job -> user
+        );
+
+		next = job -> next;
+
+		free(job);
+
+        runs++;
 	}
-	jhead = jtail = NULL;
-	return (run);
+
+	head = tail = NULL;
+
+	return runs;
 }
