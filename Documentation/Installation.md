@@ -1,6 +1,6 @@
 
-[<img height = 1300 width = 24% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 1300 width = 24% align = right src = '../Resources/Space.svg' >][#]
+[<img height = 1380 width = 21% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1380 width = 21% align = right src = '../Resources/Space.svg' >][#]
 
 <div align = center>
 
@@ -71,14 +71,16 @@
 
     <br>
 
+[<img height = 1800 width = 21% align = left  src = '../Resources/Space.svg' >][#]
+[<img height = 1800 width = 21% align = right src = '../Resources/Space.svg' >][#]
+
 8.  Built the binary with:
 
     ```sh
     make all
     ```
     
-[<img height = 2000 width = 24% align = left  src = '../Resources/Space.svg' >][#]
-[<img height = 2000 width = 24% align = right src = '../Resources/Space.svg' >][#]
+    <br>
 
 9.  Install the built program:
 
@@ -128,8 +130,8 @@
     
     <br>
 
-10.  Kill your existing Cron daemon:
-
+10. Kill your existing Cron daemon:
+    
     ```sh
     ps aux  #  Look for /etc/cron
     ```
