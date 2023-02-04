@@ -27,50 +27,46 @@ every user to have their own **CronTab** file.
 
 </div>
 
-<br>
-
-
-
-<br>
-
-### Tabs
-
-All crontab files are stored in a <br>
-read-protected folder, usually <br>
-in `/var/cron/tabs` .
+[<img height = 1000 width = 28% align = left  src = './Resources/Space.svg' >][#]
+[<img height = 1000 width = 28% align = right src = './Resources/Space.svg' >][#]
 
 <br>
+<br>
 
-### At
+## 📑  Tabs
 
-**No direct support is provided for `at` .**
-
-However you can still use `atrun` <br>
-from your **CronTab** as usual.
-
-⤷ If your system doesn't support `atrun` , <br>
-such as **System V**, you will have problem.
+All crontab files are stored in a read  
+protected folders at  `/var/cron/tabs` 
 
 <br>
 
-### Logging
+## 📜  At
 
-Every time a command is run, <br>
-a message will be logged.
+**There is no direct support for  `at`**
+
+However as long as your system  
+supports it, you can still use  `atrun`
 
 <br>
 
-### Access
+## 📋  Logging
 
-You can control access to the `crontab` <br>
-command by utilizing the `allow` and <br>
-`deny` files in `/var/cron` .
+A message will be logged for every  
+command that is run by a CronTab.
+
+<br>
+
+## 🛡  Access
+
+You can control access to the  `crontab`  
+command by utilizing the  `allow`  and  
+`deny`  files in  `/var/cron`
 
 *The command is used to install crontabs.*
 
 <br>
 
-### System V
+## 📺  System V
 
 While it hasn't been tested yet, some effort <br>
 has gone into making porting to it easier.
@@ -79,6 +75,8 @@ has gone into making porting to it easier.
 
 
 <!----------------------------------------------------------------------------->
+
+[#]: #
 
 [Cron]: https://en.wikipedia.org/wiki/Cron
 
