@@ -44,7 +44,7 @@ Values = With Spaces
 #### $\huge\texttt{\textcolor{SkyBlue}{LOGNAME}}$
 
 <pre>
-Defaults to data in the users passwd entry.
+Defaults to data in the users `passwd` entry
 </pre>
 
 <br>
@@ -52,11 +52,11 @@ Defaults to data in the users passwd entry.
 #### $\huge\texttt{\textcolor{LimeGreen}{MAILTO}}$
 
 <pre>
-If set, will mail the output of Cron to  
-the user with the specified login name.
+If set, will mail the output of Cron to
+the user with the specified login name
 <br>
-Useful if you decide to use BINMAIL in cron.h  
-as it doesn't know anything about aliasing.  
+Useful if you decide to use BINMAIL in `cron.h`
+as it doesn't know anything about aliasing
 </pre>
 
 <br>
@@ -64,7 +64,7 @@ as it doesn't know anything about aliasing.
 #### $\huge\texttt{\textcolor{SkyBlue}{SHELL}}$
 
 <pre>
-Defaults to `/bin/sh`.
+Defaults to `/bin/sh`
 </pre>
 
 <br>
@@ -73,7 +73,7 @@ Defaults to `/bin/sh`.
 
 <pre>
 Read from the users `passwd`
-entry and cannot be changed.
+entry and cannot be changed
 </pre>
 
 <br>
@@ -81,7 +81,7 @@ entry and cannot be changed.
 #### $\huge\texttt{\textcolor{SkyBlue}{HOME}}$
 
 <pre>
-Defaults to data in the users `passwd` entry.
+Defaults to data in the users `passwd` entry
 </pre>
 
 <br>
@@ -89,7 +89,7 @@ Defaults to data in the users `passwd` entry.
 #### $\huge\texttt{\textcolor{LimeGreen}{PATH}}$
 
 <pre>
-
+Contains the systems paths
 </pre>
 
 <br>
@@ -97,8 +97,8 @@ Defaults to data in the users `passwd` entry.
 #### $\huge\texttt{\textcolor{SkyBlue}{TZ}}$
 
 <pre>
-Can be set, but ignored other <br>
-than for the command it runs.
+Can be set, but ignored other
+than for the command it runs
 </pre>
 
 <br>
@@ -309,38 +309,39 @@ The email messages header will include:
 
 The situation is odd.  
 
-`* * 1,15 * Sun` will run on:
+<br>
 
-- 1st
+`* * 1,15 * Sun`  will run on:
 
-- 15th 
+1st  |  15th  |  Sundays
 
-- Sundays
+<br>
 
-`* * * * Sun` will *only* run on:
+`* * * * Sun`  will *only* run on:
 
-- Sundays
+Sundays
 
-`* * 1,15 * *` will *only* run on:
+<br>
 
-- 1st
+`* * 1,15 * *`  will *only* run on:
 
-- 15th.
+1st  |  15th
 
-This is why we keep `e->dow_star` & `e->dom_star` .
+<br>
 
-I didn't think up this behavior, it's how **Cron** <br>
-has always worked but the documentation <br>
+This is why we keep  `e -> dow_star`  &  `e -> dom_star`
+
+I didn't think up this behavior, it's how **Cron**  
+has always worked but the documentation  
 hasn't been very clear.
 
-I have been told that some **AT&T Crons** do not <br>
-act this way and do the more reasonable thing, <br>
-which is - in my honest opinion - to `or` the <br>
+I have been told that some **AT&T Crons** do not  
+act this way and do the more reasonable thing,  
+which is - in my honest opinion - to  `or`  the  
 various field - matches together.  
 
-In that sense this **Cron** isn't completely <br>
+In that sense this **Cron** isn't completely  
 similar to some of the **AT&T Crons** .
-
 
 <br>
 
