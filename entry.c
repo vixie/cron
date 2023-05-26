@@ -122,34 +122,34 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 			bit_set(e->hour, 0);
 			bit_set(e->dom, 0);
 			bit_set(e->month, 0);
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW));
 			e->flags |= DOW_STAR;
 		} else if (!strcmp("monthly", cmd)) {
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
 			bit_set(e->dom, 0);
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH));
+			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW));
 			e->flags |= DOW_STAR;
 		} else if (!strcmp("weekly", cmd)) {
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
-			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
+			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM));
+			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH));
 			bit_set(e->dow, 0);
 			e->flags |= DOW_STAR;
 		} else if (!strcmp("daily", cmd) || !strcmp("midnight", cmd)) {
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
-			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM));
+			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH));
+			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW));
 		} else if (!strcmp("hourly", cmd)) {
 			bit_set(e->minute, 0);
-			bit_nset(e->hour, 0, (LAST_HOUR-FIRST_HOUR+1));
-			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			bit_nset(e->hour, 0, (LAST_HOUR-FIRST_HOUR));
+			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM));
+			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH));
+			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW));
 			e->flags |= HR_STAR;
 		} else {
 			ecode = e_timespec;
@@ -253,7 +253,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		 * below. */
 		Skip_Blanks(ch, file)
 		unget_char(ch, file);
-		
+
 		pw = getpwnam(username);
 		if (pw == NULL) {
 			ecode = e_username;
@@ -358,7 +358,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	/* Everything up to the next \n or EOF is part of the command...
 	 * too bad we don't know in advance how long it will be, since we
 	 * need to malloc a string for it... so, we limit it to MAX_COMMAND.
-	 */ 
+	 */
 	ch = get_string(cmd, MAX_COMMAND, file, "\n");
 
 	/* a file without a \n before the EOF is rude, so we'll complain...
@@ -412,7 +412,7 @@ get_list(bitstr_t *bits, int low, int high, const char *names[],
 
 	/* list = range {"," range}
 	 */
-	
+
 	/* clear the bit string, since the default is 'off'.
 	 */
 	bit_nclear(bits, 0, (high-low+1));
