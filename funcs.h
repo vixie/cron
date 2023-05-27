@@ -53,8 +53,9 @@ int		job_runqueue(void),
 		cron_pclose(FILE *),
 		glue_strings(char *, size_t, const char *, const char *, char),
 		strcmp_until(const char *, const char *, char),
-		allowed(const char * ,const char * ,const char *),
-		strdtb(char *);
+		allowed(const char *, const char *, const char *),
+		strdtb(char *),
+		strcountstr(const char *, const char *);
 
 size_t		strlens(const char *, ...);
 
