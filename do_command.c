@@ -405,14 +405,48 @@ child_process(entry *e, user *u) {
 			 * up the mail command and subjects and stuff...
 			 */
 			if (mailto != NULL) {
-				char	mailcmd[MAX_COMMAND];
+				char mailcmd[MAX_COMMAND] = "";
+				const char *msg = NULL;
 
-				if (strlens(MAILFMT, MAILARG, NULL) + 1
-				    >= sizeof mailcmd) {
-					fprintf(stderr, "mailcmd too long\n");
+				if (Mailer != NULL) {
+					if (strcountstr(Mailer, "%s") == 1) {
+						if (strlens(Mailer,
+							    mailto,
+							    NULL)
+						    - strlen("%s")
+						    + sizeof ""
+						    > sizeof mailcmd) {
+							msg = "Mailer ovf 1";
+						} else {
+							(void) sprintf(mailcmd,
+								       Mailer,
+								       mailto);
+						}
+					} else {
+						if (strlen(Mailer) + sizeof ""
+						    > sizeof mailcmd) {
+							msg = "Mailer ovf 2";
+						} else {
+							(void) strcpy(mailcmd,
+								      Mailer);
+						}
+					}
+				} else {
+					if (strlens(MAILFMT, MAILARG, NULL)
+					    + sizeof ""
+					    > sizeof mailcmd) {
+						msg = "mailcmd too long";
+					} else {
+						(void) sprintf(mailcmd,
+							       MAILFMT,
+							       MAILARG);
+					}
+				}
+				if (msg != NULL) {
+					fputs(msg, stderr);
+					fputc('\n', stderr);
 					(void) _exit(ERROR_EXIT);
 				}
-				(void)sprintf(mailcmd, MAILFMT, MAILARG);
 				mail = cron_popen(mailcmd, "w", e->pwd);
 				if (mail == NULL) {
 					perror(mailcmd);
