@@ -98,6 +98,7 @@
 
 #define	SECONDS_PER_MINUTE	60
 #define	SECONDS_PER_HOUR	3600
+#define	SECONDS_PER_DAY		86400
 
 #define	FIRST_MINUTE	0
 #define	LAST_MINUTE	59
@@ -107,9 +108,11 @@
 #define	LAST_HOUR	23
 #define	HOUR_COUNT	(LAST_HOUR - FIRST_HOUR + 1)
 
+/* Use 0 to indicate the last day of the previous month */
+#define	PREV_LAST_DOM	0
 #define	FIRST_DOM	1
 #define	LAST_DOM	31
-#define	DOM_COUNT	(LAST_DOM - FIRST_DOM + 1)
+#define	DOM_COUNT	(LAST_DOM - PREV_LAST_DOM + 1)
 
 #define	FIRST_MONTH	1
 #define	LAST_MONTH	12

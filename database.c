@@ -115,7 +115,7 @@ load_database(cron_db *old_db) {
 		if (strlen(dp->d_name) >= sizeof fname)
 			continue;	/* XXX log? */
 		(void) strcpy(fname, dp->d_name);
-		
+
 		if (!glue_strings(tabname, sizeof tabname, SPOOL_DIR,
 				  fname, '/'))
 			continue;	/* XXX log? */

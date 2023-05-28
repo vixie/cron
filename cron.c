@@ -208,7 +208,7 @@ main(int argc, char *argv[]) {
 				    (long)getpid(), timeDiff))
 				/* run wildcard jobs for current minute */
 				find_jobs(timeRunning, &database, TRUE, FALSE);
-	
+
 				/* run fixed-time jobs for each minute missed */
 				do {
 					if (job_runqueue())
@@ -220,7 +220,7 @@ main(int argc, char *argv[]) {
 				} while (virtualTime< timeRunning &&
 				    clockTime == timeRunning);
 				break;
-	
+
 			case negative:
 				/*
 				 * case 3: timeDiff is a small or medium-sized
@@ -279,18 +279,28 @@ run_reboot_jobs(cron_db *db) {
 static void
 find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
 	time_t virtualSecond  = vtime * SECONDS_PER_MINUTE;
+	time_t virtualSecondNextDay = virtualSecond + SECONDS_PER_DAY;
 	struct tm *tm = gmtime(&virtualSecond);
+	/* tm of next day */
+	struct tm *tmNd = gmtime(&virtualSecondNextDay);
 	int minute, hour, dom, month, dow;
+	/* dom and month of the next day */
+	int domNd, monthNd;
 	user *u;
 	entry *e;
 
-	/* make 0-based values out of these so we can use them as indicies
+	/* make 0-based values out of these so we can use them as indicies,
+	 * dom is 1-based now because we use 0 to indicate the last day of the
+	 * previous month.
 	 */
 	minute = tm->tm_min -FIRST_MINUTE;
 	hour = tm->tm_hour -FIRST_HOUR;
-	dom = tm->tm_mday -FIRST_DOM;
+	dom = tm->tm_mday;
 	month = tm->tm_mon +1 /* 0..11 -> 1..12 */ -FIRST_MONTH;
 	dow = tm->tm_wday -FIRST_DOW;
+
+	domNd = tmNd->tm_mday;
+	monthNd = tmNd->tm_mon +1 -FIRST_MONTH;
 
 	Debug(DSCH, ("[%ld] tick(%d,%d,%d,%d,%d) %s %s\n",
 		     (long)getpid(), minute, hour, dom, month, dow,
@@ -316,7 +326,20 @@ find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
 			    )
 			   ) {
 				if ((doNonWild &&
-				    !(e->flags & (MIN_STAR|HR_STAR))) || 
+				    !(e->flags & (MIN_STAR|HR_STAR))) ||
+				    (doWild && (e->flags & (MIN_STAR|HR_STAR))))
+					job_add(e, u);
+			}
+
+			/* last day of previous month check */
+			if (domNd == 1 &&
+				bit_test(e->dom, PREV_LAST_DOM) &&
+				bit_test(e->minute, minute) &&
+				bit_test(e->hour, hour) &&
+				bit_test(e->month, monthNd)
+			   ) {
+				if ((doNonWild &&
+				    !(e->flags & (MIN_STAR|HR_STAR))) ||
 				    (doWild && (e->flags & (MIN_STAR|HR_STAR))))
 					job_add(e, u);
 			}

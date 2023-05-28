@@ -192,7 +192,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 
 		if (ch == '*')
 			e->flags |= DOM_STAR;
-		ch = get_list(e->dom, FIRST_DOM, LAST_DOM,
+		ch = get_list(e->dom, PREV_LAST_DOM, LAST_DOM,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
 			ecode = e_dom;
@@ -253,7 +253,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		 * below. */
 		Skip_Blanks(ch, file)
 		unget_char(ch, file);
-		
+
 		pw = getpwnam(username);
 		if (pw == NULL) {
 			ecode = e_username;
@@ -358,7 +358,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	/* Everything up to the next \n or EOF is part of the command...
 	 * too bad we don't know in advance how long it will be, since we
 	 * need to malloc a string for it... so, we limit it to MAX_COMMAND.
-	 */ 
+	 */
 	ch = get_string(cmd, MAX_COMMAND, file, "\n");
 
 	/* a file without a \n before the EOF is rude, so we'll complain...
@@ -412,7 +412,7 @@ get_list(bitstr_t *bits, int low, int high, const char *names[],
 
 	/* list = range {"," range}
 	 */
-	
+
 	/* clear the bit string, since the default is 'off'.
 	 */
 	bit_nclear(bits, 0, (high-low+1));
