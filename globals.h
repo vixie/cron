@@ -35,6 +35,7 @@ XTRN const char *copyright[]
 		"@(#) Copyright 1988,1989,1990,1993,1994,2021 by Paul Vixie",
 		"@(#) Copyright 1997,2000 by Internet Software Consortium, Inc.",
 		"@(#) Copyright 2004 by Internet Systems Consortium, Inc.",
+		"@(#) Copyright 2023 by Paul Vixie",
 		"@(#) All rights reserved",
 		NULL
 	}
@@ -63,6 +64,7 @@ XTRN const char *DowNames[]
 XTRN char	*ProgramName INIT("amnesia");
 XTRN int	LineNumber INIT(0);
 XTRN time_t	StartTime INIT(0);
+XTRN char	*Mailer INIT(NULL);
 XTRN int	NoFork INIT(0);
 XTRN const struct timespec ts_zero 
 #ifdef MAIN_PROGRAM

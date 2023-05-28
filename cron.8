@@ -22,9 +22,11 @@
 cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
 .B cron
-.RB [ \-l
-.IR load_avg ]
+.RB [ \-M
+.IR mailer ]
 .RB [ \-n ]
+.RB [ \-x
+.IR flag [ , ... ] ]
 .SH DESCRIPTION
 .I Cron
 should be started from /etc/rc or /etc/rc.local.  It will return immediately,
@@ -43,6 +45,12 @@ then wakes up every minute, examining all stored crontabs, checking each
 command to see if it should be run in the current minute.  When executing
 commands, any output is mailed to the owner of the crontab (or to the user
 named in the MAILTO environment variable in the crontab, if such exists).
+.PP
+The default mailer command is /usr/sbin/sendmail unless overridden with the
+\-M command line option when
+.I Cron
+is invoked. If exactly one %s is present this command string, it will be
+replaced by the user name of the invoking cron tab.
 .PP
 Additionally,
 .I cron
