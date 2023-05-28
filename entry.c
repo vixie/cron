@@ -51,7 +51,8 @@ static const char *ecodes[] =
 static int	get_list(bitstr_t *, int, int, const char *[], int, FILE *),
 		get_range(bitstr_t *, int, int, const char *[], int, FILE *),
 		get_number(int *, int, const char *[], int, FILE *, const char *),
-		set_element(bitstr_t *, int, int, int);
+		set_element(bitstr_t *, int, int, int),
+		set_range(bitstr_t *, int, int, int, int, int);
 
 void
 free_entry(entry *e) {
@@ -118,38 +119,65 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		if (!strcmp("reboot", cmd)) {
 			e->flags |= WHEN_REBOOT;
 		} else if (!strcmp("yearly", cmd) || !strcmp("annually", cmd)){
-			bit_set(e->minute, 0);
-			bit_set(e->hour, 0);
-			bit_set(e->dom, 0);
-			bit_set(e->month, 0);
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
+				    FIRST_MINUTE);
+			set_element(e->hour, FIRST_HOUR, LAST_HOUR,
+				    FIRST_HOUR);
+			set_element(e->dom, FIRST_DOM, LAST_DOM,
+				    FIRST_DOM);
+			set_element(e->month, FIRST_MONTH, LAST_MONTH,
+				    FIRST_MONTH);
+			set_range(e->dow, FIRST_DOW, LAST_DOW,
+				  FIRST_DOW, LAST_DOW, 1);
 			e->flags |= DOW_STAR;
 		} else if (!strcmp("monthly", cmd)) {
-			bit_set(e->minute, 0);
-			bit_set(e->hour, 0);
-			bit_set(e->dom, 0);
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
+				    FIRST_MINUTE);
+			set_element(e->hour, FIRST_HOUR, LAST_HOUR,
+				    FIRST_HOUR);
+			set_element(e->dom, FIRST_DOM, LAST_DOM,
+				    FIRST_DOM);
+			set_range(e->month, FIRST_MONTH, LAST_MONTH,
+				  FIRST_MONTH, LAST_MONTH, 1);
+			set_range(e->dow, FIRST_DOW, LAST_DOW,
+				  FIRST_DOW, LAST_DOW, 1);
 			e->flags |= DOW_STAR;
 		} else if (!strcmp("weekly", cmd)) {
-			bit_set(e->minute, 0);
-			bit_set(e->hour, 0);
-			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_set(e->dow, 0);
+			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
+				    FIRST_MINUTE);
+			set_element(e->hour, FIRST_HOUR, LAST_HOUR,
+				    FIRST_HOUR);
+			set_range(e->dom, FIRST_DOM, LAST_DOM,
+				  FIRST_DOM, LAST_DOM, 1);
+			set_range(e->month, FIRST_MONTH, LAST_MONTH,
+				  FIRST_MONTH, LAST_MONTH, 1);
+			set_element(e->dow, FIRST_DOW, LAST_DOW,
+				    FIRST_DOW);
 			e->flags |= DOW_STAR;
 		} else if (!strcmp("daily", cmd) || !strcmp("midnight", cmd)) {
-			bit_set(e->minute, 0);
-			bit_set(e->hour, 0);
-			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
+				    FIRST_MINUTE);
+			set_element(e->hour, FIRST_HOUR, LAST_HOUR,
+				    FIRST_HOUR);
+			set_range(e->dom, FIRST_DOM, LAST_DOM,
+				  FIRST_DOM, LAST_DOM, 1);
+			set_range(e->month, FIRST_MONTH, LAST_MONTH,
+				  FIRST_MONTH, LAST_MONTH, 1);
+			set_element(e->dow, FIRST_DOW, LAST_DOW,
+				    FIRST_DOW);
 		} else if (!strcmp("hourly", cmd)) {
-			bit_set(e->minute, 0);
-			bit_nset(e->hour, 0, (LAST_HOUR-FIRST_HOUR+1));
-			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
-			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
+				    FIRST_MINUTE);
+			set_range(e->hour, FIRST_HOUR, LAST_HOUR,
+				  FIRST_HOUR, LAST_HOUR, 1);
+			set_range(e->dom, FIRST_DOM, LAST_DOM,
+				  FIRST_DOM, LAST_DOM, 1);
+			set_range(e->month, FIRST_MONTH, LAST_MONTH,
+				  FIRST_MONTH, LAST_MONTH, 1);
+			set_element(e->dow, FIRST_DOW, LAST_DOW,
+				    FIRST_DOW);
+			set_range(e->dow, FIRST_DOW, LAST_DOW,
+				  FIRST_DOW, LAST_DOW, 1);
 			e->flags |= HR_STAR;
 		} else {
 			ecode = e_timespec;
@@ -515,11 +543,10 @@ get_range(bitstr_t *bits, int low, int high, const char *names[],
 	 * proposed conceptually by bob@acornrc, syntactically
 	 * designed then implemented by paul vixie).
 	 */
-	for (i = num1;  i <= num2;  i += num3)
-		if (EOF == set_element(bits, low, high, i)) {
-			unget_char(ch, file);
-			return (EOF);
-		}
+	if (EOF == set_range(bits, low, high, num1, num2, num3)) {
+		unget_char(ch, file);
+		return (EOF);
+	}
 
 	return (ch);
 }
@@ -582,7 +609,27 @@ set_element(bitstr_t *bits, int low, int high, int number) {
 
 	if (number < low || number > high)
 		return (EOF);
+	number -= low;
 
-	bit_set(bits, (number-low));
+	bit_set(bits, number);
+	return (OK);
+}
+
+static int
+set_range(bitstr_t *bits, int low, int high, int start, int stop, int step) {
+	Debug(DPARS|DEXT, ("set_range(?,%d,%d,%d,%d,%d)\n",
+			   low, high, start, stop, step))
+
+	if (start < low || stop > high)
+		return (EOF);
+	start -= low;
+	stop -= low;
+
+	if (step == 1) {
+		bit_nset(bits, start, stop);
+	} else {
+		for (int i = start; i <= stop; i += step)
+			bit_set(bits, i);
+	}
 	return (OK);
 }
