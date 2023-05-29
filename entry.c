@@ -163,8 +163,8 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 				  FIRST_DOM, LAST_DOM, 1);
 			set_range(e->month, FIRST_MONTH, LAST_MONTH,
 				  FIRST_MONTH, LAST_MONTH, 1);
-			set_element(e->dow, FIRST_DOW, LAST_DOW,
-				    FIRST_DOW);
+			set_range(e->dow, FIRST_DOW, LAST_DOW,
+				    FIRST_DOW, LAST_DOW, 1);
 		} else if (!strcmp("hourly", cmd)) {
 			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
 				    FIRST_MINUTE);
@@ -174,8 +174,6 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 				  FIRST_DOM, LAST_DOM, 1);
 			set_range(e->month, FIRST_MONTH, LAST_MONTH,
 				  FIRST_MONTH, LAST_MONTH, 1);
-			set_element(e->dow, FIRST_DOW, LAST_DOW,
-				    FIRST_DOW);
 			set_range(e->dow, FIRST_DOW, LAST_DOW,
 				  FIRST_DOW, LAST_DOW, 1);
 			e->flags |= HR_STAR;
@@ -291,7 +289,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		 * below. */
 		Skip_Blanks(ch, file)
 		unget_char(ch, file);
-		
+
 		pw = getpwnam(username);
 		if (pw == NULL) {
 			ecode = e_username;
@@ -396,7 +394,7 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 	/* Everything up to the next \n or EOF is part of the command...
 	 * too bad we don't know in advance how long it will be, since we
 	 * need to malloc a string for it... so, we limit it to MAX_COMMAND.
-	 */ 
+	 */
 	ch = get_string(cmd, MAX_COMMAND, file, "\n");
 
 	/* a file without a \n before the EOF is rude, so we'll complain...
@@ -450,7 +448,7 @@ get_list(bitstr_t *bits, int low, int high, const char *names[],
 
 	/* list = range {"," range}
 	 */
-	
+
 	/* clear the bit string, since the default is 'off'.
 	 */
 	bit_nclear(bits, 0, (high-low));
