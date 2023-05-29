@@ -218,10 +218,16 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		/* DOM (days of month)
 		 */
 
-		if (ch == '*')
-			e->flags |= DOM_STAR;
-		ch = get_list(e->dom, FIRST_DOM, LAST_DOM,
-			      PPC_NULL, ch, file);
+		if (ch == '$') {
+			e->flags |= DOM_LAST;
+			Skip_Nonblanks(ch, file);
+			Skip_Blanks(ch, file);
+		} else {
+			if (ch == '*')
+				e->flags |= DOM_STAR;
+			ch = get_list(e->dom, FIRST_DOM, LAST_DOM,
+				      PPC_NULL, ch, file);
+		}
 		if (ch == EOF) {
 			ecode = e_dom;
 			goto eof;
