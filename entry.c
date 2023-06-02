@@ -219,9 +219,13 @@ load_entry(FILE *file, void (*error_func)(), struct passwd *pw, char **envp) {
 		 */
 
 		if (ch == '$') {
-			e->flags |= DOM_LAST;
-			Skip_Nonblanks(ch, file);
+			ch = get_char(file);
+			if (!Is_Blank(ch)) {
+				ecode = e_dom;
+				goto eof;
+			}
 			Skip_Blanks(ch, file);
+			e->flags |= DOM_LAST;
 		} else {
 			if (ch == '*')
 				e->flags |= DOM_STAR;

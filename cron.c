@@ -318,7 +318,7 @@ find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
 			    bit_test(e->hour, hour) &&
 			    bit_test(e->month, month) &&
 			    ((e->flags & (DOM_STAR|DOW_STAR)) != 0
-			     ? (thisdom && thisdow) : (thisdow || thisdow))
+			     ? (thisdom && thisdow) : (thisdom || thisdow))
 			   ) {
 				if ((doNonWild &&
 				    !(e->flags & (MIN_STAR|HR_STAR))) || 

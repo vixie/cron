@@ -24,7 +24,6 @@ static char rcsid[] = "$Id: database.c,v 1.7 2004/01/23 18:56:42 vixie Exp $";
  */
 
 #include "cron.h"
-#include <stdbool.h>
 
 #define TMAX(a,b) (is_greater_than(a,b)?(a):(b))
 #define TEQUAL(a,b) (a.tv_sec == b.tv_sec && a.tv_nsec == b.tv_nsec)
