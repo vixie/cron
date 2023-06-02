@@ -473,7 +473,7 @@ get_range(bitstr_t *bits, int low, int high, const char *names[],
 	/* range = number | number "-" number [ "/" number ]
 	 */
 
-	int i, num1, num2, num3;
+	int num1, num2, num3;
 
 	Debug(DPARS|DEXT, ("get_range()...entering, exit won't show\n"))
 
