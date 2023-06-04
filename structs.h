@@ -34,8 +34,9 @@ typedef	struct _entry {
 #define	HR_STAR		0x02
 #define	DOM_STAR	0x04
 #define	DOW_STAR	0x08
-#define	WHEN_REBOOT	0x10
-#define	DONT_LOG	0x20
+#define	DOM_LAST	0x10
+#define	WHEN_REBOOT	0x20
+#define	DONT_LOG	0x40
 } entry;
 
 			/* the crontab database will be a list of the

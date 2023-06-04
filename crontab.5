@@ -96,7 +96,7 @@ minute	0-59
 .br
 hour	0-23
 .br
-day of month	1-31
+day of month	1-31 (or $, see below)
 .br
 month	0-12 (or names, see below)
 .br
@@ -123,8 +123,7 @@ hours'', just use ``*/2''.
 .PP
 Names can also be used for the ``month'' and ``day of week''
 fields.  Use the first three letters of the particular
-day or month (case doesn't matter).  Ranges or
-lists of names are not allowed.
+day or month (case doesn't matter).  Ranges of names are not allowed.
 .PP
 The ``sixth'' field (the rest of the line) specifies the command to be
 run.
@@ -138,13 +137,16 @@ input.
 .PP
 Note: The day of a command's execution can be specified by two
 fields \(em day of month, and day of week.  If both fields are
-restricted (ie, aren't *), the command will be run when
+restricted (i.e., are not *), the command will be run when
 .I either
 field matches the current time.  For example,
 .br
 ``30 4 1,15 * 5''
 would cause a command to be run at 4:30 am on the 1st and 15th of each
 month, plus every Friday.
+.PP
+Note: The day-of-month can be given as $, in which case it matches
+the last day of the current month.
 .SH EXAMPLE CRON FILE
 .nf
 # use /bin/sh to run commands, no matter what /etc/passwd says

@@ -70,8 +70,10 @@
 #define MAXHOSTNAMELEN 64
 #endif
 
+#define	Is_Blank(c) ((c) == '\t' || (c) == ' ')
+
 #define	Skip_Blanks(c, f) \
-			while (c == '\t' || c == ' ') \
+			while (Is_Blank(c)) \
 				c = get_char(f);
 
 #define	Skip_Nonblanks(c, f) \
@@ -98,6 +100,7 @@
 
 #define	SECONDS_PER_MINUTE	60
 #define	SECONDS_PER_HOUR	3600
+#define	SECONDS_PER_DAY		86400
 
 #define	FIRST_MINUTE	0
 #define	LAST_MINUTE	59
