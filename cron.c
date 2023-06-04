@@ -278,21 +278,19 @@ run_reboot_jobs(cron_db *db) {
 
 static void
 find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
-	time_t virtualSecond = vtime * SECONDS_PER_MINUTE;
-	time_t virtualTomorrow = virtualSecond + SECONDS_PER_DAY;
-	struct tm now, *now_r = gmtime_r(&virtualSecond, &now);
-	struct tm tom, *tom_r = gmtime_r(&virtualTomorrow, &tom);
-	int minute, hour, dom, month, dow;
-	user *u;
-	entry *e;
+	const time_t virtualSecond = vtime * SECONDS_PER_MINUTE;
+	const time_t virtualTomorrow = virtualSecond + SECONDS_PER_DAY;
+	struct tm now, tom;
+	const struct tm * const now_r = gmtime_r(&virtualSecond, &now);
+	const struct tm * const tom_r = gmtime_r(&virtualTomorrow, &tom);
 
 	/* make 0-based values out of these so we can use them as indicies
 	 */
-	minute = now.tm_min -FIRST_MINUTE;
-	hour = now.tm_hour -FIRST_HOUR;
-	dom = now.tm_mday -FIRST_DOM;
-	month = now.tm_mon +1 /* 0..11 -> 1..12 */ -FIRST_MONTH;
-	dow = now.tm_wday -FIRST_DOW;
+	const int minute = now.tm_min -FIRST_MINUTE;
+	const int hour = now.tm_hour -FIRST_HOUR;
+	const int dom = now.tm_mday -FIRST_DOM;
+	const int month = now.tm_mon +1 /* 0..11 -> 1..12 */ -FIRST_MONTH;
+	const int dow = now.tm_wday -FIRST_DOW;
 
 	Debug(DSCH, ("[%ld] tick(%d,%d,%d,%d,%d) %s %s\n",
 		     (long)getpid(), minute, hour, dom, month, dow,
@@ -304,25 +302,27 @@ find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
 	 * is why we keep 'e->dow_star' and 'e->dom_star'.  yes, it's bizarre.
 	 * like many bizarre things, it's the standard.
 	 */
-	for (u = db->head; u != NULL; u = u->next) {
-		for (e = u->crontab; e != NULL; e = e->next) {
-			bool lastdom = (e->flags & DOM_LAST) != 0 &&
-				tom.tm_mday == 1;
-			bool thisdom = lastdom || bit_test(e->dom, dom) != 0;
-			bool thisdow = bit_test(e->dow, dow);
-
+	const bool is_lastdom = (tom.tm_mday == 1);
+	for (user *u = db->head; u != NULL; u = u->next) {
+		for (entry *e = u->crontab; e != NULL; e = e->next) {
 			Debug(DSCH|DEXT, ("user [%s:%ld:%ld:...] cmd=\"%s\"\n",
 			    e->pwd->pw_name, (long)e->pwd->pw_uid,
 			    (long)e->pwd->pw_gid, e->cmd))
+			bool thisdom = bit_test(e->dom, dom) ||
+				(is_lastdom && (e->flags & DOM_LAST) != 0);
+			bool thisdow = bit_test(e->dow, dow);
 			if (bit_test(e->minute, minute) &&
 			    bit_test(e->hour, hour) &&
 			    bit_test(e->month, month) &&
 			    ((e->flags & (DOM_STAR|DOW_STAR)) != 0
-			     ? (thisdom && thisdow) : (thisdom || thisdow))
+			     ? (thisdom && thisdow)
+			     : (thisdom || thisdow))
 			   ) {
 				if ((doNonWild &&
-				    !(e->flags & (MIN_STAR|HR_STAR))) || 
-				    (doWild && (e->flags & (MIN_STAR|HR_STAR))))
+				     (e->flags & (MIN_STAR|HR_STAR)) == 0) || 
+				    (doWild &&
+				     (e->flags & (MIN_STAR|HR_STAR)) != 0)
+				    )
 					job_add(e, u);
 			}
 		}

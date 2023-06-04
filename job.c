@@ -24,14 +24,14 @@ static char rcsid[] = "$Id: job.c,v 1.6 2004/01/23 18:56:43 vixie Exp $";
 
 typedef	struct _job {
 	struct _job	*next;
-	entry		*e;
-	user		*u;
+	const entry	*e;
+	const user	*u;
 } job;
 
 static job	*jhead = NULL, *jtail = NULL;
 
 void
-job_add(entry *e, user *u) {
+job_add(const entry *e, const user *u) {
 	job *j;
 
 	/* if already on queue, keep going */
