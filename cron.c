@@ -303,8 +303,8 @@ find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
 	 * like many bizarre things, it's the standard.
 	 */
 	const bool is_lastdom = (tom.tm_mday == 1);
-	for (user *u = db->head; u != NULL; u = u->next) {
-		for (entry *e = u->crontab; e != NULL; e = e->next) {
+	for (const user *u = db->head; u != NULL; u = u->next) {
+		for (const entry *e = u->crontab; e != NULL; e = e->next) {
 			Debug(DSCH|DEXT, ("user [%s:%ld:%ld:...] cmd=\"%s\"\n",
 			    e->pwd->pw_name, (long)e->pwd->pw_uid,
 			    (long)e->pwd->pw_gid, e->cmd))
