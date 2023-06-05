@@ -22,11 +22,11 @@ static char rcsid[] = "$Id: do_command.c,v 1.12 2021/02/07 00:20:00 vixie Exp $"
 
 #include "cron.h"
 
-static void		child_process(entry *, user *);
+static void		child_process(const entry *, const user *);
 static int		safe_p(const char *, const char *);
 
 void
-do_command(entry *e, user *u) {
+do_command(const entry *e, const user *u) {
 	Debug(DPROC, ("[%ld] do_command(%s, (%s,%ld,%ld))\n",
 		      (long)getpid(), e->cmd, u->name,
 		      (long)e->pwd->pw_uid, (long)e->pwd->pw_gid))
@@ -58,7 +58,7 @@ do_command(entry *e, user *u) {
 }
 
 static void
-child_process(entry *e, user *u) {
+child_process(const entry *e, const user *u) {
 	int stdin_pipe[2], stdout_pipe[2];
 	char *input_data, *usernm, *mailto;
 	int children = 0;
