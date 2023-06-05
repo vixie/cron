@@ -319,7 +319,7 @@ find_jobs(int vtime, cron_db *db, int doWild, int doNonWild) {
 			     : (thisdom || thisdow))
 			   ) {
 				if ((doNonWild &&
-				     (e->flags & (MIN_STAR|HR_STAR)) == 0) || 
+				     (e->flags & (MIN_STAR|HR_STAR)) == 0) ||
 				    (doWild &&
 				     (e->flags & (MIN_STAR|HR_STAR)) != 0)
 				    )
