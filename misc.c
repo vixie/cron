@@ -597,12 +597,8 @@ first_word(char *s, char *t) {
 /* warning:
  *	heavily ascii-dependent.
  */
-void
-mkprint(dst, src, len)
-	char *dst;
-	unsigned char *src;
-	int len;
-{
+static void
+mkprint(char *dst, unsigned char *src, int len) {
 	/*
 	 * XXX
 	 * We know this routine can't overflow the dst buffer because mkprints()
@@ -632,10 +628,7 @@ mkprint(dst, src, len)
  *	returns a pointer to malloc'd storage, you must call free yourself.
  */
 char *
-mkprints(src, len)
-	unsigned char *src;
-	unsigned int len;
-{
+mkprints(unsigned char *src, unsigned int len) {
 	char *dst = malloc(len*4 + 1);
 
 	if (dst)
