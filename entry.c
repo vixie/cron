@@ -155,7 +155,7 @@ load_entry(FILE *file, void (*error_func)(const char *),
 				  FIRST_MONTH, LAST_MONTH, 1);
 			set_element(e->dow, FIRST_DOW, LAST_DOW,
 				    FIRST_DOW);
-			e->flags |= DOW_STAR;
+			e->flags |= DOM_STAR;
 		} else if (!strcmp("daily", cmd) || !strcmp("midnight", cmd)) {
 			set_element(e->minute, FIRST_MINUTE, LAST_MINUTE,
 				    FIRST_MINUTE);
