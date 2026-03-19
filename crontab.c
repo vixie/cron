@@ -257,6 +257,20 @@ static void
 delete_cmd(void) {
 	char n[MAX_FNAME];
 
+	if (isatty(fileno(stdin))) {
+		char q[MAX_TEMPSTR];
+
+		printf("Are you sure you want to delete the crontab "
+		    "for %s? This is irreversible. (y/N) ", User);
+		fflush(stdout);
+		q[0] = '\0';
+		(void) fgets(q, sizeof q, stdin);
+		if (q[0] != 'y' && q[0] != 'Y') {
+			fprintf(stderr, "crontab not deleted\n");
+			return;
+		}
+	}
+
 	log_it(RealUser, Pid, "DELETE", User);
 	if (!glue_strings(n, sizeof n, SPOOL_DIR, User, '/')) {
 		fprintf(stderr, "path too long\n");
